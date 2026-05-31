@@ -91,8 +91,8 @@ async function main() {
   for (const [email, name, roleKey] of users) {
     const user = await prisma.user.upsert({
       where: { email },
-      update: { name },
-      create: { email, name, phone: "+251900000000", passwordHash },
+      update: { name, passwordHash, status: "ACTIVE" },
+      create: { email, name, phone: "+251900000000", passwordHash, status: "ACTIVE" },
     });
     const role = await prisma.role.findUniqueOrThrow({ where: { systemKey: roleKey } });
     await prisma.userRole.upsert({
@@ -139,34 +139,42 @@ async function main() {
     });
   }
 
-  const template = await prisma.ticketTemplate.create({
-    data: {
-      name: "Adey Standard",
-      isDefault: true,
-      layoutJson: { accent: "#FFD100", mode: "registration-only", footer: "Show this QR code at the gate." },
-    },
-  });
+  const templateData = {
+    name: "Adey Standard",
+    isDefault: true,
+    layoutJson: { accent: "#FFD100", mode: "registration-only", footer: "Show this QR code at the gate." },
+  };
+  const existingTemplate = await prisma.ticketTemplate.findFirst({ where: { name: templateData.name } });
+  const template = existingTemplate
+    ? await prisma.ticketTemplate.update({ where: { id: existingTemplate.id }, data: templateData })
+    : await prisma.ticketTemplate.create({ data: templateData });
 
-  const event = await prisma.event.create({
-    data: {
-      name: "Adey Launch Showcase",
-      description: "Registration-only launch event with VIP, media, staff, and walk-in access.",
-      date: new Date("2026-06-20T00:00:00.000Z"),
-      startTime: "18:00",
-      endTime: "22:00",
-      venueName: "National Stadium",
-      status: "ACTIVE",
-      gateUsageEnabled: true,
-      idVerificationRequired: true,
-      walkInRegistrationAllowed: true,
-      ticketTemplateId: template.id,
-      createdById: superAdmin.id,
-    },
-  });
+  const eventData = {
+    name: "Adey Launch Showcase",
+    description: "Registration-only launch event with VIP, media, staff, and walk-in access.",
+    date: new Date("2026-06-20T00:00:00.000Z"),
+    startTime: "18:00",
+    endTime: "22:00",
+    venueName: "National Stadium",
+    status: "ACTIVE",
+    gateUsageEnabled: true,
+    idVerificationRequired: true,
+    walkInRegistrationAllowed: true,
+    ticketTemplateId: template.id,
+    createdById: superAdmin.id,
+  } as const;
+  const existingEvent = await prisma.event.findFirst({ where: { name: eventData.name } });
+  const event = existingEvent
+    ? await prisma.event.update({ where: { id: existingEvent.id }, data: eventData })
+    : await prisma.event.create({ data: eventData });
 
   const gates = await prisma.gate.findMany();
   for (const gate of gates) {
-    await prisma.eventGate.create({ data: { eventId: event.id, gateId: gate.id } });
+    await prisma.eventGate.upsert({
+      where: { eventId_gateId: { eventId: event.id, gateId: gate.id } },
+      update: {},
+      create: { eventId: event.id, gateId: gate.id },
+    });
   }
 
   const sampleGuests = [
@@ -178,9 +186,7 @@ async function main() {
 
   for (const [fullName, phone, categoryName, organization, title, source] of sampleGuests) {
     const category = await prisma.guestCategory.findUniqueOrThrow({ where: { name: categoryName } });
-    const guest = await prisma.guest.create({
-      data: {
-        eventId: event.id,
+    const guestData = {
         fullName,
         phone,
         categoryId: category.id,
@@ -188,31 +194,45 @@ async function main() {
         title,
         source,
         registrationStatus: "REGISTERED",
+      } as const;
+    const existingGuest = await prisma.guest.findFirst({ where: { eventId: event.id, phone } });
+    const guest = existingGuest
+      ? await prisma.guest.update({ where: { id: existingGuest.id }, data: guestData })
+      : await prisma.guest.create({ data: { eventId: event.id, ...guestData } });
+    await prisma.invitation.upsert({
+      where: { guestId: guest.id },
+      update: {
+        status: source === "WALK_IN" ? "ACCEPTED" : "SENT",
       },
-    });
-    await prisma.invitation.create({
-      data: {
+      create: {
         guestId: guest.id,
         status: source === "WALK_IN" ? "ACCEPTED" : "SENT",
         token: `invite_${crypto.randomBytes(24).toString("base64url")}`,
       },
     });
-    const token = crypto.randomBytes(32).toString("hex");
-    const ticket = await prisma.ticket.create({
-      data: {
-        guestId: guest.id,
-        eventId: event.id,
-        ticketId: `AP26-${crypto.randomBytes(3).toString("hex").toUpperCase()}`,
-        accessType: category.accessType,
-        status: "GENERATED",
-      },
+    const existingTicket = await prisma.ticket.findUnique({
+      where: { guestId: guest.id },
+      include: { token: true },
     });
-    await prisma.qrToken.create({
-      data: {
-        ticketId: ticket.id,
-        tokenHash: crypto.createHash("sha256").update(token).digest("hex"),
-      },
-    });
+    const ticket = existingTicket ??
+      await prisma.ticket.create({
+        data: {
+          guestId: guest.id,
+          eventId: event.id,
+          ticketId: `AP26-${crypto.randomBytes(3).toString("hex").toUpperCase()}`,
+          accessType: category.accessType,
+          status: "GENERATED",
+        },
+      });
+    if (!existingTicket?.token) {
+      const token = crypto.randomBytes(32).toString("hex");
+      await prisma.qrToken.create({
+        data: {
+          ticketId: ticket.id,
+          tokenHash: crypto.createHash("sha256").update(token).digest("hex"),
+        },
+      });
+    }
   }
 
   await prisma.appSetting.upsert({
