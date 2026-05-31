@@ -1,3 +1,4 @@
+import { connection } from "next/server";
 import { AppShell } from "@/components/app-shell";
 import { EventCreateForm } from "@/components/event-create-form";
 import { PageHeader } from "@/components/page-header";
@@ -6,6 +7,7 @@ import { prisma } from "@/lib/prisma";
 import { getGatesList } from "@/lib/server-data";
 
 export default async function NewEventPage() {
+  await connection();
   const [gates, setting] = await Promise.all([
     getGatesList(),
     prisma.appSetting.findUnique({ where: { key: "security" } }),

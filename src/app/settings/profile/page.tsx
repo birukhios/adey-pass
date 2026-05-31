@@ -1,3 +1,4 @@
+import { connection } from "next/server";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { AppShell } from "@/components/app-shell";
@@ -9,6 +10,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 export default async function ProfileSettingsPage() {
+  await connection();
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) redirect("/login");
   const user = await prisma.user.findUnique({ where: { id: session.user.id } });

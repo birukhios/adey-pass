@@ -1,3 +1,4 @@
+import { connection } from "next/server";
 import { AppShell } from "@/components/app-shell";
 import { PageHeader } from "@/components/page-header";
 import { SettingsTabs } from "@/components/settings-tabs";
@@ -5,6 +6,7 @@ import { UsersSettingsManager } from "@/components/users-settings-manager";
 import { getPermissionCatalog, getRolesWithPermissions, getUsersWithRoles } from "@/lib/server-data";
 
 export default async function UsersSettingsPage() {
+  await connection();
   const [users, roles, permissionCatalog] = await Promise.all([
     getUsersWithRoles(),
     getRolesWithPermissions(),

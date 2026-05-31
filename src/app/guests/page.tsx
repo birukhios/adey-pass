@@ -1,9 +1,11 @@
+import { connection } from "next/server";
 import { AppShell } from "@/components/app-shell";
 import { GuestBulkUpload } from "@/components/guest-bulk-upload";
 import { PageHeader } from "@/components/page-header";
 import { getEventOptions, getGuestCategoryOptions, getGuestsList } from "@/lib/server-data";
 
 export default async function GuestsPage() {
+  await connection();
   const [guests, events, categories] = await Promise.all([
     getGuestsList(),
     getEventOptions(),

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { connection } from "next/server";
 import QRCode from "react-qr-code";
 import { prisma } from "@/lib/prisma";
 import { AdeyLogo } from "@/components/adey-logo";
@@ -7,6 +8,7 @@ import { Badge } from "@/components/ui";
 type Props = { params: Promise<{ token: string }> };
 
 export default async function PublicTicketPage({ params }: Props) {
+  await connection();
   const { token } = await params;
   const ticket = await prisma.ticket.findFirst({
     where: { OR: [{ id: token }, { ticketId: token }] },

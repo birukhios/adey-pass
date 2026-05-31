@@ -1,3 +1,4 @@
+import { connection } from "next/server";
 import { AppShell } from "@/components/app-shell";
 import { PageHeader } from "@/components/page-header";
 import { SettingsTabs } from "@/components/settings-tabs";
@@ -5,6 +6,7 @@ import { Badge, Card } from "@/components/ui";
 import { getRolesWithPermissions } from "@/lib/server-data";
 
 export default async function RolesSettingsPage() {
+  await connection();
   const roles = await getRolesWithPermissions();
 
   return (

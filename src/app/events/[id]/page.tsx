@@ -1,3 +1,4 @@
+import { connection } from "next/server";
 import { AppShell } from "@/components/app-shell";
 import { EventDetailSidePanel } from "@/components/event-detail-side-panel";
 import { PageHeader } from "@/components/page-header";
@@ -8,6 +9,7 @@ import QRCodeLib from "qrcode";
 type Props = { params: Promise<{ id: string }> };
 
 export default async function EventDetailPage({ params }: Props) {
+  await connection();
   const { id } = await params;
   const [event, gates] = await Promise.all([getEventSummary(id), getGatesList()]);
   if (!event) {

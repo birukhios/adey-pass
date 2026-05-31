@@ -1,3 +1,4 @@
+import { connection } from "next/server";
 import { AppShell } from "@/components/app-shell";
 import { PageHeader } from "@/components/page-header";
 import { SecuritySettingsForm } from "@/components/security-settings-form";
@@ -6,6 +7,7 @@ import { Card } from "@/components/ui";
 import { prisma } from "@/lib/prisma";
 
 export default async function SecuritySettingsPage() {
+  await connection();
   const setting = await prisma.appSetting.findUnique({ where: { key: "security" } });
   const value = (setting?.value as {
     idVerificationRequiredByDefault?: boolean;

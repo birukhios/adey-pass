@@ -1,3 +1,4 @@
+import { connection } from "next/server";
 import { AppShell } from "@/components/app-shell";
 import { AdeyLogo } from "@/components/adey-logo";
 import { BrandingSettingsForm } from "@/components/branding-settings-form";
@@ -7,6 +8,7 @@ import { Card } from "@/components/ui";
 import { prisma } from "@/lib/prisma";
 
 export default async function BrandingSettingsPage() {
+  await connection();
   const setting = await prisma.appSetting.findUnique({ where: { key: "branding" } });
   const value = (setting?.value as { appName?: string; organizationName?: string; primaryColor?: string; ticketFooterText?: string } | null) ?? {};
 

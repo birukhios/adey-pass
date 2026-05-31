@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { connection } from "next/server";
 import { AdeyLogo } from "@/components/adey-logo";
 import { OrganizationSubmissionForm } from "@/components/organization-submission-form";
 import { prisma } from "@/lib/prisma";
@@ -6,6 +7,7 @@ import { prisma } from "@/lib/prisma";
 type Props = { params: Promise<{ eventId: string }> };
 
 export default async function OrganizationSubmissionPage({ params }: Props) {
+  await connection();
   const { eventId } = await params;
   const [event, categories] = await Promise.all([
     prisma.event.findUnique({ where: { id: eventId } }),

@@ -1,3 +1,4 @@
+import { connection } from "next/server";
 import { AppShell } from "@/components/app-shell";
 import { CameraScannerCard } from "@/components/camera-scanner-card";
 import { ScannerPanel } from "@/components/scanner-panel";
@@ -9,6 +10,7 @@ import { getServerSession } from "next-auth";
 import { permissions } from "@/lib/rbac";
 
 export default async function ScannerPage() {
+  await connection();
   const session = await getServerSession(authOptions);
   const userPermissions = session?.user?.permissions ?? [];
   const canManageWalkins = userPermissions.includes(permissions.walkinsCreate);

@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { connection } from "next/server";
 import { AdeyLogo } from "@/components/adey-logo";
 import { RsvpForm } from "@/components/rsvp-form";
 import { Badge } from "@/components/ui";
@@ -7,6 +8,7 @@ import { prisma } from "@/lib/prisma";
 type Props = { params: Promise<{ token: string }> };
 
 export default async function RsvpPage({ params }: Props) {
+  await connection();
   const { token } = await params;
   const invitation = await prisma.invitation.findUnique({
     where: { token },

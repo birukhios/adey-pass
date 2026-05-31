@@ -1,3 +1,4 @@
+import { connection } from "next/server";
 import { AppShell } from "@/components/app-shell";
 import { EventStatusActions } from "@/components/event-status-actions";
 import { PageHeader } from "@/components/page-header";
@@ -5,6 +6,7 @@ import { Badge, ButtonLink, Card, SelectField } from "@/components/ui";
 import { getEventsList } from "@/lib/server-data";
 
 export default async function EventsPage() {
+  await connection();
   const events = await getEventsList();
   return (
     <AppShell>

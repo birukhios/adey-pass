@@ -1,9 +1,11 @@
+import { connection } from "next/server";
 import { AppShell } from "@/components/app-shell";
 import { DashboardClient } from "@/components/dashboard-client";
 import { PageHeader } from "@/components/page-header";
 import { getDashboardData } from "@/lib/server-data";
 
 export default async function DashboardPage() {
+  await connection();
   const data = await getDashboardData();
 
   return (

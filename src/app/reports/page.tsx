@@ -1,9 +1,11 @@
+import { connection } from "next/server";
 import { AppShell } from "@/components/app-shell";
 import { PageHeader } from "@/components/page-header";
 import { ReportsClient } from "@/components/reports-client";
 import { prisma } from "@/lib/prisma";
 
 export default async function ReportsPage() {
+  await connection();
   const [rows, pendingVerifications, checkedIn, walkIns, failedVerifications, duplicateAttempts, organizationSubmissions, gates] = await Promise.all([
     prisma.guest.count(),
     prisma.idVerification.count({ where: { status: "PENDING" } }),

@@ -1,3 +1,4 @@
+import { connection } from "next/server";
 import { AppShell } from "@/components/app-shell";
 import { GuestDetailActions } from "@/components/guest-detail-actions";
 import { PageHeader } from "@/components/page-header";
@@ -7,6 +8,7 @@ import { getGuestDetail } from "@/lib/server-data";
 type Props = { params: Promise<{ id: string }> };
 
 export default async function GuestDetailPage({ params }: Props) {
+  await connection();
   const { id } = await params;
   const guest = await getGuestDetail(id);
   if (!guest) {

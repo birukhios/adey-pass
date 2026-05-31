@@ -1,3 +1,4 @@
+import { connection } from "next/server";
 import { AppShell } from "@/components/app-shell";
 import { GateCreateForm } from "@/components/gate-create-form";
 import { PageHeader } from "@/components/page-header";
@@ -6,6 +7,7 @@ import { Badge, Card } from "@/components/ui";
 import { getGatesList } from "@/lib/server-data";
 
 export default async function GatesSettingsPage() {
+  await connection();
   const gates = await getGatesList();
   return (
     <AppShell>
