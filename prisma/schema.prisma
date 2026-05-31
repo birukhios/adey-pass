@@ -1,0 +1,436 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum EventType {
+  REGISTRATION_ONLY
+  SEATED
+  HYBRID
+}
+
+enum EventStatus {
+  DRAFT
+  ACTIVE
+  CLOSED
+  ARCHIVED
+}
+
+enum GuestSource {
+  INVITED
+  WALK_IN
+  PUBLIC_REGISTRATION
+}
+
+enum InvitationStatus {
+  DRAFT
+  SENT
+  OPENED
+  ACCEPTED
+  DECLINED
+  CANCELLED
+}
+
+enum RegistrationStatus {
+  PENDING
+  REGISTERED
+  REJECTED
+  CANCELLED
+}
+
+enum TicketStatus {
+  NOT_GENERATED
+  GENERATED
+  SENT
+  USED
+  CANCELLED
+  EXPIRED
+  BLOCKED
+}
+
+enum VerificationStatus {
+  NOT_STARTED
+  PENDING
+  VERIFIED
+  FAILED
+  MANUALLY_APPROVED
+}
+
+enum VerificationMethod {
+  MANUAL
+  MOCK_PROVIDER
+  FUTURE_API_PROVIDER
+}
+
+enum CheckInStatus {
+  NOT_CHECKED_IN
+  CHECKED_IN
+  DUPLICATE_ATTEMPT
+  REJECTED
+}
+
+enum OrganizationSubmissionStatus {
+  DRAFT
+  SUBMITTED
+  APPROVED
+  REJECTED
+}
+
+enum OtpPurpose {
+  ID_VERIFICATION
+  WALK_IN_VERIFICATION
+}
+
+model User {
+  id                  String                   @id @default(cuid())
+  name                String
+  email               String                   @unique
+  phone               String?
+  passwordHash        String
+  status              UserStatus               @default(ACTIVE)
+  createdAt           DateTime                 @default(now())
+  updatedAt           DateTime                 @updatedAt
+  roles               UserRole[]
+  createdEvents       Event[]                  @relation("EventCreator")
+  verifiedRecords     IdVerification[]         @relation("VerificationApprover")
+  checkins            Checkin[]
+  walkins             WalkinRegistration[]
+  auditLogs           AuditLog[]
+  appSettings         AppSetting[]
+  permissionOverrides UserPermissionOverride[]
+  gateAssignments     GateOfficerAssignment[]
+}
+
+model Role {
+  id          String           @id @default(cuid())
+  name        String           @unique
+  description String
+  systemKey   String           @unique
+  users       UserRole[]
+  permissions RolePermission[]
+}
+
+model Permission {
+  id            String                   @id @default(cuid())
+  key           String                   @unique
+  label         String
+  resource      String
+  action        String
+  roles         RolePermission[]
+  userOverrides UserPermissionOverride[]
+}
+
+model UserPermissionOverride {
+  id           String     @id @default(cuid())
+  userId       String
+  permissionId String
+  granted      Boolean
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  @@unique([userId, permissionId])
+}
+
+model UserRole {
+  id     String @id @default(cuid())
+  userId String
+  roleId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role   Role   @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, roleId])
+}
+
+model RolePermission {
+  id           String     @id @default(cuid())
+  roleId       String
+  permissionId String
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@unique([roleId, permissionId])
+}
+
+model Event {
+  id                        String                   @id @default(cuid())
+  name                      String
+  description               String?
+  date                      DateTime
+  startTime                 String
+  endTime                   String
+  venueName                 String
+  eventType                 EventType                @default(REGISTRATION_ONLY)
+  gateUsageEnabled          Boolean                  @default(false)
+  idVerificationRequired    Boolean                  @default(true)
+  walkInRegistrationAllowed Boolean                  @default(true)
+  maxAttendees              Int?
+  status                    EventStatus              @default(DRAFT)
+  ticketTemplateId          String?
+  createdById               String
+  createdBy                 User                     @relation("EventCreator", fields: [createdById], references: [id])
+  guests                    Guest[]
+  tickets                   Ticket[]
+  gates                     EventGate[]
+  idVerifications           IdVerification[]
+  checkins                  Checkin[]
+  walkins                   WalkinRegistration[]
+  organizationSubmissions   OrganizationSubmission[]
+  createdAt                 DateTime                 @default(now())
+  updatedAt                 DateTime                 @updatedAt
+}
+
+model Gate {
+  id                 String                  @id @default(cuid())
+  name               String
+  code               String                  @unique
+  description        String?
+  active             Boolean                 @default(true)
+  allowedCategories  Json
+  events             EventGate[]
+  tickets            Ticket[]
+  checkins           Checkin[]
+  officerAssignments GateOfficerAssignment[]
+  createdAt          DateTime                @default(now())
+  updatedAt          DateTime                @updatedAt
+}
+
+model EventGate {
+  id      String @id @default(cuid())
+  eventId String
+  gateId  String
+  event   Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  gate    Gate   @relation(fields: [gateId], references: [id], onDelete: Cascade)
+
+  @@unique([eventId, gateId])
+}
+
+model GuestCategory {
+  id         String  @id @default(cuid())
+  name       String  @unique
+  accessType String
+  color      String
+  isSystem   Boolean @default(true)
+  guests     Guest[]
+}
+
+model Guest {
+  id                 String              @id @default(cuid())
+  eventId            String
+  fullName           String
+  phone              String
+  email              String?
+  categoryId         String
+  organization       String?
+  title              String?
+  source             GuestSource         @default(INVITED)
+  notes              String?
+  registrationStatus RegistrationStatus  @default(PENDING)
+  checkInStatus      CheckInStatus       @default(NOT_CHECKED_IN)
+  event              Event               @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  category           GuestCategory       @relation(fields: [categoryId], references: [id])
+  invitation         Invitation?
+  ticket             Ticket?
+  idVerification     IdVerification?
+  checkins           Checkin[]
+  walkin             WalkinRegistration?
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+}
+
+model Invitation {
+  id          String           @id @default(cuid())
+  guestId     String           @unique
+  token       String?          @unique
+  status      InvitationStatus @default(DRAFT)
+  sentAt      DateTime?
+  openedAt    DateTime?
+  acceptedAt  DateTime?
+  declinedAt  DateTime?
+  cancelledAt DateTime?
+  guest       Guest            @relation(fields: [guestId], references: [id], onDelete: Cascade)
+}
+
+model OrganizationSubmission {
+  id               String                        @id @default(cuid())
+  eventId          String
+  organizationName String
+  contactName      String
+  contactPhone     String
+  contactEmail     String?
+  status           OrganizationSubmissionStatus  @default(SUBMITTED)
+  notes            String?
+  submittedAt      DateTime                      @default(now())
+  reviewedAt       DateTime?
+  event            Event                         @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  guests           OrganizationSubmissionGuest[]
+  createdAt        DateTime                      @default(now())
+  updatedAt        DateTime                      @updatedAt
+}
+
+model OrganizationSubmissionGuest {
+  id             String                 @id @default(cuid())
+  submissionId   String
+  fullName       String
+  phone          String
+  email          String?
+  categoryName   String
+  title          String?
+  faydaLast4     String?
+  notes          String?
+  createdGuestId String?
+  submission     OrganizationSubmission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  createdAt      DateTime               @default(now())
+}
+
+model OtpChallenge {
+  id           String     @id @default(cuid())
+  phone        String
+  purpose      OtpPurpose
+  ticketToken  String?
+  codeHash     String
+  deliveryHint String
+  expiresAt    DateTime
+  verifiedAt   DateTime?
+  attempts     Int        @default(0)
+  createdAt    DateTime   @default(now())
+}
+
+model GateOfficerAssignment {
+  id        String   @id @default(cuid())
+  userId    String
+  gateId    String
+  active    Boolean  @default(true)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  gate      Gate     @relation(fields: [gateId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, gateId])
+}
+
+model Ticket {
+  id          String       @id @default(cuid())
+  guestId     String       @unique
+  eventId     String
+  gateId      String?
+  ticketId    String       @unique
+  status      TicketStatus @default(GENERATED)
+  accessType  String
+  token       QrToken?
+  generatedAt DateTime     @default(now())
+  sentAt      DateTime?
+  usedAt      DateTime?
+  expiresAt   DateTime?
+  cancelledAt DateTime?
+  guest       Guest        @relation(fields: [guestId], references: [id], onDelete: Cascade)
+  event       Event        @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  gate        Gate?        @relation(fields: [gateId], references: [id])
+  checkins    Checkin[]
+}
+
+model QrToken {
+  id         String       @id @default(cuid())
+  tokenHash  String       @unique
+  ticketId   String       @unique
+  status     TicketStatus @default(GENERATED)
+  createdAt  DateTime     @default(now())
+  expiresAt  DateTime?
+  lastUsedAt DateTime?
+  ticket     Ticket       @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+}
+
+model IdVerification {
+  id             String             @id @default(cuid())
+  guestId        String             @unique
+  eventId        String
+  fullName       String
+  maskedIdNumber String
+  idNumberHash   String
+  phone          String
+  email          String?
+  dateOfBirth    DateTime?
+  gender         String?
+  nationality    String?
+  currentAddress String?
+  status         VerificationStatus @default(PENDING)
+  method         VerificationMethod @default(MANUAL)
+  consentGiven   Boolean            @default(false)
+  verifiedAt     DateTime?
+  verifiedById   String?
+  rejectedReason String?
+  guest          Guest              @relation(fields: [guestId], references: [id], onDelete: Cascade)
+  event          Event              @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  verifiedBy     User?              @relation("VerificationApprover", fields: [verifiedById], references: [id])
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+}
+
+model Checkin {
+  id            String        @id @default(cuid())
+  guestId       String
+  ticketId      String
+  eventId       String
+  gateId        String?
+  checkedInById String
+  checkedInAt   DateTime      @default(now())
+  method        String
+  result        CheckInStatus
+  notes         String?
+  guest         Guest         @relation(fields: [guestId], references: [id], onDelete: Cascade)
+  ticket        Ticket        @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  event         Event         @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  gate          Gate?         @relation(fields: [gateId], references: [id])
+  checkedInBy   User          @relation(fields: [checkedInById], references: [id])
+}
+
+model WalkinRegistration {
+  id                   String   @id @default(cuid())
+  guestId              String   @unique
+  eventId              String
+  registeredById       String
+  checkedInImmediately Boolean  @default(false)
+  guest                Guest    @relation(fields: [guestId], references: [id], onDelete: Cascade)
+  event                Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  registeredBy         User     @relation(fields: [registeredById], references: [id])
+  createdAt            DateTime @default(now())
+}
+
+model TicketTemplate {
+  id         String   @id @default(cuid())
+  name       String
+  layoutJson Json
+  isDefault  Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model AuditLog {
+  id          String   @id @default(cuid())
+  actorUserId String?
+  action      String
+  entityType  String
+  entityId    String
+  metadata    Json?
+  ipAddress   String?
+  actor       User?    @relation(fields: [actorUserId], references: [id])
+  createdAt   DateTime @default(now())
+}
+
+model AppSetting {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  value       Json
+  updatedById String?
+  updatedBy   User?    @relation(fields: [updatedById], references: [id])
+  updatedAt   DateTime @updatedAt
+}
