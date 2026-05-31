@@ -63,6 +63,34 @@ AdeyPass@2026
 - `security@adeypass.local` - Security Officer
 - `reports@adeypass.local` - Report Viewer
 
+## Render Demo Deploy
+
+GitHub only stores the code. To get a public login URL, deploy the repo to Render as a Web Service.
+
+Use these Render settings for the current SQLite demo build:
+
+```text
+Build Command: npm run render:build
+Start Command: npm run render:start
+```
+
+Add these environment variables in Render before building:
+
+```text
+DATABASE_URL=file:./dev.db
+NEXTAUTH_SECRET=<32+ character random string>
+AUTH_SECRET=<32+ character random string>
+NEXTAUTH_URL=https://YOUR-RENDER-SERVICE.onrender.com
+```
+
+You can generate secrets locally with:
+
+```bash
+openssl rand -base64 32
+```
+
+The start command pushes the Prisma schema and seeds the demo users, so the accounts above will exist on the deployed app. SQLite on Render is good for demo testing; for production, move to PostgreSQL and persistent migrations.
+
 ## Implemented Foundation
 
 - Adey Pass brand system and app shell
