@@ -19,6 +19,15 @@ const payloadSchema = z.object({
 
 type Props = { params: Promise<{ token: string }> };
 
+function mockPhotoForName(name: string) {
+  const normalized = name.toLowerCase();
+  if (normalized.includes("aster")) return "/fayda-mock/aster-girma.svg";
+  if (normalized.includes("mikael")) return "/fayda-mock/mikael-tadesse.svg";
+  if (normalized.includes("liya")) return "/fayda-mock/liya-kebede.svg";
+  if (normalized.includes("abel")) return "/fayda-mock/abel-fikru.svg";
+  return "/fayda-mock/aster-girma.svg";
+}
+
 export async function POST(request: Request, { params }: Props) {
   const parsed = payloadSchema.safeParse(await request.json());
   if (!parsed.success || !parsed.data.consent) {
@@ -54,6 +63,7 @@ export async function POST(request: Request, { params }: Props) {
 
   const masked = maskIdNumber(parsed.data.idNumber);
   const idNumberHash = hashSecret(parsed.data.idNumber);
+  const photoUrl = mockPhotoForName(parsed.data.fullName);
 
   const duplicateVerification = await prisma.idVerification.findFirst({
     where: {
@@ -84,6 +94,7 @@ export async function POST(request: Request, { params }: Props) {
         gender: parsed.data.gender || null,
         nationality: parsed.data.nationality || null,
         currentAddress: parsed.data.currentAddress || null,
+        photoUrl,
         consentGiven: true,
         status: VerificationStatus.VERIFIED,
         method: VerificationMethod.MOCK_PROVIDER,
@@ -101,6 +112,7 @@ export async function POST(request: Request, { params }: Props) {
         gender: parsed.data.gender || null,
         nationality: parsed.data.nationality || null,
         currentAddress: parsed.data.currentAddress || null,
+        photoUrl,
         consentGiven: true,
         status: VerificationStatus.VERIFIED,
         method: VerificationMethod.MOCK_PROVIDER,
@@ -116,6 +128,7 @@ export async function POST(request: Request, { params }: Props) {
         gender: true,
         nationality: true,
         currentAddress: true,
+        photoUrl: true,
       },
     });
     await tx.auditLog.create({

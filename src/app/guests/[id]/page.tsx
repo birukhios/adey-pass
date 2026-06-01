@@ -1,4 +1,5 @@
 import { connection } from "next/server";
+import Image from "next/image";
 import { AppShell } from "@/components/app-shell";
 import { GuestDetailActions } from "@/components/guest-detail-actions";
 import { PageHeader } from "@/components/page-header";
@@ -37,12 +38,24 @@ export default async function GuestDetailPage({ params }: Props) {
         </Card>
         <div className="grid gap-6">
           <Card>
-            <h2 className="text-lg font-black">Fayda / National ID</h2>
-            <div className="mt-3 flex flex-wrap gap-2">
-              <Badge tone={guest.idVerification?.status === "VERIFIED" || guest.idVerification?.status === "MANUALLY_APPROVED" ? "green" : "yellow"}>
-                {guest.idVerification?.status?.replaceAll("_", " ") ?? "NOT STARTED"}
-              </Badge>
-              <Badge>{guest.idVerification?.maskedIdNumber ?? "XXXX-XXXX-0000"}</Badge>
+            <div className="flex items-start gap-4">
+              <div className="grid size-24 shrink-0 place-items-center overflow-hidden rounded-3xl border" style={{ background: "var(--bg)", borderColor: "var(--line)" }}>
+                {guest.idVerification?.photoUrl ? (
+                  <Image alt={`${guest.fullName} Fayda profile`} className="h-full w-full object-cover" height={96} src={guest.idVerification.photoUrl} width={96} />
+                ) : (
+                  <span className="text-2xl font-black" style={{ color: "var(--text-muted)" }}>{guest.fullName.slice(0, 2).toUpperCase()}</span>
+                )}
+              </div>
+              <div className="min-w-0">
+                <p className="text-xs font-black uppercase tracking-[0.22em]" style={{ color: "var(--text-muted)" }}>Mock Fayda profile</p>
+                <h2 className="mt-1 text-lg font-black">Fayda / National ID</h2>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <Badge tone={guest.idVerification?.status === "VERIFIED" || guest.idVerification?.status === "MANUALLY_APPROVED" ? "green" : "yellow"}>
+                    {guest.idVerification?.status?.replaceAll("_", " ") ?? "NOT STARTED"}
+                  </Badge>
+                  <Badge>{guest.idVerification?.maskedIdNumber ?? "XXXX-XXXX-0000"}</Badge>
+                </div>
+              </div>
             </div>
             <dl className="mt-5 grid gap-3 text-sm">
               <div>

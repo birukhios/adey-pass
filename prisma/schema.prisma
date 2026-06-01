@@ -383,6 +383,7 @@ model IdVerification {
   gender         String?
   nationality    String?
   currentAddress String?
+  photoUrl       String?
   status         VerificationStatus @default(PENDING)
   method         VerificationMethod @default(MANUAL)
   consentGiven   Boolean            @default(false)

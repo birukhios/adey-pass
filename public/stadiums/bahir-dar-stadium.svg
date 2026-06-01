@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="520" viewBox="0 0 1200 520">
+  <defs><linearGradient id="g" x1="0" x2="1"><stop stop-color="#052E1A"/><stop offset=".5" stop-color="#0B7DE3"/><stop offset="1" stop-color="#EAF5FF"/></linearGradient></defs>
+  <rect width="1200" height="520" fill="url(#g)"/>
+  <circle cx="1040" cy="110" r="96" fill="#EAF5FF" opacity=".35"/>
+  <path d="M90 350c166-118 854-118 1020 0v92H90z" fill="#FFFFFF" opacity=".9"/>
+  <path d="M170 344c158-72 702-72 860 0" fill="none" stroke="#0F172A" stroke-width="32" opacity=".42"/>
+  <ellipse cx="600" cy="386" rx="330" ry="62" fill="#16A34A"/>
+  <path d="M0 470c120-44 240-44 360 0s240 44 360 0 240-44 480 0v50H0z" fill="#BAE6FD" opacity=".65"/>
+  <text x="96" y="96" font-family="Arial" font-size="44" font-weight="800" fill="#FFFFFF">Bahir Dar International Stadium</text>
+  <text x="98" y="138" font-family="Arial" font-size="20" font-weight="700" fill="#D9F99D">Regional stadium guest control</text>
+</svg>

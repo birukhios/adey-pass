@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="520" viewBox="0 0 1200 520">
+  <defs><linearGradient id="g" x1="0" x2="1"><stop stop-color="#111418"/><stop offset=".56" stop-color="#075CAD"/><stop offset="1" stop-color="#D6A600"/></linearGradient></defs>
+  <rect width="1200" height="520" fill="url(#g)"/>
+  <path d="M0 410c220-160 980-160 1200 0v110H0z" fill="#0F172A" opacity=".55"/>
+  <path d="M128 372c170-118 774-118 944 0" fill="none" stroke="#F8FAFC" stroke-width="42" opacity=".9"/>
+  <path d="M218 366c135-60 629-60 764 0" fill="none" stroke="#CBD5E1" stroke-width="26"/>
+  <ellipse cx="600" cy="395" rx="360" ry="72" fill="#15803D"/>
+  <path d="M408 380h384v44H408z" fill="#22C55E"/>
+  <text x="96" y="96" font-family="Arial" font-size="44" font-weight="800" fill="#FFFFFF">Addis Ababa Stadium</text>
+  <text x="98" y="138" font-family="Arial" font-size="20" font-weight="700" fill="#FFF4C7">High-volume match day operations</text>
+</svg>

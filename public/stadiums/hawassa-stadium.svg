@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="520" viewBox="0 0 1200 520">
+  <defs><linearGradient id="g" x1="0" x2="1"><stop stop-color="#1E1233"/><stop offset=".55" stop-color="#0B7DE3"/><stop offset="1" stop-color="#22C55E"/></linearGradient></defs>
+  <rect width="1200" height="520" fill="url(#g)"/>
+  <path d="M80 360c180-140 860-140 1040 0v82H80z" fill="#F8FAFC" opacity=".92"/>
+  <path d="M170 350c150-76 710-76 860 0" fill="none" stroke="#94A3B8" stroke-width="34"/>
+  <path d="M260 345c120-40 560-40 680 0" fill="none" stroke="#FFFFFF" stroke-width="24"/>
+  <ellipse cx="600" cy="392" rx="330" ry="66" fill="#15803D"/>
+  <circle cx="112" cy="118" r="38" fill="#D6A600"/>
+  <text x="96" y="96" font-family="Arial" font-size="44" font-weight="800" fill="#FFFFFF">Hawassa Stadium</text>
+  <text x="98" y="150" font-family="Arial" font-size="20" font-weight="700" fill="#E0F2FE">Fast gate visibility and reporting</text>
+</svg>

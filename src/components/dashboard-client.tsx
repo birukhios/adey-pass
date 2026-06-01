@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { StadiumCarousel } from "@/components/stadium-carousel";
 import { Badge, Card, SelectField } from "@/components/ui";
 
 const DashboardCharts = dynamic(() => import("@/components/dashboard-charts").then((module) => module.DashboardCharts), {
@@ -24,6 +25,8 @@ type Props = {
 export function DashboardClient({ metrics, trendData, categoryData, events, guests }: Props) {
   return (
     <>
+      <StadiumCarousel />
+
       <div className="grid gap-3 md:grid-cols-2">
         <SelectField label="Event" options={["All events", ...events.map((event) => event.name)]} />
         <SelectField label="Date" options={["Last 7 days", "Today", "This month"]} />

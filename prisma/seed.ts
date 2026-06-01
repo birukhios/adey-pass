@@ -41,6 +41,58 @@ const rolePermissions: Record<string, string[]> = {
   report_viewer: ["dashboard:view", "reports:view", "reports:export"],
 };
 
+const faydaProfiles: Record<string, {
+  idNumber: string;
+  email: string;
+  dateOfBirth: string;
+  gender: string;
+  nationality: string;
+  currentAddress: string;
+  photoUrl: string;
+}> = {
+  "Aster Girma": {
+    idNumber: "FAYDA-1989-1111",
+    email: "aster.girma@example.com",
+    dateOfBirth: "1989-03-12T00:00:00.000Z",
+    gender: "Female",
+    nationality: "Ethiopian",
+    currentAddress: "Bole, Addis Ababa",
+    photoUrl: "/fayda-mock/aster-girma.svg",
+  },
+  "Mikael Tadesse": {
+    idNumber: "FAYDA-1991-2222",
+    email: "mikael.tadesse@example.com",
+    dateOfBirth: "1991-07-08T00:00:00.000Z",
+    gender: "Male",
+    nationality: "Ethiopian",
+    currentAddress: "Kazanchis, Addis Ababa",
+    photoUrl: "/fayda-mock/mikael-tadesse.svg",
+  },
+  "Liya Kebede": {
+    idNumber: "FAYDA-1994-3333",
+    email: "liya.kebede@example.com",
+    dateOfBirth: "1994-11-21T00:00:00.000Z",
+    gender: "Female",
+    nationality: "Ethiopian",
+    currentAddress: "CMC, Addis Ababa",
+    photoUrl: "/fayda-mock/liya-kebede.svg",
+  },
+  "Abel Fikru": {
+    idNumber: "FAYDA-1987-4444",
+    email: "abel.fikru@example.com",
+    dateOfBirth: "1987-05-27T00:00:00.000Z",
+    gender: "Male",
+    nationality: "Ethiopian",
+    currentAddress: "Piassa, Addis Ababa",
+    photoUrl: "/fayda-mock/abel-fikru.svg",
+  },
+};
+
+function maskSeedId(idNumber: string) {
+  const suffix = idNumber.replace(/[^0-9A-Za-z]/g, "").slice(-4);
+  return `XXXX-XXXX-${suffix}`;
+}
+
 async function main() {
   const passwordHash = await bcrypt.hash("AdeyPass@2026", 12);
 
@@ -256,6 +308,46 @@ async function main() {
         data: {
           ticketId: ticket.id,
           tokenHash: crypto.createHash("sha256").update(token).digest("hex"),
+        },
+      });
+    }
+    const faydaProfile = faydaProfiles[fullName];
+    if (faydaProfile) {
+      await prisma.idVerification.upsert({
+        where: { guestId: guest.id },
+        update: {
+          fullName,
+          maskedIdNumber: maskSeedId(faydaProfile.idNumber),
+          idNumberHash: crypto.createHash("sha256").update(faydaProfile.idNumber).digest("hex"),
+          phone,
+          email: faydaProfile.email,
+          dateOfBirth: new Date(faydaProfile.dateOfBirth),
+          gender: faydaProfile.gender,
+          nationality: faydaProfile.nationality,
+          currentAddress: faydaProfile.currentAddress,
+          photoUrl: faydaProfile.photoUrl,
+          status: "VERIFIED",
+          method: "MOCK_PROVIDER",
+          consentGiven: true,
+          verifiedAt: new Date("2026-05-30T09:00:00.000Z"),
+        },
+        create: {
+          guestId: guest.id,
+          eventId: event.id,
+          fullName,
+          maskedIdNumber: maskSeedId(faydaProfile.idNumber),
+          idNumberHash: crypto.createHash("sha256").update(faydaProfile.idNumber).digest("hex"),
+          phone,
+          email: faydaProfile.email,
+          dateOfBirth: new Date(faydaProfile.dateOfBirth),
+          gender: faydaProfile.gender,
+          nationality: faydaProfile.nationality,
+          currentAddress: faydaProfile.currentAddress,
+          photoUrl: faydaProfile.photoUrl,
+          status: "VERIFIED",
+          method: "MOCK_PROVIDER",
+          consentGiven: true,
+          verifiedAt: new Date("2026-05-30T09:00:00.000Z"),
         },
       });
     }
