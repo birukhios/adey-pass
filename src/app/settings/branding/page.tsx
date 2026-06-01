@@ -16,7 +16,7 @@ export default async function BrandingSettingsPage() {
     <AppShell>
       <PageHeader title="Branding Settings" description="Adey Pass visual identity, ticket footer text, logo placeholder, and primary color." />
       <SettingsTabs />
-      <div className="grid gap-6 xl:grid-cols-[1fr_360px]">
+      <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(280px,360px)] xl:gap-6">
         <Card>
           <BrandingSettingsForm
             initial={{
@@ -27,7 +27,7 @@ export default async function BrandingSettingsPage() {
             }}
           />
         </Card>
-        <Card className="bg-[#111418]"><AdeyLogo /><div className="mt-6 rounded-lg bg-[#FFD100] p-6 text-[#111418]"><h2 className="text-2xl font-black">Ticket Preview</h2><p className="mt-2 text-sm font-bold">Smart Event Access & Registration</p></div></Card>
+        <Card className="bg-[#111418]"><AdeyLogo /><div className="mt-6 rounded-lg bg-[#FFD100] p-5 text-[#111418] sm:p-6"><h2 className="text-xl font-black sm:text-2xl">Ticket Preview</h2><p className="mt-2 text-sm font-bold">Smart Event Access & Registration</p></div></Card>
       </div>
     </AppShell>
   );

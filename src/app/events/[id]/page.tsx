@@ -39,18 +39,18 @@ export default async function EventDetailPage({ params }: Props) {
         title={event.name}
         description={`${event.date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })} · ${event.startTime} - ${event.endTime} · ${event.venueName}`}
       />
-      <div className="grid gap-6 xl:grid-cols-[1fr_360px]">
-        <div className="grid gap-6">
-          <Card>
+      <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(300px,360px)] xl:gap-6">
+        <div className="grid min-w-0 gap-4 xl:gap-6">
+          <Card className="min-w-0">
             <div className="flex flex-wrap gap-2"><Badge tone="green">{event.status}</Badge><Badge>{event.eventType.replaceAll("_", " ")}</Badge><Badge tone="yellow">{event.idVerificationRequired ? "ID Required" : "ID Optional"}</Badge><Badge>{event.walkInRegistrationAllowed ? "Walk-ins Allowed" : "Walk-ins Disabled"}</Badge></div>
-            <div className="mt-6 grid gap-4 sm:grid-cols-3">
+            <div className="mt-5 grid gap-3 sm:grid-cols-3 sm:gap-4">
               <div className="ap-muted-surface p-4"><div className="text-2xl font-black">{registered}</div><div className="text-sm font-bold text-slate-500">Registered</div></div>
               <div className="ap-muted-surface p-4"><div className="text-2xl font-black">{checkedIn}</div><div className="text-sm font-bold text-slate-500">Checked in</div></div>
               <div className="ap-muted-surface p-4"><div className="text-2xl font-black">{pending}</div><div className="text-sm font-bold text-slate-500">Pending verification</div></div>
             </div>
           </Card>
-          <Card>
-            <h2 className="text-lg font-black">Guest Activity Report</h2>
+          <Card className="min-w-0">
+            <h2 className="text-base font-black sm:text-lg">Guest Activity Report</h2>
             <div className="mt-5 grid gap-5 lg:grid-cols-2">
               <div>
                 <div className="mb-3 text-sm font-black text-slate-600 dark:text-slate-300">Attendance progress</div>
@@ -82,7 +82,7 @@ export default async function EventDetailPage({ params }: Props) {
             </div>
           </Card>
         </div>
-        <Card>
+        <Card className="min-w-0">
           <EventDetailSidePanel
             event={{
               id: event.id,

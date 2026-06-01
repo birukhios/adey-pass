@@ -33,14 +33,14 @@ export function BrandingSettingsForm({ initial }: { initial: BrandingValue }) {
 
   return (
     <>
-      <div className="grid gap-5 md:grid-cols-2">
-        <label className="grid gap-2 text-sm font-bold text-slate-700">App name<input className="ap-input" onChange={(event) => setForm((s) => ({ ...s, appName: event.target.value }))} value={form.appName} /></label>
-        <label className="grid gap-2 text-sm font-bold text-slate-700">Organization name<input className="ap-input" onChange={(event) => setForm((s) => ({ ...s, organizationName: event.target.value }))} value={form.organizationName} /></label>
-        <label className="grid gap-2 text-sm font-bold text-slate-700">Primary color<input className="ap-input" onChange={(event) => setForm((s) => ({ ...s, primaryColor: event.target.value }))} value={form.primaryColor} /></label>
-        <label className="grid gap-2 text-sm font-bold text-slate-700">Ticket footer text<input className="ap-input" onChange={(event) => setForm((s) => ({ ...s, ticketFooterText: event.target.value }))} value={form.ticketFooterText} /></label>
+      <div className="grid gap-4 sm:grid-cols-2 lg:gap-5">
+        <label className="ap-field-label">App name<input className="ap-input" onChange={(event) => setForm((s) => ({ ...s, appName: event.target.value }))} value={form.appName} /></label>
+        <label className="ap-field-label">Organization name<input className="ap-input" onChange={(event) => setForm((s) => ({ ...s, organizationName: event.target.value }))} value={form.organizationName} /></label>
+        <label className="ap-field-label">Primary color<input className="ap-input" onChange={(event) => setForm((s) => ({ ...s, primaryColor: event.target.value }))} value={form.primaryColor} /></label>
+        <label className="ap-field-label">Ticket footer text<input className="ap-input" onChange={(event) => setForm((s) => ({ ...s, ticketFooterText: event.target.value }))} value={form.ticketFooterText} /></label>
       </div>
       {message ? <div className="mt-4 rounded-lg bg-slate-100 p-3 text-sm font-bold text-slate-700">{message}</div> : null}
-      <div className="mt-6"><button className="ap-button-primary disabled:opacity-60" disabled={loading} onClick={() => { void submit(); }} type="button">{loading ? "Saving..." : "Save Branding"}</button></div>
+      <div className="mt-6 grid sm:flex"><button className="ap-button-primary disabled:opacity-60" disabled={loading} onClick={() => { void submit(); }} type="button">{loading ? "Saving..." : "Save Branding"}</button></div>
     </>
   );
 }

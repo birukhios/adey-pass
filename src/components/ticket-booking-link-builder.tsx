@@ -82,22 +82,22 @@ export function TicketBookingLinkBuilder() {
   }
 
   return (
-    <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_420px]">
-      <Card className="p-0">
-        <div className="border-b p-5" style={{ borderColor: "var(--stroke)" }}>
+    <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(300px,420px)] xl:gap-6">
+      <Card className="min-w-0 p-0">
+        <div className="border-b p-4 sm:p-5" style={{ borderColor: "var(--stroke)" }}>
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <div className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.16em]" style={{ color: "var(--text-muted)" }}>
                 <Palette size={15} />
                 Ticket Designer
               </div>
-              <h2 className="mt-2 text-2xl font-black" style={{ color: "var(--text-strong)" }}>Build booking links by access type</h2>
+              <h2 className="mt-2 text-xl font-black sm:text-2xl" style={{ color: "var(--text-strong)" }}>Build booking links by access type</h2>
             </div>
             <Badge tone="yellow">Live preview</Badge>
           </div>
         </div>
 
-        <div className="grid gap-6 p-5">
+        <div className="grid gap-5 p-4 sm:gap-6 sm:p-5">
           <section>
             <div className="mb-3 text-sm font-black" style={{ color: "var(--text-strong)" }}>Access color presets</div>
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -123,7 +123,7 @@ export function TicketBookingLinkBuilder() {
             </div>
           </section>
 
-          <section className="grid gap-4 lg:grid-cols-2">
+          <section className="grid gap-4 sm:grid-cols-2">
             <label className="grid gap-2 text-sm font-black" style={{ color: "var(--text-strong)" }}>Event name<input className="ap-input" onChange={(event) => setEventName(event.target.value)} value={eventName} /></label>
             <label className="grid gap-2 text-sm font-black" style={{ color: "var(--text-strong)" }}>Venue<input className="ap-input" onChange={(event) => setVenue(event.target.value)} value={venue} /></label>
             <label className="grid gap-2 text-sm font-black" style={{ color: "var(--text-strong)" }}>Event date<input className="ap-input" onChange={(event) => setEventDate(event.target.value)} value={eventDate} /></label>
@@ -132,8 +132,8 @@ export function TicketBookingLinkBuilder() {
             <label className="grid gap-2 text-sm font-black" style={{ color: "var(--text-strong)" }}>Company / organization<input className="ap-input" onChange={(event) => setOrganization(event.target.value)} value={organization} /></label>
             <label className="grid gap-2 text-sm font-black" style={{ color: "var(--text-strong)" }}>Logo text<input className="ap-input" onChange={(event) => setLogoText(event.target.value)} value={logoText} /></label>
             <label className="grid gap-2 text-sm font-black" style={{ color: "var(--text-strong)" }}>CTA label<input className="ap-input" onChange={(event) => setCtaLabel(event.target.value)} value={ctaLabel} /></label>
-            <label className="grid gap-2 text-sm font-black lg:col-span-2" style={{ color: "var(--text-strong)" }}>Verification instruction<input className="ap-input" onChange={(event) => setInstructionText(event.target.value)} value={instructionText} /></label>
-            <label className="grid gap-2 text-sm font-black lg:col-span-2" style={{ color: "var(--text-strong)" }}>Ticket footer<input className="ap-input" onChange={(event) => setFooterText(event.target.value)} value={footerText} /></label>
+            <label className="grid gap-2 text-sm font-black sm:col-span-2" style={{ color: "var(--text-strong)" }}>Verification instruction<input className="ap-input" onChange={(event) => setInstructionText(event.target.value)} value={instructionText} /></label>
+            <label className="grid gap-2 text-sm font-black sm:col-span-2" style={{ color: "var(--text-strong)" }}>Ticket footer<input className="ap-input" onChange={(event) => setFooterText(event.target.value)} value={footerText} /></label>
           </section>
 
           <section>
@@ -147,7 +147,7 @@ export function TicketBookingLinkBuilder() {
             </div>
           </section>
 
-          <section className="grid gap-4 md:grid-cols-4">
+          <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <label className="grid gap-2 text-sm font-black" style={{ color: "var(--text-strong)" }}>Primary<input className="ap-input h-12" onChange={(event) => updateBrand({ primary: event.target.value })} type="color" value={brand.primary} /></label>
             <label className="grid gap-2 text-sm font-black" style={{ color: "var(--text-strong)" }}>Background<input className="ap-input h-12" onChange={(event) => updateBrand({ background: event.target.value })} type="color" value={brand.background} /></label>
             <label className="grid gap-2 text-sm font-black" style={{ color: "var(--text-strong)" }}>Ticket surface<input className="ap-input h-12" onChange={(event) => updateBrand({ surface: event.target.value })} type="color" value={brand.surface} /></label>
@@ -157,7 +157,7 @@ export function TicketBookingLinkBuilder() {
           <section className="rounded-3xl border p-4" style={{ borderColor: "var(--stroke)", background: "var(--surface-muted)" }}>
             <div className="text-xs font-black uppercase tracking-[0.16em]" style={{ color: "var(--text-muted)" }}>Booking link</div>
             <div className="mt-2 break-all text-sm font-bold" style={{ color: "var(--text-strong)" }}>{bookingLink}</div>
-            <div className="mt-4 flex flex-wrap gap-3">
+            <div className="mt-4 grid gap-3 sm:flex sm:flex-wrap">
               <button className="ap-button-primary inline-flex min-h-11 items-center gap-2 px-4" onClick={copyLink} type="button"><Copy size={16} />Copy link</button>
               <a className="ap-button-ghost inline-flex min-h-11 items-center gap-2 px-4" href={bookingLink} rel="noreferrer" target="_blank"><ExternalLink size={16} />Open booking page</a>
             </div>
@@ -165,7 +165,7 @@ export function TicketBookingLinkBuilder() {
         </div>
       </Card>
 
-      <div className="xl:sticky xl:top-6 xl:self-start">
+      <div className="min-w-0 xl:sticky xl:top-6 xl:self-start">
         <div className="rounded-[2rem] p-4 shadow-2xl" style={{ background: brand.background }}>
           <div className="mb-4 flex items-center justify-between text-white">
             <div className="flex items-center gap-2 text-sm font-black">
@@ -175,16 +175,16 @@ export function TicketBookingLinkBuilder() {
             <span className="rounded-full px-3 py-1 text-xs font-black" style={{ background: brand.primary, color: brand.background }}>{brand.label}</span>
           </div>
 
-          <div className={layout === "Wide Ticket" ? "rounded-3xl p-5" : "mx-auto max-w-[320px] rounded-3xl p-5"} style={{ background: brand.surface, color: brand.text }}>
+          <div className={layout === "Wide Ticket" ? "rounded-3xl p-4 sm:p-5" : "mx-auto max-w-[320px] rounded-3xl p-4 sm:p-5"} style={{ background: brand.surface, color: brand.text }}>
             <div className="text-xs font-black uppercase tracking-[0.18em]" style={{ color: brand.accent }}>{eventName}</div>
             <div className="mt-3 flex items-start justify-between gap-4">
               <div>
-                <h3 className="text-2xl font-black leading-tight">{guestName}</h3>
+                <h3 className="break-words text-xl font-black leading-tight sm:text-2xl">{guestName}</h3>
                 <p className="mt-1 text-sm font-black" style={{ color: brand.accent }}>{brand.accessType} · {organization}</p>
               </div>
               <span className="rounded-full px-3 py-1 text-xs font-black" style={{ background: brand.primary, color: brand.background }}>Verified</span>
             </div>
-            <div className={layout === "Wide Ticket" ? "mt-5 grid grid-cols-[1fr_150px] gap-4" : "mt-5 grid gap-4"}>
+            <div className={layout === "Wide Ticket" ? "mt-5 grid gap-4 sm:grid-cols-[minmax(0,1fr)_150px]" : "mt-5 grid gap-4"}>
               <div className="rounded-2xl border border-dashed p-4">
                 <div className="text-xs font-black uppercase tracking-[0.14em]" style={{ color: brand.accent }}>Event details</div>
                 <div className="mt-3 space-y-2 text-sm font-bold">
@@ -199,7 +199,7 @@ export function TicketBookingLinkBuilder() {
                 </div>
               </div>
             </div>
-            <div className="mt-5 flex items-center justify-between gap-3 text-xs font-black">
+            <div className="mt-5 flex flex-wrap items-center justify-between gap-3 text-xs font-black">
               <span>AP26-{brand.id.toUpperCase()}-0427</span>
               <span style={{ color: brand.accent }}>{footerText}</span>
             </div>

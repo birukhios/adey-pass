@@ -114,6 +114,12 @@ body {
   min-height: 100vh;
 }
 
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
 .dark body {
   background:
     radial-gradient(circle at 0% 0%, color-mix(in oklab, var(--adey-yellow) 11%, transparent), transparent 30%),
@@ -194,7 +200,7 @@ textarea {
 
 @layer components {
   .ap-surface {
-    @apply rounded-2xl border p-5;
+    @apply rounded-2xl border p-4 sm:p-5;
     border-color: var(--stroke);
     background: var(--surface);
     box-shadow: var(--shadow-card);
@@ -244,7 +250,7 @@ textarea {
   }
 
   .ap-page {
-    @apply mx-auto grid w-full max-w-7xl gap-5;
+    @apply mx-auto grid w-full max-w-7xl gap-4 sm:gap-5;
   }
 
   .ap-page-grid {
@@ -255,6 +261,25 @@ textarea {
     @apply overflow-x-auto rounded-2xl border;
     border-color: var(--stroke);
     background: var(--surface);
+  }
+
+  .ap-mobile-list {
+    @apply grid gap-3 lg:hidden;
+  }
+
+  .ap-mobile-card {
+    @apply rounded-2xl border p-4;
+    border-color: var(--stroke);
+    background: var(--surface-muted);
+  }
+
+  .ap-desktop-table {
+    @apply hidden lg:block;
+  }
+
+  .ap-field-label {
+    @apply grid gap-2 text-sm font-bold;
+    color: var(--text-strong);
   }
 
   .ap-table {

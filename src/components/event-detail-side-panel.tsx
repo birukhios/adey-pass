@@ -87,12 +87,12 @@ export function EventDetailSidePanel({
   }
 
   return (
-    <div>
+    <div className="min-w-0">
       <h2 className="text-lg font-black">Generated Link & QR</h2>
       <div className="mt-4 rounded-lg border p-4" style={{ borderColor: "var(--stroke)", background: "var(--surface-muted)" }}>
         <div className="break-all text-sm font-bold">{generatedLink}</div>
-        {qrDataUrl ? <Image alt="Event ticket QR preview" className="mt-4 size-44 rounded-lg bg-white p-2" height={176} src={qrDataUrl} width={176} /> : null}
-        <div className="mt-4 flex flex-wrap gap-2">
+        {qrDataUrl ? <Image alt="Event ticket QR preview" className="mt-4 size-40 rounded-lg bg-white p-2 sm:size-44" height={176} src={qrDataUrl} width={176} /> : null}
+        <div className="mt-4 grid gap-2 sm:flex sm:flex-wrap">
           <button className="ap-button-ghost min-h-9 gap-2 px-3" disabled={!qrDataUrl} onClick={copyQr} type="button">
             <Copy size={15} />
             Copy QR
@@ -108,7 +108,7 @@ export function EventDetailSidePanel({
       <div className="mt-4 rounded-lg border p-4" style={{ borderColor: "var(--stroke)", background: "var(--surface-muted)" }}>
         <div className="break-all text-sm font-bold">{organizationLink}</div>
         <button
-          className="ap-button-ghost mt-4 min-h-9 gap-2 px-3"
+          className="ap-button-ghost mt-4 min-h-9 w-full gap-2 px-3 sm:w-auto"
           onClick={async () => {
             await navigator.clipboard.writeText(organizationLink);
             setMessage("Organization submission link copied.");
@@ -166,7 +166,7 @@ export function EventDetailSidePanel({
           <input className="ap-input" min={1} onChange={(event) => setForm((state) => ({ ...state, maxAttendees: event.target.value }))} placeholder="No limit" type="number" value={form.maxAttendees} />
         </label>
       </div>
-      <div className="mt-4 flex flex-wrap items-center gap-2">
+      <div className="mt-4 grid items-center gap-2 sm:flex sm:flex-wrap">
         <button className="ap-button-primary gap-2 disabled:opacity-60" disabled={saving} onClick={saveSettings} type="button">
           <Save size={15} />
           {saving ? "Saving..." : "Save Settings"}

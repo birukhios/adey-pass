@@ -125,8 +125,8 @@ export function UsersSettingsManager({
       {createModalOpen ? <button className="fixed inset-0 z-40 bg-black/45" onClick={() => setCreateModalOpen(false)} type="button" /> : null}
       {createModalOpen ? (
         <div className="fixed inset-0 z-50 grid place-items-center p-4">
-          <div className="w-full max-w-3xl rounded-3xl border p-5 shadow-[var(--shadow-soft)]" style={{ borderColor: "var(--stroke)", background: "var(--surface)" }}>
-            <div className="flex items-center justify-between">
+          <div className="max-h-[92vh] w-full max-w-3xl overflow-y-auto rounded-3xl border p-4 shadow-[var(--shadow-soft)] sm:p-5" style={{ borderColor: "var(--stroke)", background: "var(--surface)" }}>
+            <div className="flex flex-wrap items-center justify-between gap-3">
               <h2 className="text-xl font-black">Create User</h2>
               <button className="ap-button-ghost" onClick={() => setCreateModalOpen(false)} type="button">Close</button>
             </div>
@@ -137,9 +137,9 @@ export function UsersSettingsManager({
               <label className="grid gap-2 text-sm font-black" style={{ color: "var(--text-strong)" }}>Role<select className="ap-input" onChange={(event) => { const roleKey = event.target.value; setForm((s) => ({ ...s, roleSystemKey: roleKey })); setCreatePermissions(roleByKey[roleKey]?.permissions ?? []); }} value={form.roleSystemKey}>{roles.map((role) => <option key={role.systemKey} value={role.systemKey}>{role.name}</option>)}</select></label>
             </div>
             <div className="mt-4 rounded-2xl border p-3" style={{ borderColor: "var(--stroke)", background: "var(--surface-muted)" }}>
-              <div className="flex items-center justify-between gap-3">
+              <div className="flex flex-wrap items-center justify-between gap-3">
                 <div className="ap-kicker">Permissions</div>
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2">
                   <button className="ap-button-ghost h-8 px-3 text-xs" onClick={selectAllCreatePermissions} type="button">Select All</button>
                   <button className="ap-button-ghost h-8 px-3 text-xs" onClick={clearCreatePermissions} type="button">Unselect All</button>
                 </div>
@@ -153,19 +153,67 @@ export function UsersSettingsManager({
                 ))}
               </div>
             </div>
-            <div className="mt-4 flex gap-2">
+            <div className="mt-4 grid gap-2 sm:flex">
               <button className="ap-button-primary" onClick={() => { void createUser(); }} type="button">Create User</button>
             </div>
           </div>
         </div>
       ) : null}
-      <div className="mb-4 flex items-center justify-between">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-lg font-black">Users & Access</h2>
-        <button className="ap-button-primary" onClick={() => setCreateModalOpen(true)} type="button">Create User</button>
+        <button className="ap-button-primary w-full sm:w-auto" onClick={() => setCreateModalOpen(true)} type="button">Create User</button>
       </div>
       <div className="grid gap-6">
         <div>
-        <div className="overflow-x-auto">
+        <div className="ap-mobile-list">
+          {users.map((user) => (
+            <article className="ap-mobile-card" key={user.id}>
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="break-words font-black">{user.name}</div>
+                  <div className="mt-1 break-all text-xs font-semibold ap-soft-text">{user.email}</div>
+                </div>
+                <Badge tone={user.status === "ACTIVE" ? "green" : "neutral"}>{user.status === "ACTIVE" ? "Active" : "Inactive"}</Badge>
+              </div>
+              <label className="mt-4 grid gap-2 text-sm font-black" style={{ color: "var(--text-strong)" }}>
+                Role
+                <select
+                  className="ap-input"
+                  onChange={(event) => {
+                    void saveUserAccess(user, { roleSystemKey: event.target.value });
+                  }}
+                  value={user.roleKey}
+                >
+                  {roles.map((role) => (
+                    <option key={role.systemKey} value={role.systemKey}>
+                      {role.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <div className="mt-3 flex max-h-24 flex-wrap gap-1 overflow-y-auto">
+                {user.effectivePermissions.slice(0, 8).map((permission) => (
+                  <Badge key={`${user.id}-mobile-${permission}`} tone="neutral">{permission}</Badge>
+                ))}
+                {user.effectivePermissions.length > 8 ? <Badge tone="neutral">+{user.effectivePermissions.length - 8} more</Badge> : null}
+              </div>
+              <div className="mt-4 grid gap-2">
+                <button className="ap-button-ghost" onClick={() => openPermissionEditor(user)} type="button">Edit Permissions</button>
+                <button
+                  className="ap-button-ghost disabled:opacity-60"
+                  disabled={savingUserId === user.id}
+                  onClick={() => {
+                    void saveUserAccess(user, { status: user.status === "ACTIVE" ? "INACTIVE" : "ACTIVE" });
+                  }}
+                  type="button"
+                >
+                  {savingUserId === user.id ? "Saving..." : user.status === "ACTIVE" ? "Deactivate" : "Activate"}
+                </button>
+              </div>
+            </article>
+          ))}
+        </div>
+        <div className="ap-desktop-table overflow-x-auto">
           <table className="w-full min-w-[620px] text-left text-sm">
             <thead className="text-xs uppercase" style={{ color: "var(--text-muted)" }}>
               <tr><th className="py-3">User</th><th>Email</th><th>Role</th><th>Status</th><th>Permissions</th><th>Actions</th></tr>
@@ -226,9 +274,9 @@ export function UsersSettingsManager({
         </div>
         {editingPermissionUserId ? (
           <div className="mt-4 rounded-2xl border p-4" style={{ borderColor: "var(--stroke)", background: "var(--surface-muted)" }}>
-            <div className="flex items-center justify-between gap-3">
+            <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="text-sm font-black">Edit User Permissions</div>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 <button className="ap-button-ghost h-8 px-3 text-xs" onClick={() => setDraftPermissions([...permissionCatalog])} type="button">Select All</button>
                 <button className="ap-button-ghost h-8 px-3 text-xs" onClick={() => setDraftPermissions([])} type="button">Unselect All</button>
               </div>
@@ -246,7 +294,7 @@ export function UsersSettingsManager({
                 </label>
               ))}
             </div>
-            <div className="mt-4 flex gap-2">
+            <div className="mt-4 grid gap-2 sm:flex">
               <button
                 className="ap-button-primary"
                 onClick={() => {

@@ -95,7 +95,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen text-[var(--text-strong)]">
       {mobileNavOpen ? <button aria-label="Close navigation" className="fixed inset-0 z-40 bg-black/55 backdrop-blur-sm lg:hidden" onClick={() => setMobileNavOpen(false)} type="button" /> : null}
-      <aside className={cn("fixed inset-y-0 left-0 z-50 flex w-72 flex-col border-r border-white/10 bg-[linear-gradient(180deg,var(--sidebar-start),var(--sidebar-end))] p-5 text-white transition-transform duration-200 lg:hidden", mobileNavOpen ? "translate-x-0" : "-translate-x-full")}>
+      <aside className={cn("fixed inset-y-0 left-0 z-50 flex w-[min(18rem,86vw)] flex-col border-r border-white/10 bg-[linear-gradient(180deg,var(--sidebar-start),var(--sidebar-end))] p-4 text-white transition-transform duration-200 sm:p-5 lg:hidden", mobileNavOpen ? "translate-x-0" : "-translate-x-full")}>
         <div className="mb-2 flex items-center justify-between">
           <AdeyLogo theme="dark" />
           <button aria-label="Close navigation" className="grid size-10 place-items-center rounded-xl border border-white/10 bg-white/[0.06] text-white" onClick={() => setMobileNavOpen(false)} type="button">
@@ -115,13 +115,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </aside>
 
       <div className={cn("transition-[padding] lg:pl-72", desktopNavCollapsed && "lg:pl-24")}>
-        <header className="sticky top-0 z-20 flex h-16 items-center gap-3 border-b px-4 backdrop-blur-xl md:px-8" style={{ borderColor: "var(--stroke)", background: "color-mix(in oklab, var(--app-bg) 86%, transparent)" }}>
+        <header className="sticky top-0 z-20 flex h-14 items-center gap-3 border-b px-3 backdrop-blur-xl sm:h-16 sm:px-4 md:px-8" style={{ borderColor: "var(--stroke)", background: "color-mix(in oklab, var(--app-bg) 86%, transparent)" }}>
           <button className="grid size-10 place-items-center rounded-xl border lg:hidden" style={{ borderColor: "var(--stroke)", background: "var(--surface)" }} aria-label="Open navigation" onClick={() => setMobileNavOpen(true)} type="button">
             <Menu size={20} />
           </button>
           <div className="text-sm font-black" style={{ color: "var(--text-strong)" }}>{currentNavLabel}</div>
         </header>
-        <main className="page-enter min-h-[calc(100vh-64px)] px-4 py-6 md:px-8">
+        <main className="page-enter min-h-[calc(100vh-56px)] px-3 py-4 sm:px-4 sm:py-6 md:px-8 lg:min-h-[calc(100vh-64px)]">
           <div className="ap-page">{children}</div>
         </main>
       </div>

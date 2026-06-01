@@ -359,11 +359,11 @@ export function GuestBulkUpload({
       ) : null}
       {ticketPreview ? (
         <div className="fixed inset-0 z-50 grid place-items-center bg-black/55 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-md rounded-3xl border p-5 shadow-[var(--shadow-soft)]" style={{ borderColor: "var(--stroke)", background: "var(--surface)" }}>
+          <div className="max-h-[92vh] w-full max-w-md overflow-y-auto rounded-3xl border p-4 shadow-[var(--shadow-soft)] sm:p-5" style={{ borderColor: "var(--stroke)", background: "var(--surface)" }}>
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="ap-kicker">Ticket QR</p>
-                <h2 className="mt-2 text-2xl font-black">{ticketPreview.name}</h2>
+                <h2 className="mt-2 text-xl font-black sm:text-2xl">{ticketPreview.name}</h2>
                 <p className="mt-1 text-sm font-semibold ap-soft-text">{ticketPreview.event} · {ticketPreview.category}</p>
               </div>
               <button className="ap-button-ghost min-h-10 px-3" onClick={() => setTicketPreview(null)} type="button"><X size={16} /></button>
@@ -371,7 +371,7 @@ export function GuestBulkUpload({
             <div className="mt-5 rounded-3xl p-5 text-center" style={{ background: "var(--surface-muted)" }}>
               {ticketPreview.linkToken ? (
                 <div className="inline-flex rounded-2xl bg-white p-4">
-                  <QRCode value={`${window.location.origin}/ticket/${ticketPreview.linkToken}`} size={220} />
+                  <QRCode value={`${window.location.origin}/ticket/${ticketPreview.linkToken}`} size={190} />
                 </div>
               ) : null}
               <div className="mt-4 text-lg font-black">{ticketPreview.ticketId || "No ticket generated"}</div>
@@ -389,13 +389,13 @@ export function GuestBulkUpload({
         <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <p className="ap-kicker">Guest Invitation Desk</p>
-            <h1 className="mt-2 text-3xl font-black tracking-tight">VIP, protocol and important guest access</h1>
+            <h1 className="mt-2 text-2xl font-black tracking-tight sm:text-3xl">VIP, protocol and important guest access</h1>
             <p className="mt-2 max-w-2xl text-sm font-semibold leading-6 ap-soft-text">
               Use this page to invite important people, send RSVP links in bulk, and review who booked or confirmed through a link.
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
-            <button className="ap-button-primary gap-2" onClick={() => setModalOpen(true)} type="button"><Plus size={16} /> Add Guest</button>
+            <button className="ap-button-primary w-full gap-2 sm:w-auto" onClick={() => setModalOpen(true)} type="button"><Plus size={16} /> Add Guest</button>
           </div>
         </div>
         <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
@@ -416,7 +416,7 @@ export function GuestBulkUpload({
       </div>
 
       {activeTab !== "bulk" ? (
-        <Card className="grid gap-3 md:grid-cols-4">
+        <Card className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
           <label className="grid gap-2 text-sm font-black" style={{ color: "var(--text-strong)" }}>
             Event
             <select className="ap-input" onChange={(event) => setEventFilter(event.target.value)} value={eventFilter}>
@@ -462,7 +462,7 @@ export function GuestBulkUpload({
               <h2 className="text-lg font-black">Important Invitation List</h2>
               <p className="mt-1 text-sm font-semibold ap-soft-text">VIPs, protocol, media, staff and other invite-only guests.</p>
             </div>
-            <div className="flex flex-wrap gap-2">
+            <div className="grid gap-2 sm:flex sm:flex-wrap">
               <button className="ap-button-ghost gap-2" onClick={() => setSelectedGuestIds(invitedGuests.map((guest) => guest.id))} type="button"><Check size={16} /> Select All</button>
               <button className="ap-button-ghost gap-2" onClick={() => { void runBulkGuestAction("BLOCK"); }} type="button"><Ban size={16} /> Block</button>
               <button className="ap-button-ghost gap-2" onClick={() => { void runBulkGuestAction("DELETE"); }} type="button"><Trash2 size={16} /> Delete</button>
@@ -488,7 +488,7 @@ export function GuestBulkUpload({
               <h2 className="text-lg font-black">Booked / Confirmed People</h2>
               <p className="mt-1 text-sm font-semibold ap-soft-text">People who accepted an RSVP, booked from a link, or already have generated tickets.</p>
             </div>
-            <div className="flex flex-wrap gap-2">
+            <div className="grid gap-2 sm:flex sm:flex-wrap">
               <Badge tone="green">{bookedGuests.length} confirmed</Badge>
               <button className="ap-button-ghost gap-2" onClick={() => setSelectedGuestIds(bookedGuests.map((guest) => guest.id))} type="button"><Check size={16} /> Select All</button>
               <button className="ap-button-ghost gap-2" onClick={() => { void runBulkGuestAction("BLOCK"); }} type="button"><Ban size={16} /> Block</button>
@@ -604,7 +604,36 @@ function GuestTable({
   showRsvp?: boolean;
 }) {
   return (
-    <div className="ap-table-wrap mt-5">
+    <>
+    <div className="ap-mobile-list mt-5">
+      {guests.map((guest) => (
+        <article className="ap-mobile-card" key={guest.id}>
+          <div className="flex items-start gap-3">
+            <input checked={selectedGuestIds.includes(guest.id)} className="mt-1 size-4 shrink-0 accent-[#FFD100]" onChange={() => onSelect?.(guest.id)} type="checkbox" />
+            <div className="min-w-0 flex-1">
+              <div className="break-words font-black">{guest.name}</div>
+              <div className="mt-1 text-xs font-semibold ap-soft-text">{guest.phone}</div>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <Badge tone={guest.category === "VIP" || guest.category === "Protocol" ? "yellow" : "neutral"}>{guest.category}</Badge>
+                <Badge tone={["Accepted", "Sent", "Opened"].includes(guest.invitation) ? "green" : "neutral"}>{guest.invitation}</Badge>
+              </div>
+              <div className="mt-3 grid gap-1 text-sm font-semibold">
+                <span>{guest.organization || "-"}</span>
+                <span className="ap-soft-text">{guest.event}</span>
+              </div>
+            </div>
+          </div>
+          <div className="mt-4 grid grid-cols-2 gap-2">
+            {showRsvp && guest.invitationToken ? <button className="ap-button-ghost min-h-10 gap-1 px-3 text-xs" onClick={() => { void onCopyRsvp(guest); }} type="button"><Send size={13} /> RSVP</button> : null}
+            {guest.linkToken ? <button className="ap-button-ghost min-h-10 gap-1 px-3 text-xs" onClick={() => onPreviewTicket(guest)} type="button"><QrCode size={13} /> Ticket</button> : null}
+            {guest.linkToken ? <button className="ap-button-ghost min-h-10 gap-1 px-3 text-xs" onClick={() => { void onCopyTicket(guest); }} type="button"><Copy size={13} /> Copy</button> : null}
+            <ButtonLink href={`/guests/${guest.id}`} variant="ghost">View</ButtonLink>
+          </div>
+        </article>
+      ))}
+      {!guests.length ? <div className="ap-mobile-card py-8 text-center text-sm font-bold ap-soft-text">No guests in this view yet.</div> : null}
+    </div>
+    <div className="ap-table-wrap ap-desktop-table mt-5">
       <table className="ap-table min-w-[1020px]">
         <thead>
           <tr>
@@ -652,5 +681,6 @@ function GuestTable({
         </tbody>
       </table>
     </div>
+    </>
   );
 }
