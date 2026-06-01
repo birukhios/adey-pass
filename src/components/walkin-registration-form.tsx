@@ -87,9 +87,9 @@ export function WalkinRegistrationForm({ events }: { events: Array<{ id: string;
   }
 
   return (
-    <div>
+    <div className="min-w-0">
       <h2 className="text-lg font-black">Manual Add Walk-In</h2>
-      <div className="mt-4 grid gap-4 md:grid-cols-2">
+      <div className="mt-4 grid gap-4 lg:grid-cols-2">
         <label className="grid gap-2 text-sm font-bold text-slate-200">
           Full name
           <input
@@ -136,7 +136,7 @@ export function WalkinRegistrationForm({ events }: { events: Array<{ id: string;
         </label>
         <label className="grid gap-2 text-sm font-bold text-slate-200">
           ID Number (Required)
-          <div className="grid gap-2 md:grid-cols-[1fr_auto]">
+          <div className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_auto]">
             <input
               className="ap-input"
               onChange={(event) => setFaydaNumber(event.target.value)}
@@ -144,7 +144,7 @@ export function WalkinRegistrationForm({ events }: { events: Array<{ id: string;
               value={faydaNumber}
             />
             <button
-              className="inline-flex h-11 items-center justify-center rounded-lg border px-4 text-sm font-black text-white disabled:opacity-50"
+              className="inline-flex h-11 items-center justify-center rounded-xl border px-4 text-sm font-black text-white disabled:opacity-50"
               disabled={!canSendOtp()}
               onClick={() => { void sendOtp(); }}
               style={{ borderColor: "var(--surface-muted)" }}
@@ -156,7 +156,7 @@ export function WalkinRegistrationForm({ events }: { events: Array<{ id: string;
         </label>
       </div>
 
-      <div className="mt-4 grid gap-3 md:grid-cols-[1fr_auto]">
+      <div className="mt-4 grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto]">
         <label className="grid gap-2 text-sm font-bold text-slate-200">
           OTP code
           <input
@@ -167,7 +167,7 @@ export function WalkinRegistrationForm({ events }: { events: Array<{ id: string;
           />
         </label>
         <button
-          className="mt-7 inline-flex h-11 items-center justify-center rounded-lg bg-[#FFD100] px-4 text-sm font-black text-[#111418] disabled:opacity-50"
+          className="inline-flex h-11 items-center justify-center rounded-xl bg-[#FFD100] px-4 text-sm font-black text-[#111418] disabled:opacity-50 sm:mt-7"
           disabled={otpStatus !== "sent" || !otp.trim()}
           onClick={verifyOtp}
           type="button"
@@ -176,7 +176,7 @@ export function WalkinRegistrationForm({ events }: { events: Array<{ id: string;
         </button>
       </div>
 
-      <div className="mt-4 flex items-center gap-3">
+      <div className="mt-4 flex flex-wrap items-center gap-3">
         <span className="text-sm font-black text-slate-200">Verification:</span>
         {otpStatus === "verified" && <Badge tone="green">Verified</Badge>}
         {otpStatus === "sent" && <Badge tone="yellow">OTP Sent</Badge>}
@@ -186,9 +186,9 @@ export function WalkinRegistrationForm({ events }: { events: Array<{ id: string;
 
       {notice && <div className="mt-3 rounded-lg p-3 text-sm font-bold" style={{ background: "var(--surface-muted)", color: "var(--text-strong)" }}>{notice}</div>}
 
-      <div className="mt-5 flex flex-wrap gap-3">
+      <div className="mt-5 grid gap-3 sm:flex sm:flex-wrap">
         <button
-          className="ap-button-primary disabled:cursor-not-allowed disabled:opacity-50"
+          className="ap-button-primary w-full disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
           disabled={otpStatus !== "verified" || !fullName.trim() || submitting}
           onClick={() => {
             void registerWalkin(false);
@@ -198,7 +198,7 @@ export function WalkinRegistrationForm({ events }: { events: Array<{ id: string;
           {submitting ? "Saving..." : "Generate Ticket"}
         </button>
         <button
-          className="inline-flex min-h-10 items-center justify-center rounded-lg border px-4 text-sm font-black text-white disabled:cursor-not-allowed disabled:opacity-50"
+          className="inline-flex min-h-11 w-full items-center justify-center rounded-xl border px-4 text-sm font-black text-white disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
           disabled={otpStatus !== "verified" || !fullName.trim() || submitting}
           onClick={() => {
             void registerWalkin(true);
@@ -210,10 +210,10 @@ export function WalkinRegistrationForm({ events }: { events: Array<{ id: string;
         </button>
       </div>
       {ticketId && qrDataUrl ? (
-        <div className="mt-5 rounded-lg border p-4" style={{ borderColor: "var(--surface-muted)", background: "var(--surface-muted)" }}>
+        <div className="mt-5 rounded-2xl border p-4" style={{ borderColor: "var(--surface-muted)", background: "var(--surface-muted)" }}>
           <div className="text-sm font-black text-emerald-400">Walk-In Ticket Ready</div>
-          <div className="mt-2 text-lg font-black text-white">{ticketId}</div>
-          <div className="mt-3 inline-flex rounded-lg bg-white p-2">
+          <div className="mt-2 break-all text-lg font-black text-white">{ticketId}</div>
+          <div className="mt-3 inline-flex max-w-full rounded-lg bg-white p-2">
             <Image alt="Walk-in QR code" className="size-44" height={176} src={qrDataUrl} width={176} />
           </div>
           <p className="mt-3 text-sm text-slate-300">Show this QR immediately at the gate scanner.</p>

@@ -38,17 +38,17 @@ export default async function ScannerPage() {
 
   return (
     <AppShell>
-      <div className="grid gap-5">
-        <section className="overflow-hidden rounded-[2rem] border shadow-[var(--shadow-soft)]" style={{ borderColor: "color-mix(in oklab, white 10%, transparent)", background: "linear-gradient(145deg, var(--sidebar-start), var(--sidebar-end))" }}>
-          <div className="grid gap-5 p-4 sm:p-6 xl:grid-cols-[minmax(0,1fr)_390px]">
-            <div>
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <div>
+      <div className="grid gap-4 sm:gap-5">
+        <section className="overflow-hidden rounded-3xl border shadow-[var(--shadow-soft)] sm:rounded-[2rem]" style={{ borderColor: "color-mix(in oklab, white 10%, transparent)", background: "linear-gradient(145deg, var(--sidebar-start), var(--sidebar-end))" }}>
+          <div className="grid gap-4 p-3 sm:gap-5 sm:p-6 xl:grid-cols-[minmax(0,1fr)_minmax(340px,400px)]">
+            <div className="min-w-0">
+              <div className="grid gap-3 sm:flex sm:items-center sm:justify-between">
+                <div className="min-w-0">
                   <div className="text-xs font-black uppercase tracking-[0.18em]" style={{ color: "var(--adey-yellow)" }}>Gate console</div>
-                  <h1 className="mt-2 text-2xl font-black text-white sm:text-3xl">Scan, validate, check in</h1>
+                  <h1 className="mt-2 text-2xl font-black leading-tight text-white sm:text-3xl">Scan, validate, check in</h1>
                 </div>
                 <a
-                  className="inline-flex min-h-11 items-center justify-center rounded-xl border px-4 text-sm font-black text-white transition hover:-translate-y-0.5"
+                  className="inline-flex min-h-11 w-full items-center justify-center rounded-xl border px-4 text-sm font-black text-white transition hover:-translate-y-0.5 sm:w-auto"
                   href="#walkin-registration"
                   style={{ borderColor: "color-mix(in oklab, white 18%, transparent)", background: "color-mix(in oklab, white 7%, transparent)" }}
                 >
@@ -62,7 +62,7 @@ export default async function ScannerPage() {
                 <CameraScannerCard gates={assignedGates} />
               </div>
             </div>
-            <aside className="grid content-start gap-4">
+            <aside className="grid min-w-0 content-start gap-4">
               <ScannerPanel gates={assignedGates} />
               <div className="rounded-[1.75rem] border p-5" style={{ borderColor: "color-mix(in oklab, white 12%, transparent)", background: "color-mix(in oklab, white 7%, transparent)" }}>
                 <div className="text-xs font-black uppercase tracking-[0.16em] text-white/45">Gate rules</div>
@@ -76,7 +76,7 @@ export default async function ScannerPage() {
           </div>
         </section>
 
-        <Card className="text-white" id="walkin-registration" style={{ background: "linear-gradient(145deg, var(--sidebar-start), var(--sidebar-end))" }}>
+        <Card className="scroll-mt-20 text-white" id="walkin-registration" style={{ background: "linear-gradient(145deg, var(--sidebar-start), var(--sidebar-end))" }}>
           <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
             <div>
               <div className="text-xs font-black uppercase tracking-[0.16em]" style={{ color: "var(--adey-yellow)" }}>Walk-in desk</div>
