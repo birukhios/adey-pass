@@ -5,12 +5,12 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --adey-yellow: #0b7de3;
-  --adey-charcoal: #071b3d;
-  --adey-warm-gray: #5a5f66;
-  --adey-light-gray: #e6e8ec;
-  --adey-yellow-soft: #dff0ff;
-  --adey-yellow-deep: #075cad;
+  --adey-yellow: #3b63f4;
+  --adey-charcoal: #171b26;
+  --adey-warm-gray: #667085;
+  --adey-light-gray: #edf1f7;
+  --adey-yellow-soft: #eef3ff;
+  --adey-yellow-deep: #2746c7;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -34,20 +34,20 @@
   --chart-3: oklch(0.439 0 0);
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);
-  --radius: 0.85rem;
-  --app-bg: #f5f6f8;
+  --radius: 1rem;
+  --app-bg: #f6f8fc;
   --surface: #ffffff;
   --surface-elevated: #ffffff;
-  --surface-muted: #f8f9fb;
-  --stroke: #e5e7eb;
-  --stroke-strong: #d6dae2;
-  --text-strong: #0f172a;
-  --text-muted: #6b7280;
-  --text-soft: #94a3b8;
-  --sidebar-start: #06142d;
-  --sidebar-end: #082450;
-  --shadow-soft: 0 18px 50px -34px rgba(15, 23, 42, 0.55);
-  --shadow-card: 0 1px 1px rgba(15, 23, 42, 0.04), 0 14px 36px -28px rgba(15, 23, 42, 0.4);
+  --surface-muted: #f7f9fd;
+  --stroke: #e8edf5;
+  --stroke-strong: #d8e0ec;
+  --text-strong: #171b26;
+  --text-muted: #7a8497;
+  --text-soft: #a5afc0;
+  --sidebar-start: #ffffff;
+  --sidebar-end: #f8faff;
+  --shadow-soft: 0 28px 90px -58px rgba(23, 27, 38, 0.35);
+  --shadow-card: 0 1px 0 rgba(23, 27, 38, 0.03), 0 22px 70px -54px rgba(23, 27, 38, 0.32);
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
   --sidebar-primary: oklch(0.205 0 0);
@@ -112,8 +112,9 @@
 body {
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
   background:
-    radial-gradient(circle at top left, color-mix(in oklab, var(--adey-yellow) 18%, transparent), transparent 34%),
-    linear-gradient(135deg, color-mix(in oklab, var(--surface) 90%, var(--adey-yellow) 10%), var(--app-bg) 46%, color-mix(in oklab, var(--app-bg) 94%, var(--adey-charcoal) 6%));
+    radial-gradient(circle at 0% 0%, color-mix(in oklab, var(--adey-yellow) 10%, transparent), transparent 34%),
+    radial-gradient(circle at 100% 18%, color-mix(in oklab, var(--adey-yellow) 7%, transparent), transparent 36%),
+    linear-gradient(135deg, #ffffff, var(--app-bg) 46%, #eef3ff);
   color: var(--text-strong);
   min-height: 100vh;
 }
@@ -177,15 +178,17 @@ textarea {
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
-  --app-bg: #060914;
-  --surface: #0d1320;
-  --surface-elevated: #121a2a;
-  --surface-muted: #101827;
-  --stroke: #223047;
-  --stroke-strong: #314059;
-  --text-strong: #f4f7fb;
-  --text-muted: #a7b0c0;
-  --text-soft: #6f7d92;
+  --app-bg: #080b14;
+  --surface: #101521;
+  --surface-elevated: #151b2a;
+  --surface-muted: #0c111d;
+  --stroke: #222a3a;
+  --stroke-strong: #344055;
+  --text-strong: #f7f9fd;
+  --text-muted: #a6afc0;
+  --text-soft: #717d92;
+  --sidebar-start: #0c1220;
+  --sidebar-end: #111827;
   --shadow-soft: 0 18px 54px -34px rgba(0, 0, 0, 0.85);
   --shadow-card: 0 1px 0 rgba(255, 255, 255, 0.03), 0 18px 52px -34px rgba(0, 0, 0, 0.95);
 }
@@ -204,44 +207,44 @@ textarea {
 
 @layer components {
   .ap-surface {
-    @apply rounded-2xl border p-4 sm:p-5;
+    @apply rounded-[1.75rem] border p-4 sm:p-5;
     border-color: var(--stroke);
     background: var(--surface);
     box-shadow: var(--shadow-card);
   }
 
   .ap-muted-surface {
-    @apply rounded-2xl border;
+    @apply rounded-[1.5rem] border;
     border-color: var(--stroke);
     background: var(--surface-muted);
   }
 
   .ap-input {
-    @apply h-11 rounded-xl border px-3 text-sm font-semibold outline-none transition;
+    @apply h-12 rounded-2xl border px-4 text-sm font-semibold outline-none transition;
     border-color: var(--stroke);
-    background: var(--surface-elevated);
+    background: color-mix(in oklab, var(--surface-elevated) 92%, var(--app-bg));
     color: var(--text-strong);
   }
 
   .ap-input:focus {
     border-color: var(--adey-yellow);
-    box-shadow: 0 0 0 4px color-mix(in oklab, var(--adey-yellow) 24%, transparent);
+    box-shadow: 0 0 0 4px color-mix(in oklab, var(--adey-yellow) 16%, transparent);
   }
 
   .ap-button-primary {
-    @apply inline-flex min-h-11 items-center justify-center rounded-xl px-4 text-sm font-black transition;
+    @apply inline-flex min-h-12 items-center justify-center rounded-2xl px-5 text-sm font-black transition;
     background: var(--adey-yellow);
-    color: var(--adey-charcoal);
-    box-shadow: 0 12px 28px -18px color-mix(in oklab, var(--adey-yellow) 70%, black);
+    color: #ffffff;
+    box-shadow: 0 16px 34px -22px color-mix(in oklab, var(--adey-yellow) 88%, black);
   }
 
   .ap-button-primary:hover {
-    background: color-mix(in oklab, var(--adey-yellow) 88%, white 12%);
+    background: color-mix(in oklab, var(--adey-yellow) 88%, #ffffff 12%);
     transform: translateY(-1px);
   }
 
   .ap-button-ghost {
-    @apply inline-flex min-h-11 items-center justify-center rounded-xl border px-4 text-sm font-black transition;
+    @apply inline-flex min-h-12 items-center justify-center rounded-2xl border px-5 text-sm font-black transition;
     border-color: var(--stroke);
     background: var(--surface-elevated);
     color: var(--text-strong);
@@ -249,12 +252,12 @@ textarea {
 
   .ap-button-ghost:hover {
     border-color: var(--stroke-strong);
-    background: color-mix(in oklab, var(--surface-elevated) 88%, var(--adey-yellow) 12%);
+    background: color-mix(in oklab, var(--surface-elevated) 88%, var(--adey-yellow) 8%);
     transform: translateY(-1px);
   }
 
   .ap-page {
-    @apply mx-auto grid w-full max-w-7xl gap-4 sm:gap-5;
+    @apply mx-auto grid w-full max-w-[92rem] gap-4 sm:gap-5;
   }
 
   .ap-page-grid {
@@ -262,7 +265,7 @@ textarea {
   }
 
   .ap-table-wrap {
-    @apply overflow-x-auto rounded-2xl border;
+    @apply overflow-x-auto rounded-[1.5rem] border;
     border-color: var(--stroke);
     background: var(--surface);
   }
@@ -272,7 +275,7 @@ textarea {
   }
 
   .ap-mobile-card {
-    @apply rounded-2xl border p-4;
+    @apply rounded-[1.5rem] border p-4;
     border-color: var(--stroke);
     background: var(--surface-muted);
   }
@@ -291,16 +294,17 @@ textarea {
   }
 
   .ap-table thead {
-    background: var(--surface-muted);
+    background: color-mix(in oklab, var(--surface-muted) 82%, var(--adey-yellow) 5%);
     color: var(--text-muted);
   }
 
   .ap-table th {
-    @apply px-4 py-3 text-xs font-black uppercase;
+    @apply px-5 py-4 text-xs font-black uppercase;
+    letter-spacing: 0.06em;
   }
 
   .ap-table td {
-    @apply px-4 py-3 align-middle;
+    @apply px-5 py-4 align-middle;
     color: var(--text-strong);
   }
 
@@ -314,8 +318,8 @@ textarea {
 
   .ap-kicker {
     @apply text-xs font-black uppercase;
-    color: color-mix(in oklab, var(--adey-yellow) 70%, var(--adey-charcoal));
-    letter-spacing: 0.14em;
+    color: var(--adey-yellow);
+    letter-spacing: 0.18em;
   }
 
   .ap-soft-text {

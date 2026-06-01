@@ -7,7 +7,7 @@ export default function LoginPage() {
   return (
     <main className="min-h-screen overflow-hidden px-4 py-5 sm:px-6 lg:px-8">
       <div className="mx-auto grid min-h-[calc(100vh-40px)] max-w-7xl items-center gap-8 lg:grid-cols-[1.05fr_0.95fr]">
-        <section className="relative hidden min-h-[700px] overflow-hidden rounded-[2rem] border p-8 text-white lg:flex lg:flex-col" style={{ borderColor: "color-mix(in oklab, var(--adey-yellow) 18%, transparent)", background: "linear-gradient(145deg, var(--sidebar-start), var(--sidebar-end))", boxShadow: "var(--shadow-soft)" }}>
+        <section className="relative hidden min-h-[700px] overflow-hidden rounded-[2rem] border p-8 text-white lg:flex lg:flex-col" style={{ borderColor: "color-mix(in oklab, var(--adey-yellow) 18%, transparent)", background: "radial-gradient(circle at 82% 8%, rgba(59,99,244,0.6), transparent 32%), linear-gradient(145deg, #07122f, #172a67 58%, #2549bc)", boxShadow: "var(--shadow-soft)" }}>
           <div className="absolute inset-x-8 top-28 h-px bg-white/10" />
           <div className="absolute -right-20 top-20 size-72 rounded-full" style={{ background: "color-mix(in oklab, var(--adey-yellow) 18%, transparent)", filter: "blur(30px)" }} />
           <div className="absolute bottom-10 left-10 right-10 h-52 rounded-[2rem] border border-white/10 bg-white/[0.04]" />
@@ -17,8 +17,8 @@ export default function LoginPage() {
           </div>
 
           <div className="relative z-10 mt-20 max-w-xl">
-            <p className="ap-kicker">Stadium Management System</p>
-            <h1 className="mt-5 text-6xl font-black leading-[0.96] tracking-tight">Command center for stadium event days.</h1>
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-blue-200">Afropay Stadium Suite</p>
+            <h1 className="mt-5 text-6xl font-medium leading-[0.96] tracking-tight">Command center for stadium event days.</h1>
             <p className="mt-6 max-w-md text-base font-semibold leading-8 text-white/62">
               Select a stadium, manage invitations, verify Fayda IDs, issue QR tickets, and run gate scanning from one operations surface.
             </p>
@@ -67,7 +67,7 @@ export default function LoginPage() {
               <div>
                 <p className="ap-kicker">Welcome Back</p>
                 <h2 className="mt-3 text-4xl font-black leading-tight tracking-tight" style={{ color: "var(--text-strong)" }}>
-                  Log in to Stadium Ops
+                  Log in to Afropay Stadium
                 </h2>
               </div>
               <div className="grid size-14 place-items-center rounded-2xl" style={{ background: "var(--surface-muted)", color: "var(--text-strong)" }}>
