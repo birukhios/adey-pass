@@ -26,6 +26,7 @@ export function PaymentReceipt({ payment }: { payment: PaymentReceiptData }) {
   const qrPayload = useMemo(
     () =>
       JSON.stringify({
+        ticketId: payment.reference,
         provider: "Afropay",
         reference: payment.reference,
         eventName: payment.eventName,

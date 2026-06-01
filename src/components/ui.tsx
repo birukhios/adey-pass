@@ -34,7 +34,7 @@ export function Card({ children, className, ...props }: HTMLAttributes<HTMLEleme
 
 export function Field({ label, placeholder, type = "text" }: { label: string; placeholder?: string; type?: string }) {
   return (
-    <label className="grid gap-2 text-sm font-black" style={{ color: "var(--text-strong)" }}>
+    <label className="ap-field-label">
       {label}
       <input className="ap-input" placeholder={placeholder} type={type} />
     </label>
@@ -43,7 +43,7 @@ export function Field({ label, placeholder, type = "text" }: { label: string; pl
 
 export function SelectField({ label, options }: { label: string; options: string[] }) {
   return (
-    <label className="grid gap-2 text-sm font-black" style={{ color: "var(--text-strong)" }}>
+    <label className="ap-field-label">
       {label}
       <select className="ap-input">
         {options.map((option) => (

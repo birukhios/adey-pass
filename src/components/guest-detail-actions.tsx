@@ -42,20 +42,35 @@ export function GuestDetailActions({ guestId, initial }: Props) {
   }
 
   return (
-    <div className="grid gap-4">
-      <div className="grid gap-5 lg:grid-cols-2">
-        <label className="grid gap-2 text-sm font-bold text-slate-700">Full name<input className="ap-input" onChange={(event) => setForm((s) => ({ ...s, fullName: event.target.value }))} value={form.fullName} /></label>
-        <label className="grid gap-2 text-sm font-bold text-slate-700">Phone<input className="ap-input" onChange={(event) => setForm((s) => ({ ...s, phone: event.target.value }))} value={form.phone} /></label>
-        <label className="grid gap-2 text-sm font-bold text-slate-700">Email<input className="ap-input" onChange={(event) => setForm((s) => ({ ...s, email: event.target.value }))} value={form.email} /></label>
-        <label className="grid gap-2 text-sm font-bold text-slate-700">Organization<input className="ap-input" onChange={(event) => setForm((s) => ({ ...s, organization: event.target.value }))} value={form.organization} /></label>
-        <label className="grid gap-2 text-sm font-bold text-slate-700">Title / role<input className="ap-input" onChange={(event) => setForm((s) => ({ ...s, title: event.target.value }))} value={form.title} /></label>
-      </div>
-      <label className="grid gap-2 text-sm font-bold text-slate-700">Notes<textarea className="ap-input min-h-28 p-3" onChange={(event) => setForm((s) => ({ ...s, notes: event.target.value }))} value={form.notes} /></label>
-      {message ? <div className="rounded-lg bg-slate-100 p-3 text-sm font-bold text-slate-700">{message}</div> : null}
-      <div className="flex flex-wrap gap-3">
+    <div className="ap-form-shell">
+      <section className="ap-form-section">
+        <div>
+          <h2 className="ap-form-title">Guest information</h2>
+          <p className="ap-form-description">Update the invited person, organization, and protocol role used on invitations and tickets.</p>
+        </div>
+        <div className="ap-form-grid">
+          <label className="ap-field-label">Full name<input className="ap-input" onChange={(event) => setForm((s) => ({ ...s, fullName: event.target.value }))} value={form.fullName} /></label>
+          <label className="ap-field-label">Phone<input className="ap-input" onChange={(event) => setForm((s) => ({ ...s, phone: event.target.value }))} value={form.phone} /></label>
+          <label className="ap-field-label">Email<input className="ap-input" onChange={(event) => setForm((s) => ({ ...s, email: event.target.value }))} value={form.email} /></label>
+          <label className="ap-field-label">Organization<input className="ap-input" onChange={(event) => setForm((s) => ({ ...s, organization: event.target.value }))} value={form.organization} /></label>
+          <label className="ap-field-label sm:col-span-2">Title / role<input className="ap-input" onChange={(event) => setForm((s) => ({ ...s, title: event.target.value }))} value={form.title} /></label>
+        </div>
+      </section>
+
+      <section className="ap-form-section">
+        <h2 className="ap-form-title">Internal notes</h2>
+        <p className="ap-form-description">Private context for the operations team. This does not appear on public ticket pages.</p>
+        <label className="ap-field-label mt-4">Notes<textarea className="ap-input" onChange={(event) => setForm((s) => ({ ...s, notes: event.target.value }))} value={form.notes} /></label>
+      </section>
+
+      {message ? <div className="ap-form-message">{message}</div> : null}
+
+      <div className="ap-form-actions">
+        <div className="grid gap-2 sm:flex sm:flex-wrap">
+          <button className="ap-button-ghost" onClick={() => { void verificationDecision("approve"); }} type="button">Approve Verification</button>
+          <button className="ap-button-ghost" onClick={() => { void verificationDecision("reject"); }} type="button">Reject Verification</button>
+        </div>
         <button className="ap-button-primary disabled:opacity-60" disabled={loading} onClick={() => { void saveGuest(); }} type="button">{loading ? "Saving..." : "Save Guest"}</button>
-        <button className="ap-button-ghost" onClick={() => { void verificationDecision("approve"); }} type="button">Approve Verification</button>
-        <button className="ap-button-ghost" onClick={() => { void verificationDecision("reject"); }} type="button">Reject Verification</button>
       </div>
     </div>
   );

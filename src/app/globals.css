@@ -220,15 +220,32 @@ textarea {
   }
 
   .ap-input {
-    @apply h-10 rounded-lg border px-3 text-sm font-semibold outline-none transition;
+    @apply h-10 w-full rounded-lg border px-3 text-sm font-semibold outline-none transition;
     border-color: var(--stroke);
     background: var(--surface);
     color: var(--text-strong);
   }
 
+  .ap-input::placeholder {
+    color: var(--text-soft);
+  }
+
   .ap-input:focus {
     border-color: var(--adey-yellow);
     box-shadow: 0 0 0 4px color-mix(in oklab, var(--adey-yellow) 16%, transparent);
+  }
+
+  .ap-input:disabled {
+    cursor: not-allowed;
+    background: color-mix(in oklab, var(--surface-muted) 92%, var(--stroke) 8%);
+    color: var(--text-soft);
+  }
+
+  textarea.ap-input {
+    min-height: 7rem;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+    resize: vertical;
   }
 
   .ap-button-primary {
@@ -287,6 +304,66 @@ textarea {
   .ap-field-label {
     @apply grid gap-2 text-xs font-bold;
     color: var(--text-strong);
+  }
+
+  .ap-surface label:has(.ap-input),
+  .ap-muted-surface label:has(.ap-input),
+  .ap-form-section label:has(.ap-input) {
+    display: grid;
+    gap: 0.5rem;
+    color: var(--text-strong) !important;
+    font-size: 0.78rem;
+    font-weight: 700;
+    line-height: 1.25;
+  }
+
+  .ap-form-shell {
+    @apply grid gap-4;
+  }
+
+  .ap-form-section {
+    @apply rounded-xl border p-4 sm:p-5;
+    border-color: var(--stroke);
+    background: color-mix(in oklab, var(--surface) 82%, var(--surface-muted) 18%);
+  }
+
+  .ap-form-section-muted {
+    @apply rounded-xl border p-4 sm:p-5;
+    border-color: var(--stroke);
+    background: var(--surface-muted);
+  }
+
+  .ap-form-title {
+    @apply text-base font-bold;
+    color: var(--text-strong);
+    letter-spacing: -0.01em;
+  }
+
+  .ap-form-description {
+    @apply mt-1 text-sm font-medium leading-6;
+    color: var(--text-muted);
+  }
+
+  .ap-form-grid {
+    @apply mt-4 grid gap-4 sm:grid-cols-2;
+  }
+
+  .ap-form-actions {
+    @apply flex flex-col-reverse gap-3 border-t pt-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between;
+    border-color: var(--stroke);
+  }
+
+  .ap-form-message {
+    @apply rounded-lg border p-3 text-sm font-bold;
+    border-color: var(--stroke);
+    background: var(--surface-muted);
+    color: var(--text-strong);
+  }
+
+  .ap-copy-box {
+    @apply rounded-lg border p-3;
+    border-color: var(--stroke);
+    background: var(--surface-muted);
   }
 
   .ap-table {

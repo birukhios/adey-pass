@@ -20,10 +20,9 @@ export default async function EventDetailPage({ params }: Props) {
     );
   }
 
-  const firstTicket = event.guests.find((guest) => guest.ticket)?.ticket;
-  const generatedLink = firstTicket ? `http://localhost:3000/ticket/${firstTicket.id}` : "Generate a guest ticket to create a public link";
+  const generatedLink = `http://localhost:3000/booking/${event.id}`;
   const organizationLink = `http://localhost:3000/organization/${event.id}`;
-  const qrDataUrl = firstTicket ? await QRCodeLib.toDataURL(generatedLink, { width: 180, margin: 1 }) : "";
+  const qrDataUrl = await QRCodeLib.toDataURL(generatedLink, { width: 180, margin: 1 });
   const checkedIn = event.checkins.length;
   const registered = event.guests.length;
   const pending = event.idVerifications.length;
@@ -48,10 +47,9 @@ export default async function EventDetailPage({ params }: Props) {
               <div className="ap-muted-surface p-4"><div className="text-2xl font-black">{checkedIn}</div><div className="text-sm font-bold text-slate-500">Checked in</div></div>
               <div className="ap-muted-surface p-4"><div className="text-2xl font-black">{pending}</div><div className="text-sm font-bold text-slate-500">Pending verification</div></div>
             </div>
-          </Card>
-          <Card className="min-w-0">
-            <h2 className="text-base font-black sm:text-lg">Guest Activity Report</h2>
-            <div className="mt-5 grid gap-5 lg:grid-cols-2">
+            <div className="mt-6 border-t pt-5" style={{ borderColor: "var(--stroke)" }}>
+              <h2 className="text-base font-black sm:text-lg">Guest Activity Report</h2>
+              <div className="mt-5 grid gap-5 lg:grid-cols-2">
               <div>
                 <div className="mb-3 text-sm font-black text-slate-600 dark:text-slate-300">Attendance progress</div>
                 {[
@@ -78,6 +76,7 @@ export default async function EventDetailPage({ params }: Props) {
                     </div>
                   ))}
                 </div>
+              </div>
               </div>
             </div>
           </Card>

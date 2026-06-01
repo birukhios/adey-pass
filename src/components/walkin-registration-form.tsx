@@ -12,6 +12,7 @@ export function WalkinRegistrationForm({ events }: { events: Array<{ id: string;
   const [faydaNumber, setFaydaNumber] = useState("");
   const [idType, setIdType] = useState("Fayda ID");
   const [otp, setOtp] = useState("");
+  const [demoOtp, setDemoOtp] = useState("");
   const [otpStatus, setOtpStatus] = useState<"idle" | "sent" | "verified" | "failed">("idle");
   const [notice, setNotice] = useState("");
   const [eventId, setEventId] = useState(events[0]?.id ?? "");
@@ -39,6 +40,8 @@ export function WalkinRegistrationForm({ events }: { events: Array<{ id: string;
       return;
     }
     setOtpStatus("sent");
+    setDemoOtp(result.demoOtp);
+    setOtp(result.demoOtp);
     setNotice(`OTP sent to ${phone}. Demo OTP: ${result.demoOtp}`);
   }
 
@@ -47,13 +50,13 @@ export function WalkinRegistrationForm({ events }: { events: Array<{ id: string;
       setNotice("Send OTP first.");
       return;
     }
-    if (otp.trim()) {
+    if (otp.trim() && (!demoOtp || otp.trim() === demoOtp)) {
       setOtpStatus("verified");
       setNotice("OTP added. It will be verified securely when you register.");
       return;
     }
     setOtpStatus("failed");
-    setNotice("Enter the OTP first.");
+    setNotice("Enter the OTP shown after sending the code.");
   }
 
   async function registerWalkin(checkInImmediately: boolean) {
@@ -82,7 +85,7 @@ export function WalkinRegistrationForm({ events }: { events: Array<{ id: string;
     const nextTicketId = result.ticket.ticketId as string;
     setTicketId(nextTicketId);
     setNotice(`Walk-in registered. Ticket: ${nextTicketId}`);
-    const image = await QRCodeLib.toDataURL(nextTicketId, { width: 220, margin: 1 });
+    const image = await QRCodeLib.toDataURL(JSON.stringify({ ticketId: nextTicketId }), { width: 220, margin: 1 });
     setQrDataUrl(image);
   }
 

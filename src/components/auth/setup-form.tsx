@@ -33,25 +33,25 @@ export function SetupForm() {
   }
 
   return (
-    <form action={handleSubmit} className="mt-8 grid gap-4">
-      <label className="grid gap-2 text-sm font-bold text-slate-700">
+    <form action={handleSubmit} className="ap-form-shell mt-8">
+      <label className="ap-field-label">
         Name
         <input className="ap-input" name="name" placeholder="Super Admin" />
       </label>
-      <label className="grid gap-2 text-sm font-bold text-slate-700">
+      <label className="ap-field-label">
         Email
         <input className="ap-input" name="email" placeholder="super@adeypass.local" type="email" />
       </label>
-      <label className="grid gap-2 text-sm font-bold text-slate-700">
+      <label className="ap-field-label">
         Phone
         <input className="ap-input" name="phone" placeholder="+251" />
       </label>
-      <label className="grid gap-2 text-sm font-bold text-slate-700">
+      <label className="ap-field-label">
         Password
         <input className="ap-input" name="password" type="password" />
       </label>
-      {message && <div className="rounded-lg bg-red-50 p-3 text-sm font-bold text-red-700">{message}</div>}
-      <button className="ap-button-primary h-12 text-sm font-black" disabled={isPending} type="submit">
+      {message && <div className="ap-form-message" style={{ borderColor: "color-mix(in oklab, var(--danger) 30%, transparent)", background: "color-mix(in oklab, var(--danger) 10%, var(--surface))", color: "var(--danger)" }}>{message}</div>}
+      <button className="ap-button-primary h-12 text-sm font-bold" disabled={isPending} type="submit">
         {isPending ? "Creating..." : "Create Super Admin"}
       </button>
     </form>

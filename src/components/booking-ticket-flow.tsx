@@ -16,6 +16,18 @@ type BookingTicketFlowProps = {
   paymentRequired: boolean;
   priceAmount: number;
   currency: string;
+  ticketTypes?: Array<{
+    id: string;
+    name: string;
+    accessType: string;
+    paymentRequired: boolean;
+    priceAmount: number;
+    currency: string;
+    primaryColor: string;
+    accentColor: string;
+    outlineColor: string;
+  }>;
+  initialTicketTypeId?: string;
 };
 
 export function BookingTicketFlow({
@@ -30,7 +42,10 @@ export function BookingTicketFlow({
   paymentRequired,
   priceAmount,
   currency,
+  ticketTypes = [],
+  initialTicketTypeId,
 }: BookingTicketFlowProps) {
+  const [selectedTicketTypeId, setSelectedTicketTypeId] = useState(initialTicketTypeId ?? ticketTypes[0]?.id ?? "");
   const [fullName, setFullName] = useState("");
   const [companyName, setCompanyName] = useState("");
   const [phone, setPhone] = useState("");
@@ -39,22 +54,32 @@ export function BookingTicketFlow({
   const [started, setStarted] = useState(false);
   const [status, setStatus] = useState<"idle" | "verifying" | "verified" | "failed">("idle");
   const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const [ticketId, setTicketId] = useState("");
+  const [smsNotice, setSmsNotice] = useState("");
   const [error, setError] = useState("");
+  const selectedTicketType = ticketTypes.find((item) => item.id === selectedTicketTypeId);
+  const activeAccessType = selectedTicketType?.accessType ?? accessType;
+  const activePaymentRequired = selectedTicketType ? selectedTicketType.paymentRequired && selectedTicketType.priceAmount > 0 : paymentRequired;
+  const activePriceAmount = selectedTicketType?.priceAmount ?? priceAmount;
+  const activeCurrency = selectedTicketType?.currency ?? currency;
+  const activePrimary = selectedTicketType?.primaryColor ?? primary;
+  const activeBackground = selectedTicketType?.outlineColor ?? background;
+  const activeAccent = selectedTicketType?.accentColor ?? accent;
 
   const qrPayload = useMemo(
     () =>
       JSON.stringify({
-        token,
+        ticketId: ticketId || token,
         eventName,
         fullName,
         companyName,
         phone,
-        accessType,
+        accessType: activeAccessType,
         verifiedAt: new Date().toISOString(),
       }),
-    [accessType, companyName, eventName, fullName, phone, token],
+    [activeAccessType, companyName, eventName, fullName, phone, ticketId, token],
   );
-  const ticketId = useMemo(() => {
+  const previewTicketId = useMemo(() => {
     const clean = token.replace(/[^A-Za-z0-9]/g, "").toUpperCase();
     const a = clean.slice(0, 4).padEnd(4, "X");
     const b = clean.slice(4, 8).padEnd(4, "X");
@@ -74,8 +99,8 @@ export function BookingTicketFlow({
       setError("Please add your company name.");
       return;
     }
-    if (paymentRequired && phone.replace(/[^0-9]/g, "").length < 8) {
-      setError("Please add the phone number you want to pay with.");
+    if (phone.replace(/[^0-9]/g, "").length < 8) {
+      setError(activePaymentRequired ? "Please add the phone number you want to pay with." : "Please add your phone number.");
       return;
     }
     if (cleanFayda.length < 8) {
@@ -107,6 +132,7 @@ export function BookingTicketFlow({
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         bookingToken: token,
+        ticketTypeId: selectedTicketType?.id,
         fullName,
         companyName,
         phone,
@@ -120,6 +146,31 @@ export function BookingTicketFlow({
       return;
     }
     window.location.href = result.checkoutUrl;
+  }
+
+  async function completeFreeBooking() {
+    setCheckoutLoading(true);
+    setError("");
+    const response = await fetch("/api/bookings/complete", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        bookingToken: token,
+        ticketTypeId: selectedTicketType?.id,
+        fullName,
+        companyName,
+        phone,
+        faydaNumber,
+      }),
+    });
+    const result = await response.json();
+    setCheckoutLoading(false);
+    if (!response.ok) {
+      setError(result.message ?? "Could not generate ticket.");
+      return;
+    }
+    setTicketId(result.ticketId);
+    setSmsNotice(result.sms ?? `Mock SMS sent to ${phone} with your event ticket.`);
   }
 
   async function downloadTicketCard() {
@@ -167,7 +218,7 @@ export function BookingTicketFlow({
 
     ctx.fillStyle = "#475569";
     ctx.font = "700 32px Arial";
-    ctx.fillText(`${accessType} · ${companyName}`, 120, 370);
+    ctx.fillText(`${activeAccessType} · ${companyName}`, 120, 370);
 
     // QR box
     ctx.strokeStyle = "#CBD5E1";
@@ -187,7 +238,7 @@ export function BookingTicketFlow({
     // Footer line
     ctx.fillStyle = "#111418";
     ctx.font = "700 42px Arial";
-    ctx.fillText(ticketId, 120, 995);
+    ctx.fillText(ticketId || previewTicketId, 120, 995);
 
     // Verified pill
     const pillX = width - 300;
@@ -224,7 +275,7 @@ export function BookingTicketFlow({
         <button
           className="h-12 w-full rounded-lg text-sm font-black"
           onClick={() => setStarted(true)}
-          style={{ background: background, color: text }}
+          style={{ background: activeBackground, color: text }}
           type="button"
         >
           {ctaLabel}
@@ -233,39 +284,51 @@ export function BookingTicketFlow({
 
       {started && (
         <div className="mt-4 rounded-lg border border-slate-200 bg-slate-50 p-4">
-          <p className="text-xs font-black uppercase tracking-[0.16em]" style={{ color: accent }}>
+          <p className="text-xs font-black uppercase tracking-[0.16em]" style={{ color: activeAccent }}>
             Fayda Verification
           </p>
           <div className="mt-3 grid gap-3">
-            <label className="grid gap-1 text-sm font-bold text-slate-700">
+            {ticketTypes.length > 1 ? (
+              <label className="ap-field-label">
+                Ticket type
+                <select className="ap-input" onChange={(event) => { setSelectedTicketTypeId(event.target.value); setStatus("idle"); setTicketId(""); }} value={selectedTicketTypeId}>
+                  {ticketTypes.map((item) => (
+                    <option key={item.id} value={item.id}>
+                      {item.name} · {item.paymentRequired && item.priceAmount > 0 ? `${item.currency} ${item.priceAmount.toLocaleString()}` : "Free"}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            ) : null}
+            <label className="ap-field-label">
               Full name
               <input
-                className="h-11 rounded-lg border border-slate-200 px-3 outline-none focus:ring-4 focus:ring-[color-mix(in_oklab,var(--adey-yellow)_20%,transparent)]"
+                className="ap-input"
                 onChange={(event) => setFullName(event.target.value)}
                 value={fullName}
               />
             </label>
-            <label className="grid gap-1 text-sm font-bold text-slate-700">
+            <label className="ap-field-label">
               Company name
               <input
-                className="h-11 rounded-lg border border-slate-200 px-3 outline-none focus:ring-4 focus:ring-[color-mix(in_oklab,var(--adey-yellow)_20%,transparent)]"
+                className="ap-input"
                 onChange={(event) => setCompanyName(event.target.value)}
                 value={companyName}
               />
             </label>
-            <label className="grid gap-1 text-sm font-bold text-slate-700">
+            <label className="ap-field-label">
               Phone number
               <input
-                className="h-11 rounded-lg border border-slate-200 px-3 outline-none focus:ring-4 focus:ring-[color-mix(in_oklab,var(--adey-yellow)_20%,transparent)]"
+                className="ap-input"
                 onChange={(event) => setPhone(event.target.value)}
                 placeholder="+251 9..."
                 value={phone}
               />
             </label>
-            <label className="grid gap-1 text-sm font-bold text-slate-700">
+            <label className="ap-field-label">
               Fayda number
               <input
-                className="h-11 rounded-lg border border-slate-200 px-3 outline-none focus:ring-4 focus:ring-[color-mix(in_oklab,var(--adey-yellow)_20%,transparent)]"
+                className="ap-input"
                 onChange={(event) => setFaydaNumber(event.target.value)}
                 value={faydaNumber}
               />
@@ -282,7 +345,7 @@ export function BookingTicketFlow({
             <button
               className="mt-4 h-11 w-full rounded-lg text-sm font-black"
               onClick={verifyIdentity}
-              style={{ background: primary, color: background }}
+              style={{ background: activePrimary, color: activeBackground }}
               type="button"
             >
               {status === "verifying" ? "Verifying..." : "Verify Fayda Number"}
@@ -292,12 +355,12 @@ export function BookingTicketFlow({
           {status === "verified" && (
             <div className="mt-4 rounded-lg border border-emerald-200 bg-emerald-50 p-4">
               <p className="text-sm font-black text-emerald-700">Verified. Your ticket card is ready.</p>
-              {paymentRequired ? (
+              {activePaymentRequired ? (
                 <div className="mt-4 rounded-xl border border-blue-100 bg-white p-4">
                   <div className="text-xs font-black uppercase tracking-[0.16em] text-blue-500">Payment required</div>
                   <div className="mt-2 flex items-end justify-between gap-3">
                     <div>
-                      <div className="text-3xl font-black text-slate-950">{currency} {priceAmount.toLocaleString()}</div>
+                      <div className="text-3xl font-black text-slate-950">{activeCurrency} {activePriceAmount.toLocaleString()}</div>
                       <div className="mt-1 text-sm font-bold text-slate-500">Powered by Afropay mock checkout</div>
                     </div>
                   </div>
@@ -310,6 +373,16 @@ export function BookingTicketFlow({
                   </button>
                 </div>
               ) : (
+              !ticketId ? (
+                <button
+                  className="mt-4 h-11 w-full rounded-lg text-sm font-black text-white"
+                  onClick={completeFreeBooking}
+                  style={{ background: activePrimary }}
+                  type="button"
+                >
+                  {checkoutLoading ? "Generating ticket..." : "Generate QR Ticket"}
+                </button>
+              ) : (
               <div className="mt-4 rounded-xl bg-[#0B1017] p-4">
                 <div className="rounded-xl bg-[var(--adey-yellow)] p-4">
                   <div className="text-xl font-black text-[var(--adey-charcoal)]">Stadium Management System</div>
@@ -317,7 +390,7 @@ export function BookingTicketFlow({
                   <div className="mt-4 rounded-lg bg-white p-4">
                     <div className="text-xs font-black uppercase tracking-[0.16em] text-slate-500">{eventName}</div>
                     <h3 className="mt-2 text-2xl font-black text-slate-900">{fullName}</h3>
-                    <p className="text-sm font-bold text-slate-600">{accessType} · {companyName}</p>
+                    <p className="text-sm font-bold text-slate-600">{activeAccessType} · {companyName}</p>
                     <div className="mt-4 grid place-items-center rounded-lg border border-dashed border-slate-300 p-4">
                       <QRCode value={qrPayload} size={170} />
                     </div>
@@ -330,12 +403,14 @@ export function BookingTicketFlow({
                 <button
                   className="mt-4 h-11 w-full rounded-lg text-sm font-black"
                   onClick={downloadTicketCard}
-                  style={{ background: background, color: text }}
+                  style={{ background: activeBackground, color: text }}
                   type="button"
                 >
                   Download Ticket Card
                 </button>
+                {smsNotice ? <div className="mt-3 rounded-lg bg-white/10 p-3 text-sm font-bold text-white">{smsNotice}</div> : null}
               </div>
+              )
               )}
             </div>
           )}

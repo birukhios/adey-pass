@@ -16,14 +16,20 @@ function readValue(value: string | string[] | undefined, fallback: string) {
 export default async function BookingPage({ params, searchParams }: BookingPageProps) {
   await connection();
   const [{ token }, query] = await Promise.all([params, searchParams]);
-  const ticketType = await prisma.eventTicketType.findUnique({
+  const directTicketType = await prisma.eventTicketType.findUnique({
     where: { bookingToken: token },
-    include: { event: true },
+    include: { event: { include: { ticketTypes: { orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }] } } } },
   });
+  const event = directTicketType?.event ?? await prisma.event.findUnique({
+    where: { id: token },
+    include: { ticketTypes: { orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }] } },
+  });
+  const ticketTypes = event?.ticketTypes ?? [];
+  const fallbackTicketType = ticketTypes[0];
+  const ticketType = directTicketType ?? fallbackTicketType;
 
-  const eventName = ticketType?.event.name ?? readValue(query.e, "Stadium Event");
+  const eventName = event?.name ?? readValue(query.e, "Stadium Event");
   const accessType = ticketType?.accessType ?? readValue(query.a, "General Admission");
-  const logoText = readValue(query.logo, "Stadium Management System");
   const footerText = readValue(query.footer, "Stadium Access & Gate Management");
   const ctaLabel = readValue(query.cta, "Book Your Ticket");
   const primary = ticketType?.primaryColor ?? readValue(query.p, "#0B7DE3");
@@ -43,13 +49,13 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
           </div>
           <h1 className="mt-2 text-4xl font-black tracking-tight">{eventName}</h1>
           <p className="mt-2 text-sm font-bold" style={{ color: accent }}>
-            {ticketType ? `${ticketType.name} · ${accessType} · ${ticketType.event.venueName}` : accessType}
+            {event ? `${event.venueName} · choose your ticket type below` : accessType}
           </p>
           <div className="mt-8 rounded-lg p-4" style={{ background: primary, color: background }}>
-            <div className="text-sm font-black">{logoText}</div>
+            <div className="text-sm font-black">Booking access</div>
             <div className="mt-1 text-xs font-bold">Token: {token}</div>
             <div className="mt-3 inline-flex rounded-full bg-white/18 px-3 py-1 text-xs font-black">
-              {paymentRequired && priceAmount > 0 ? `${currency} ${priceAmount.toLocaleString()} checkout` : "Free booking"}
+              {ticketTypes.some((item) => item.paymentRequired && item.priceAmount > 0) ? "Paid and free options" : paymentRequired && priceAmount > 0 ? `${currency} ${priceAmount.toLocaleString()} checkout` : "Free booking"}
             </div>
           </div>
           <BookingTicketFlow
@@ -64,6 +70,18 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
             currency={currency}
             text={text}
             token={token}
+            ticketTypes={ticketTypes.map((item) => ({
+              id: item.id,
+              name: item.name,
+              accessType: item.accessType,
+              paymentRequired: item.paymentRequired,
+              priceAmount: item.priceAmount,
+              currency: item.currency,
+              primaryColor: item.primaryColor,
+              accentColor: item.accentColor,
+              outlineColor: item.outlineColor,
+            }))}
+            initialTicketTypeId={ticketType?.id}
           />
           <p className="mt-6 text-sm font-bold" style={{ color: accent }}>{footerText}</p>
           <div className="mt-6">

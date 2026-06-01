@@ -20,18 +20,37 @@ export function ProfileSettingsForm({ initial }: { initial: { name: string; emai
   }
 
   return (
-    <>
-      <div className="mb-6 grid size-24 place-items-center rounded-full bg-[var(--adey-yellow)] text-2xl font-black shadow-[0_12px_24px_-16px_rgba(11,125,227,0.62)]">
-        {form.name.split(" ").map((part) => part[0]).join("").slice(0, 2).toUpperCase()}
+    <div className="ap-form-shell">
+      <section className="ap-form-section">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-4">
+            <div className="grid size-20 place-items-center rounded-2xl bg-[var(--adey-yellow)] text-xl font-bold text-white shadow-[0_12px_24px_-16px_rgba(11,125,227,0.62)]">
+              {form.name.split(" ").map((part) => part[0]).join("").slice(0, 2).toUpperCase()}
+            </div>
+            <div>
+              <h2 className="ap-form-title">General settings</h2>
+              <p className="ap-form-description">Manage your profile information and password placeholder.</p>
+            </div>
+          </div>
+          <button className="ap-button-ghost" type="button">Upload image</button>
+        </div>
+      </section>
+
+      <section className="ap-form-section">
+        <h2 className="ap-form-title">Personal information</h2>
+        <div className="ap-form-grid">
+          <label className="ap-field-label">Name<input className="ap-input" onChange={(event) => setForm((s) => ({ ...s, name: event.target.value }))} value={form.name} /></label>
+          <label className="ap-field-label">Email<input className="ap-input" onChange={(event) => setForm((s) => ({ ...s, email: event.target.value }))} value={form.email} /></label>
+          <label className="ap-field-label">Phone<input className="ap-input" onChange={(event) => setForm((s) => ({ ...s, phone: event.target.value }))} value={form.phone} /></label>
+          <label className="ap-field-label">New password<input className="ap-input" onChange={(event) => setForm((s) => ({ ...s, newPassword: event.target.value }))} placeholder="Leave blank to keep current password" type="password" value={form.newPassword} /></label>
+        </div>
+      </section>
+
+      {message ? <div className="ap-form-message">{message}</div> : null}
+      <div className="ap-form-actions">
+        <span className="text-sm font-semibold ap-soft-text">Profile changes update your admin account.</span>
+        <button className="ap-button-primary disabled:opacity-60" disabled={loading} onClick={() => { void save(); }} type="button">{loading ? "Saving..." : "Save Profile"}</button>
       </div>
-      <div className="grid gap-4 sm:grid-cols-2 lg:gap-5">
-        <label className="ap-field-label">Name<input className="ap-input" onChange={(event) => setForm((s) => ({ ...s, name: event.target.value }))} value={form.name} /></label>
-        <label className="ap-field-label">Email<input className="ap-input" onChange={(event) => setForm((s) => ({ ...s, email: event.target.value }))} value={form.email} /></label>
-        <label className="ap-field-label">Phone<input className="ap-input" onChange={(event) => setForm((s) => ({ ...s, phone: event.target.value }))} value={form.phone} /></label>
-        <label className="ap-field-label">New password<input className="ap-input" onChange={(event) => setForm((s) => ({ ...s, newPassword: event.target.value }))} type="password" value={form.newPassword} /></label>
-      </div>
-      {message ? <div className="mt-4 rounded-lg bg-slate-100 p-3 text-sm font-bold text-slate-700">{message}</div> : null}
-      <div className="mt-6 grid sm:flex"><button className="ap-button-primary disabled:opacity-60" disabled={loading} onClick={() => { void save(); }} type="button">{loading ? "Saving..." : "Save Profile"}</button></div>
-    </>
+    </div>
   );
 }

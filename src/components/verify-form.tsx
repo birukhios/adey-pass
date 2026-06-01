@@ -52,28 +52,37 @@ export function VerifyForm({ token }: { token: string }) {
   }
 
   return (
-    <form className="mt-6 grid gap-4" onSubmit={(event) => { event.preventDefault(); void submit(); }}>
-      <label className="grid gap-2 text-sm font-black" style={{ color: "var(--text-strong)" }}>Full name<input className="ap-input" onChange={(event) => setFullName(event.target.value)} placeholder="Aster Girma" value={fullName} /></label>
-      <label className="grid gap-2 text-sm font-black" style={{ color: "var(--text-strong)" }}>National/Fayda ID number<input className="ap-input" onChange={(event) => setIdNumber(event.target.value)} placeholder="0000-0000-1234" value={idNumber} /></label>
-      <label className="grid gap-2 text-sm font-black" style={{ color: "var(--text-strong)" }}>Phone number<input className="ap-input" onChange={(event) => setPhone(event.target.value)} placeholder="+251 911 111 111" value={phone} /></label>
+    <form className="ap-form-shell mt-6" onSubmit={(event) => { event.preventDefault(); void submit(); }}>
+      <section className="ap-form-section">
+        <h2 className="ap-form-title">Fayda verification</h2>
+        <p className="ap-form-description">Confirm your identity before the ticket becomes valid for gate entry.</p>
+        <div className="ap-form-grid">
+          <label className="ap-field-label">Full name<input className="ap-input" onChange={(event) => setFullName(event.target.value)} placeholder="Aster Girma" value={fullName} /></label>
+          <label className="ap-field-label">National/Fayda ID number<input className="ap-input" onChange={(event) => setIdNumber(event.target.value)} placeholder="0000-0000-1234" value={idNumber} /></label>
+          <label className="ap-field-label">Phone number<input className="ap-input" onChange={(event) => setPhone(event.target.value)} placeholder="+251 911 111 111" value={phone} /></label>
+          <label className="ap-field-label">OTP code<input className="ap-input" onChange={(event) => setOtp(event.target.value)} placeholder="6-digit OTP" value={otp} /></label>
+        </div>
+      </section>
       <button className="ap-button-ghost" disabled={sendingOtp || phone.trim().length < 8 || idNumber.trim().length < 8} onClick={() => { void sendOtp(); }} type="button">
         {sendingOtp ? "Sending OTP..." : "Send OTP"}
       </button>
-      {otpMessage ? <div className="rounded-2xl border p-3 text-sm font-bold" style={{ borderColor: "var(--stroke)", background: "var(--surface-muted)", color: "var(--text-strong)" }}>{otpMessage}</div> : null}
-      <label className="grid gap-2 text-sm font-black" style={{ color: "var(--text-strong)" }}>OTP code<input className="ap-input" onChange={(event) => setOtp(event.target.value)} placeholder="6-digit OTP" value={otp} /></label>
-      <label className="grid gap-2 text-sm font-black" style={{ color: "var(--text-strong)" }}>Date of birth<input className="ap-input" onChange={(event) => setDateOfBirth(event.target.value)} type="date" value={dateOfBirth} /></label>
-      <div className="grid gap-4 md:grid-cols-2">
-        <label className="grid gap-2 text-sm font-black" style={{ color: "var(--text-strong)" }}>Gender<select className="ap-input" onChange={(event) => setGender(event.target.value)} value={gender}><option value="">Not specified</option><option>Female</option><option>Male</option></select></label>
-        <label className="grid gap-2 text-sm font-black" style={{ color: "var(--text-strong)" }}>Nationality<input className="ap-input" onChange={(event) => setNationality(event.target.value)} placeholder="Ethiopian" value={nationality} /></label>
-      </div>
-      <label className="grid gap-2 text-sm font-black" style={{ color: "var(--text-strong)" }}>Email optional<input className="ap-input" onChange={(event) => setEmail(event.target.value)} placeholder="guest@example.com" type="email" value={email} /></label>
-      <label className="grid gap-2 text-sm font-black" style={{ color: "var(--text-strong)" }}>Current address<input className="ap-input" onChange={(event) => setCurrentAddress(event.target.value)} placeholder="Addis Ababa, Ethiopia" value={currentAddress} /></label>
+      {otpMessage ? <div className="ap-form-message">{otpMessage}</div> : null}
+      <section className="ap-form-section">
+        <h2 className="ap-form-title">Additional details</h2>
+        <div className="ap-form-grid">
+          <label className="ap-field-label">Date of birth<input className="ap-input" onChange={(event) => setDateOfBirth(event.target.value)} type="date" value={dateOfBirth} /></label>
+          <label className="ap-field-label">Gender<select className="ap-input" onChange={(event) => setGender(event.target.value)} value={gender}><option value="">Not specified</option><option>Female</option><option>Male</option></select></label>
+          <label className="ap-field-label">Nationality<input className="ap-input" onChange={(event) => setNationality(event.target.value)} placeholder="Ethiopian" value={nationality} /></label>
+          <label className="ap-field-label">Email optional<input className="ap-input" onChange={(event) => setEmail(event.target.value)} placeholder="guest@example.com" type="email" value={email} /></label>
+          <label className="ap-field-label sm:col-span-2">Current address<input className="ap-input" onChange={(event) => setCurrentAddress(event.target.value)} placeholder="Addis Ababa, Ethiopia" value={currentAddress} /></label>
+        </div>
+      </section>
       <label className="flex gap-3 rounded-2xl p-4 text-sm font-bold leading-6" style={{ background: "var(--surface-muted)", color: "var(--text-strong)" }}>
         <input className="mt-1 size-4 accent-[var(--adey-yellow)]" onChange={(event) => setConsent(event.target.checked)} type="checkbox" />
         I confirm that the information I provided is correct and I consent to identity verification for event access.
       </label>
-      {message ? <div className="rounded-2xl border p-3 text-sm font-bold" style={{ borderColor: "var(--stroke)", background: "var(--surface-muted)", color: "var(--text-strong)" }}>{message}</div> : null}
-      <button className="ap-button-primary h-12 text-sm font-black disabled:opacity-60" disabled={loading} type="submit">
+      {message ? <div className="ap-form-message">{message}</div> : null}
+      <button className="ap-button-primary h-12 text-sm font-bold disabled:opacity-60" disabled={loading} type="submit">
         {loading ? "Submitting..." : "Submit Verification"}
       </button>
     </form>

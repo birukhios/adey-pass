@@ -115,6 +115,12 @@ export function EventTicketBoard({ initialEvents }: { initialEvents: EventTicket
     setMessage(`Copied ${ticketType.name} booking link.`);
   }
 
+  async function copyEventBookingLink() {
+    if (!selectedEvent) return;
+    await navigator.clipboard.writeText(`${publicOrigin}/booking/${selectedEvent.id}`);
+    setMessage("Copied one public booking link with ticket type dropdown.");
+  }
+
   async function saveTicketTypes() {
     if (!selectedEvent) return;
     setSaving(true);
@@ -172,7 +178,7 @@ export function EventTicketBoard({ initialEvents }: { initialEvents: EventTicket
           <div>
             <p className="ap-kicker">Event Ticket Setup</p>
             <h1 className="mt-2 text-2xl font-black sm:text-3xl">Ticket groups by event</h1>
-            <p className="mt-2 text-sm font-semibold leading-6 ap-soft-text">Select an event, design ticket layouts, set quantities, and copy booking links from one workspace.</p>
+            <p className="mt-2 text-sm font-semibold leading-6 ap-soft-text">Paid events use one public booking link with a ticket type dropdown. Individual links remain available for free or special access groups.</p>
           </div>
           <label className="ap-field-label">
             Event
@@ -182,10 +188,13 @@ export function EventTicketBoard({ initialEvents }: { initialEvents: EventTicket
               ))}
             </select>
           </label>
-          <button className="ap-button-primary gap-2" onClick={saveTicketTypes} type="button">
-            <Save size={16} />
-            {saving ? "Saving..." : "Save Tickets"}
-          </button>
+          <div className="grid gap-2 sm:flex lg:grid">
+            <button className="ap-button-ghost gap-2" onClick={copyEventBookingLink} type="button"><Copy size={16} /> Copy event link</button>
+            <button className="ap-button-primary gap-2" onClick={saveTicketTypes} type="button">
+              <Save size={16} />
+              {saving ? "Saving..." : "Save Tickets"}
+            </button>
+          </div>
         </div>
         <div className="mt-4 flex flex-wrap gap-2">
           <Badge tone="blue">{selectedEvent.stadium}</Badge>

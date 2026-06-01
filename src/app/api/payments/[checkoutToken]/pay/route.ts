@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { issuePublicTicket } from "@/lib/public-ticketing";
 import { prisma } from "@/lib/prisma";
 
 const payloadSchema = z.object({
@@ -26,5 +27,18 @@ export async function POST(request: Request, { params }: Props) {
     },
   });
 
-  return NextResponse.json(paid);
+  const issued = await issuePublicTicket({
+    eventTicketTypeId: paid.eventTicketTypeId,
+    fullName: paid.fullName,
+    companyName: paid.companyName,
+    phone: paid.phone ?? "",
+    faydaNumber: paid.maskedFaydaId ?? paid.reference,
+    paidReference: paid.reference,
+  });
+
+  return NextResponse.json({
+    ...paid,
+    ticketId: issued.ticket.ticketId,
+    sms: `Mock SMS sent to ${paid.phone ?? "guest"} with event ticket ${issued.ticket.ticketId}.`,
+  });
 }

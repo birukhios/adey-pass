@@ -6,6 +6,7 @@ import { maskIdNumber } from "@/lib/secure-token";
 
 const payloadSchema = z.object({
   bookingToken: z.string().min(4),
+  ticketTypeId: z.string().optional(),
   fullName: z.string().min(2),
   companyName: z.string().optional(),
   phone: z.string().min(8),
@@ -18,10 +19,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ message: "Invalid checkout payload." }, { status: 422 });
   }
 
-  const ticketType = await prisma.eventTicketType.findUnique({
-    where: { bookingToken: payload.data.bookingToken },
-    include: { event: true },
-  });
+  const ticketType = payload.data.ticketTypeId
+    ? await prisma.eventTicketType.findUnique({ where: { id: payload.data.ticketTypeId }, include: { event: true } })
+    : await prisma.eventTicketType.findUnique({ where: { bookingToken: payload.data.bookingToken }, include: { event: true } });
   if (!ticketType) return NextResponse.json({ message: "Booking link not found." }, { status: 404 });
   if (!ticketType.paymentRequired || ticketType.priceAmount <= 0) {
     return NextResponse.json({ message: "This booking does not require checkout." }, { status: 422 });
