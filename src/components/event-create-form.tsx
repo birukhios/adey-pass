@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { stadiumOptions } from "@/components/stadium-selector";
-import { ticketDesigns } from "@/lib/ticket-designs";
+import { ticketDesigns, ticketLayouts } from "@/lib/ticket-designs";
 
 type SecurityDefaults = {
   idVerificationRequiredByDefault: boolean;
@@ -21,9 +21,9 @@ export function EventCreateForm({
 }) {
   const router = useRouter();
   const defaultTicketTypes = [
-    { name: "VVIP", quantity: "200", designKey: "vvip-blue" },
-    { name: "VIP", quantity: "1000", designKey: "vip-gold" },
-    { name: "Normal", quantity: "50000", designKey: "normal-silver" },
+    { name: "VVIP", quantity: "200", designKey: "vvip-blue", layoutKey: "badge-card" },
+    { name: "VIP", quantity: "1000", designKey: "vip-gold", layoutKey: "mobile-pass" },
+    { name: "Normal", quantity: "50000", designKey: "normal-silver", layoutKey: "wide-ticket" },
   ];
   const [form, setForm] = useState({
     name: "",
@@ -59,6 +59,7 @@ export function EventCreateForm({
             name: ticketType.name,
             quantity: Number(ticketType.quantity || 0),
             designKey: design.key,
+            layoutKey: ticketType.layoutKey,
             accessType: design.accessType,
             primaryColor: design.primaryColor,
             accentColor: design.accentColor,
@@ -101,7 +102,7 @@ export function EventCreateForm({
           </div>
           <button
             className="ap-button-ghost"
-            onClick={() => setForm((s) => ({ ...s, ticketTypes: [...s.ticketTypes, { name: "New Ticket", quantity: "100", designKey: "normal-silver" }] }))}
+            onClick={() => setForm((s) => ({ ...s, ticketTypes: [...s.ticketTypes, { name: "New Ticket", quantity: "100", designKey: "normal-silver", layoutKey: "mobile-pass" }] }))}
             type="button"
           >
             Add Ticket Type
@@ -111,12 +112,13 @@ export function EventCreateForm({
           {form.ticketTypes.map((ticketType, index) => {
             const design = ticketDesigns.find((item) => item.key === ticketType.designKey) ?? ticketDesigns[0];
             return (
-              <div className="grid gap-3 rounded-2xl border p-3 sm:grid-cols-[minmax(0,1fr)_150px_minmax(180px,1fr)_auto]" key={`${ticketType.name}-${index}`} style={{ borderColor: "var(--stroke)", background: "var(--surface-muted)" }}>
+              <div className="grid gap-3 rounded-2xl border p-3 lg:grid-cols-[minmax(0,1fr)_130px_minmax(180px,1fr)_minmax(180px,1fr)_auto]" key={`${ticketType.name}-${index}`} style={{ borderColor: "var(--stroke)", background: "var(--surface-muted)" }}>
                 <label className="ap-field-label">Ticket name<input className="ap-input" onChange={(event) => setForm((s) => ({ ...s, ticketTypes: s.ticketTypes.map((item, itemIndex) => itemIndex === index ? { ...item, name: event.target.value } : item) }))} value={ticketType.name} /></label>
                 <label className="ap-field-label">Quantity<input className="ap-input" min={0} onChange={(event) => setForm((s) => ({ ...s, ticketTypes: s.ticketTypes.map((item, itemIndex) => itemIndex === index ? { ...item, quantity: event.target.value } : item) }))} type="number" value={ticketType.quantity} /></label>
                 <label className="ap-field-label">Design outline<select className="ap-input" onChange={(event) => setForm((s) => ({ ...s, ticketTypes: s.ticketTypes.map((item, itemIndex) => itemIndex === index ? { ...item, designKey: event.target.value } : item) }))} value={ticketType.designKey}>{ticketDesigns.map((item) => <option key={item.key} value={item.key}>{item.name}</option>)}</select></label>
+                <label className="ap-field-label">Ticket layout<select className="ap-input" onChange={(event) => setForm((s) => ({ ...s, ticketTypes: s.ticketTypes.map((item, itemIndex) => itemIndex === index ? { ...item, layoutKey: event.target.value } : item) }))} value={ticketType.layoutKey}>{ticketLayouts.map((item) => <option key={item.key} value={item.key}>{item.name}</option>)}</select></label>
                 <button className="ap-button-ghost self-end" onClick={() => setForm((s) => ({ ...s, ticketTypes: s.ticketTypes.filter((_, itemIndex) => itemIndex !== index) }))} type="button">Remove</button>
-                <div className="rounded-2xl border p-4 sm:col-span-4" style={{ borderColor: design.outlineColor, background: "var(--surface)" }}>
+                <div className="rounded-2xl border p-4 lg:col-span-5" style={{ borderColor: design.outlineColor, background: "var(--surface)" }}>
                   <div className="flex items-center justify-between gap-3">
                     <div>
                       <div className="text-xs font-black uppercase tracking-[0.14em]" style={{ color: design.accentColor }}>{design.name}</div>

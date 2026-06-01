@@ -198,6 +198,7 @@ model EventTicketType {
   accessType   String
   quantity     Int      @default(0)
   designKey    String
+  layoutKey    String   @default("mobile-pass")
   primaryColor String
   accentColor  String
   outlineColor String

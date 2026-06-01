@@ -176,6 +176,7 @@ export async function getTicketTypeBoard() {
       accessType: ticketType.accessType,
       quantity: ticketType.quantity,
       designKey: ticketType.designKey,
+      layoutKey: ticketType.layoutKey,
       primaryColor: ticketType.primaryColor,
       accentColor: ticketType.accentColor,
       outlineColor: ticketType.outlineColor,

@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { Copy, ExternalLink, Plus, Save, Trash2 } from "lucide-react";
 import { Badge, Card } from "@/components/ui";
-import { ticketDesigns } from "@/lib/ticket-designs";
+import { ticketDesigns, ticketLayouts } from "@/lib/ticket-designs";
 
 type TicketType = {
   id?: string;
@@ -11,6 +11,7 @@ type TicketType = {
   accessType: string;
   quantity: number;
   designKey: string;
+  layoutKey: string;
   primaryColor: string;
   accentColor: string;
   outlineColor: string;
@@ -78,6 +79,7 @@ export function EventTicketBoard({ initialEvents }: { initialEvents: EventTicket
                   accessType: design.accessType,
                   quantity: 100,
                   designKey: design.key,
+                  layoutKey: "mobile-pass",
                   primaryColor: design.primaryColor,
                   accentColor: design.accentColor,
                   outlineColor: design.outlineColor,
@@ -121,6 +123,7 @@ export function EventTicketBoard({ initialEvents }: { initialEvents: EventTicket
           accessType: ticketType.accessType,
           quantity: ticketType.quantity,
           designKey: ticketType.designKey,
+          layoutKey: ticketType.layoutKey,
           primaryColor: ticketType.primaryColor,
           accentColor: ticketType.accentColor,
           outlineColor: ticketType.outlineColor,
@@ -154,13 +157,13 @@ export function EventTicketBoard({ initialEvents }: { initialEvents: EventTicket
   }
 
   return (
-    <div className="grid gap-5">
-      <Card>
+    <Card className="min-w-0">
+      <div className="grid gap-5">
         <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(240px,360px)_auto] lg:items-end">
           <div>
             <p className="ap-kicker">Event Ticket Setup</p>
             <h1 className="mt-2 text-2xl font-black sm:text-3xl">Ticket groups by event</h1>
-            <p className="mt-2 text-sm font-semibold leading-6 ap-soft-text">Select an event, lay out VVIP/VIP/Normal ticket designs, set quantities, and copy booking links.</p>
+            <p className="mt-2 text-sm font-semibold leading-6 ap-soft-text">Select an event, design ticket layouts, set quantities, and copy booking links from one workspace.</p>
           </div>
           <label className="ap-field-label">
             Event
@@ -181,13 +184,12 @@ export function EventTicketBoard({ initialEvents }: { initialEvents: EventTicket
           <Badge tone="yellow">{selectedEvent.ticketTypes.reduce((sum, ticketType) => sum + ticketType.quantity, 0).toLocaleString()} total capacity</Badge>
         </div>
         {message ? <div className="mt-4 rounded-2xl border p-3 text-sm font-bold" style={{ borderColor: "var(--stroke)", background: "var(--surface-muted)" }}>{message}</div> : null}
-      </Card>
 
-      <div className="grid gap-4">
+      <div className="grid gap-4 border-t pt-5" style={{ borderColor: "var(--stroke)" }}>
         {selectedEvent.ticketTypes.map((ticketType, index) => (
-          <Card className="min-w-0" key={ticketType.id ?? `${ticketType.name}-${index}`}>
-            <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(260px,340px)]">
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <section className="rounded-3xl border p-3 sm:p-4" key={ticketType.id ?? `${ticketType.name}-${index}`} style={{ borderColor: "var(--stroke)", background: "var(--surface-muted)" }}>
+            <div className="grid gap-4 2xl:grid-cols-[minmax(0,1fr)_minmax(290px,360px)]">
+              <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
                 <label className="ap-field-label">
                   Ticket name
                   <input className="ap-input" onChange={(event) => updateTicketType(index, { name: event.target.value })} value={ticketType.name} />
@@ -204,38 +206,32 @@ export function EventTicketBoard({ initialEvents }: { initialEvents: EventTicket
                     ))}
                   </select>
                 </label>
-                <div className="grid gap-2 sm:col-span-2 lg:col-span-4 lg:flex lg:flex-wrap">
+                <label className="ap-field-label sm:col-span-2">
+                  Ticket layout
+                  <select className="ap-input" onChange={(event) => updateTicketType(index, { layoutKey: event.target.value })} value={ticketType.layoutKey}>
+                    {ticketLayouts.map((layout) => (
+                      <option key={layout.key} value={layout.key}>{layout.name}</option>
+                    ))}
+                  </select>
+                </label>
+                <div className="grid gap-2 sm:col-span-2 xl:col-span-4 xl:flex xl:flex-wrap">
                   <button className="ap-button-ghost gap-2" disabled={!ticketType.bookingToken} onClick={() => { void copyLink(ticketType); }} type="button"><Copy size={16} /> Copy link</button>
                   <a className="ap-button-ghost gap-2" href={ticketType.bookingToken ? `/booking/${ticketType.bookingToken}` : "#"} target="_blank" rel="noreferrer"><ExternalLink size={16} /> Open link</a>
                   <button className="ap-button-ghost gap-2" onClick={() => removeTicketType(index)} type="button"><Trash2 size={16} /> Remove</button>
                 </div>
+                <div className="grid gap-3 sm:col-span-2 xl:col-span-4 sm:grid-cols-3">
+                  <StatTile label="Allowed tickets" value={ticketType.quantity.toLocaleString()} />
+                  <StatTile label="People on it" value={ticketType.issuedCount.toLocaleString()} />
+                  <StatTile label="Available" value={Math.max(0, ticketType.quantity - ticketType.issuedCount).toLocaleString()} />
+                </div>
+                <div className="break-all rounded-2xl border p-3 text-xs font-bold ap-soft-text sm:col-span-2 xl:col-span-4" style={{ borderColor: "var(--stroke)", background: "var(--surface)" }}>
+                  {ticketType.bookingToken ? `/booking/${ticketType.bookingToken}` : "Save to generate booking link"}
+                </div>
               </div>
 
-              <div className="rounded-3xl border p-4" style={{ borderColor: ticketType.outlineColor, background: "var(--surface-muted)" }}>
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <div className="text-xs font-black uppercase tracking-[0.16em]" style={{ color: ticketType.accentColor }}>{selectedEvent.name}</div>
-                    <h3 className="mt-2 text-2xl font-black">{ticketType.name}</h3>
-                    <p className="text-sm font-bold ap-soft-text">{ticketType.accessType}</p>
-                  </div>
-                  <div className="grid size-16 place-items-center rounded-2xl text-xs font-black text-white" style={{ background: ticketType.primaryColor }}>QR</div>
-                </div>
-                <div className="mt-5 grid grid-cols-2 gap-3">
-                  <div className="rounded-2xl border p-3" style={{ borderColor: "var(--stroke)", background: "var(--surface)" }}>
-                    <div className="text-2xl font-black">{ticketType.quantity.toLocaleString()}</div>
-                    <div className="text-xs font-bold ap-soft-text">Allowed tickets</div>
-                  </div>
-                  <div className="rounded-2xl border p-3" style={{ borderColor: "var(--stroke)", background: "var(--surface)" }}>
-                    <div className="text-2xl font-black">{ticketType.issuedCount.toLocaleString()}</div>
-                    <div className="text-xs font-bold ap-soft-text">People on it</div>
-                  </div>
-                </div>
-                <div className="mt-4 break-all rounded-2xl border p-3 text-xs font-bold ap-soft-text" style={{ borderColor: "var(--stroke)", background: "var(--surface)" }}>
-                  {ticketType.bookingToken ? `${publicOrigin}/booking/${ticketType.bookingToken}` : "Save to generate booking link"}
-                </div>
-              </div>
+              <TicketLayoutPreview eventName={selectedEvent.name} ticketType={ticketType} />
             </div>
-          </Card>
+          </section>
         ))}
       </div>
 
@@ -243,6 +239,84 @@ export function EventTicketBoard({ initialEvents }: { initialEvents: EventTicket
         <Plus size={16} />
         Add another ticket group
       </button>
+      </div>
+    </Card>
+  );
+}
+
+function StatTile({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-2xl border p-3" style={{ borderColor: "var(--stroke)", background: "var(--surface)" }}>
+      <div className="text-2xl font-black">{value}</div>
+      <div className="text-xs font-bold ap-soft-text">{label}</div>
+    </div>
+  );
+}
+
+function TicketLayoutPreview({ eventName, ticketType }: { eventName: string; ticketType: TicketType }) {
+  const sharedHeader = (
+    <>
+      <div className="text-xs font-black uppercase tracking-[0.16em]" style={{ color: ticketType.accentColor }}>{eventName}</div>
+      <h3 className="mt-2 break-words text-2xl font-black">{ticketType.name}</h3>
+      <p className="text-sm font-bold ap-soft-text">{ticketType.accessType}</p>
+    </>
+  );
+
+  if (ticketType.layoutKey === "wide-ticket") {
+    return (
+      <div className="rounded-3xl border p-4" style={{ borderColor: ticketType.outlineColor, background: "var(--surface)" }}>
+        <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_104px]">
+          <div>{sharedHeader}<div className="mt-6 h-2 rounded-full" style={{ background: ticketType.primaryColor }} /></div>
+          <QrPreview color={ticketType.primaryColor} />
+        </div>
+      </div>
+    );
+  }
+
+  if (ticketType.layoutKey === "badge-card") {
+    return (
+      <div className="overflow-hidden rounded-3xl border" style={{ borderColor: ticketType.outlineColor, background: "var(--surface)" }}>
+        <div className="p-4 text-white" style={{ background: ticketType.outlineColor }}>
+          <div className="text-xs font-black uppercase tracking-[0.18em]">Stadium Badge</div>
+          <h3 className="mt-3 text-3xl font-black">{ticketType.name}</h3>
+        </div>
+        <div className="grid gap-4 p-4 sm:grid-cols-[1fr_104px]">
+          <div>{sharedHeader}</div>
+          <QrPreview color={ticketType.primaryColor} />
+        </div>
+      </div>
+    );
+  }
+
+  if (ticketType.layoutKey === "minimal-qr") {
+    return (
+      <div className="rounded-3xl border p-4 text-center" style={{ borderColor: ticketType.outlineColor, background: "var(--surface)" }}>
+        <QrPreview color={ticketType.primaryColor} large />
+        <h3 className="mt-4 text-2xl font-black">{ticketType.name}</h3>
+        <p className="text-sm font-bold ap-soft-text">{ticketType.accessType}</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="rounded-3xl border p-4" style={{ borderColor: ticketType.outlineColor, background: "var(--surface)" }}>
+      <div className="flex items-start justify-between gap-3">
+        <div>{sharedHeader}</div>
+        <QrPreview color={ticketType.primaryColor} />
+      </div>
+      <div className="mt-5 rounded-2xl border p-3 text-xs font-black uppercase tracking-[0.16em]" style={{ borderColor: ticketType.primaryColor, color: ticketType.accentColor }}>
+        Mobile Pass Layout
+      </div>
+    </div>
+  );
+}
+
+function QrPreview({ color, large = false }: { color: string; large?: boolean }) {
+  return (
+    <div className="grid place-items-center rounded-2xl bg-white p-3 shadow-sm">
+      <div className={large ? "grid size-36 place-items-center rounded-xl border-4 text-xs font-black leading-5" : "grid size-20 place-items-center rounded-xl border-4 text-xs font-black leading-5"} style={{ borderColor: color, color }}>
+        QR
+      </div>
     </div>
   );
 }

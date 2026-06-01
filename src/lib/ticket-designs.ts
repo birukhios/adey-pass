@@ -41,6 +41,33 @@ export const ticketDesigns = [
   },
 ];
 
+export const ticketLayouts = [
+  {
+    key: "mobile-pass",
+    name: "Mobile Pass",
+    description: "Tall phone-first ticket with compact QR block.",
+  },
+  {
+    key: "wide-ticket",
+    name: "Wide Ticket",
+    description: "Horizontal ticket layout for print and desktop preview.",
+  },
+  {
+    key: "badge-card",
+    name: "Badge Card",
+    description: "Staff badge style with bold access label.",
+  },
+  {
+    key: "minimal-qr",
+    name: "Minimal QR",
+    description: "Fast gate view with QR and essential identity only.",
+  },
+];
+
 export function getTicketDesign(key: string) {
   return ticketDesigns.find((design) => design.key === key) ?? ticketDesigns[0];
+}
+
+export function getTicketLayout(key: string) {
+  return ticketLayouts.find((layout) => layout.key === key) ?? ticketLayouts[0];
 }

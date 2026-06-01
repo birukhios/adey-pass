@@ -178,21 +178,22 @@ async function main() {
   }
 
   const ticketTypes = [
-    ["VVIP", "VVIP Access", 200, "vvip-blue", "#0B7DE3", "#075CAD", "#071B3D"],
-    ["VIP", "VIP Access", 1000, "vip-gold", "#D6A600", "#8A6A00", "#111418"],
-    ["Normal", "General Admission", 50000, "normal-silver", "#94A3B8", "#64748B", "#334155"],
+    ["VVIP", "VVIP Access", 200, "vvip-blue", "badge-card", "#0B7DE3", "#075CAD", "#071B3D"],
+    ["VIP", "VIP Access", 1000, "vip-gold", "mobile-pass", "#D6A600", "#8A6A00", "#111418"],
+    ["Normal", "General Admission", 50000, "normal-silver", "wide-ticket", "#94A3B8", "#64748B", "#334155"],
   ] as const;
 
-  for (const [name, accessType, quantity, designKey, primaryColor, accentColor, outlineColor] of ticketTypes) {
+  for (const [name, accessType, quantity, designKey, layoutKey, primaryColor, accentColor, outlineColor] of ticketTypes) {
     await prisma.eventTicketType.upsert({
       where: { eventId_name: { eventId: event.id, name } },
-      update: { accessType, quantity, designKey, primaryColor, accentColor, outlineColor },
+      update: { accessType, quantity, designKey, layoutKey, primaryColor, accentColor, outlineColor },
       create: {
         eventId: event.id,
         name,
         accessType,
         quantity,
         designKey,
+        layoutKey,
         primaryColor,
         accentColor,
         outlineColor,
