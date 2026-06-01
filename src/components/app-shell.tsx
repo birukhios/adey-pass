@@ -65,7 +65,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                     "group flex min-h-11 items-center gap-3 rounded-2xl px-3 text-sm font-bold transition",
                     compact && "justify-center",
                     active
-                      ? "bg-[var(--adey-charcoal)] text-white shadow-[0_14px_30px_-22px_rgba(23,27,38,0.75)]"
+                      ? "bg-[var(--adey-yellow)] text-white shadow-[0_14px_30px_-22px_rgba(59,99,244,0.85)]"
                       : "text-[var(--text-muted)] hover:bg-[var(--surface-muted)] hover:text-[var(--text-strong)]",
                   )}
                   href={item.href}
@@ -131,7 +131,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <button className="grid size-10 place-items-center rounded-xl border lg:hidden" style={{ borderColor: "var(--stroke)", background: "var(--surface)" }} aria-label="Open navigation" onClick={() => setMobileNavOpen(true)} type="button">
             <Menu size={20} />
           </button>
-          <div className="min-w-0 flex-1 text-sm font-black" style={{ color: "var(--text-strong)" }}>{currentNavLabel}</div>
+          <div className="min-w-0 flex-1 text-sm font-semibold" style={{ color: "var(--text-strong)" }}>{currentNavLabel}</div>
           <div className="hidden h-11 w-full max-w-md items-center rounded-2xl border px-4 text-sm font-semibold text-[var(--text-soft)] md:flex" style={{ borderColor: "var(--stroke)", background: "var(--surface)" }}>Search anything...</div>
           <StadiumSelector compact />
         </header>

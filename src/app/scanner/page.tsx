@@ -39,7 +39,7 @@ export default async function ScannerPage() {
   return (
     <AppShell>
       <div className="grid gap-4 sm:gap-5">
-        <section className="overflow-hidden rounded-3xl border shadow-[var(--shadow-soft)] sm:rounded-[2rem]" style={{ borderColor: "color-mix(in oklab, white 10%, transparent)", background: "linear-gradient(145deg, var(--sidebar-start), var(--sidebar-end))" }}>
+        <section className="overflow-hidden rounded-3xl border shadow-[var(--shadow-soft)] sm:rounded-[2rem]" style={{ borderColor: "color-mix(in oklab, white 10%, transparent)", background: "linear-gradient(145deg, #07122f, #172a67 58%, #2549bc)" }}>
           <div className="grid gap-4 p-3 sm:gap-5 sm:p-6 xl:grid-cols-[minmax(0,1fr)_minmax(340px,400px)]">
             <div className="min-w-0">
               <div className="grid gap-3 sm:flex sm:items-center sm:justify-between">
@@ -76,7 +76,7 @@ export default async function ScannerPage() {
           </div>
         </section>
 
-        <Card className="scroll-mt-20 text-white" id="walkin-registration" style={{ background: "linear-gradient(145deg, var(--sidebar-start), var(--sidebar-end))" }}>
+        <Card className="scroll-mt-20 text-white" id="walkin-registration" style={{ background: "linear-gradient(145deg, #07122f, #172a67 58%, #2549bc)" }}>
           <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
             <div>
               <div className="text-xs font-black uppercase tracking-[0.16em]" style={{ color: "var(--adey-yellow)" }}>Walk-in desk</div>

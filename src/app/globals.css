@@ -232,7 +232,7 @@ textarea {
   }
 
   .ap-button-primary {
-    @apply inline-flex min-h-10 items-center justify-center rounded-lg px-5 text-sm font-black transition;
+    @apply inline-flex min-h-10 items-center justify-center rounded-lg px-5 text-sm font-bold transition;
     background: var(--adey-yellow);
     color: #ffffff;
     box-shadow: 0 16px 34px -22px color-mix(in oklab, var(--adey-yellow) 88%, black);
@@ -244,7 +244,7 @@ textarea {
   }
 
   .ap-button-ghost {
-    @apply inline-flex min-h-10 items-center justify-center rounded-lg border px-5 text-sm font-black transition;
+    @apply inline-flex min-h-10 items-center justify-center rounded-lg border px-5 text-sm font-bold transition;
     border-color: var(--stroke);
     background: var(--surface-elevated);
     color: var(--text-strong);
@@ -317,9 +317,23 @@ textarea {
   }
 
   .ap-kicker {
-    @apply text-xs font-black uppercase;
+    @apply text-xs font-bold uppercase;
     color: var(--adey-yellow);
-    letter-spacing: 0.18em;
+    letter-spacing: 0.16em;
+  }
+
+  .ap-surface h1,
+  .ap-surface h2,
+  .ap-surface h3 {
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  .ap-surface .font-black,
+  .ap-muted-surface .font-black,
+  .ap-table .font-black,
+  .ap-mobile-card .font-black {
+    font-weight: 700;
   }
 
   .ap-soft-text {

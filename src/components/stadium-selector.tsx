@@ -23,12 +23,12 @@ export function StadiumSelector({ compact = false }: { compact?: boolean }) {
   }
 
   return (
-    <label className="flex min-w-0 items-center gap-2 rounded-2xl border px-3 py-2 text-xs font-black" style={{ borderColor: "var(--stroke)", background: "var(--surface)" }}>
+    <label className="flex min-w-0 items-center gap-2 rounded-xl border px-3 py-2 text-xs font-semibold" style={{ borderColor: "var(--stroke)", background: "var(--surface)" }}>
       <Building2 className="shrink-0" size={16} style={{ color: "var(--adey-yellow)" }} />
       {!compact ? <span className="hidden text-[var(--text-muted)] sm:inline">Stadium</span> : null}
       <select
         aria-label="Select stadium"
-        className="min-w-0 max-w-[145px] bg-transparent text-sm font-black outline-none sm:max-w-[220px]"
+        className="min-w-0 max-w-[145px] bg-transparent text-sm font-semibold outline-none sm:max-w-[220px]"
         onChange={(event) => update(event.target.value)}
         style={{ color: "var(--text-strong)" }}
         value={selected}

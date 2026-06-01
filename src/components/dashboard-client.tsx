@@ -22,6 +22,8 @@ export function DashboardClient({ metrics, events }: Props) {
 
   return (
     <>
+      <StadiumCarousel />
+
       <section className="overflow-hidden rounded-[2rem] p-5 text-white shadow-[0_28px_90px_-48px_rgba(39,70,199,0.8)] sm:p-6" style={{ background: "radial-gradient(circle at 80% 0%, rgba(59,99,244,0.55), transparent 32%), linear-gradient(135deg, #07122f, #172a67 56%, #2549bc)" }}>
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
@@ -61,8 +63,6 @@ export function DashboardClient({ metrics, events }: Props) {
           })}
         </div>
       </section>
-
-      <StadiumCarousel />
     </>
   );
 }

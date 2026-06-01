@@ -18,10 +18,10 @@ export function AdeyLogo({ compact = false, className, theme = "dark" }: { compa
       </div>
       {!compact && (
         <div>
-          <div className={cn("text-xl font-black tracking-tight", titleClass)}>
-            Afro<span className="text-[var(--adey-yellow)]">pay</span>
+          <div className={cn("text-lg font-bold leading-tight tracking-tight", titleClass)}>
+            Stadium
           </div>
-          <div className={cn("text-xs font-medium", subtitleClass)}>Stadium Management</div>
+          <div className={cn("text-xs font-semibold leading-tight", subtitleClass)}>Management System</div>
         </div>
       )}
     </div>

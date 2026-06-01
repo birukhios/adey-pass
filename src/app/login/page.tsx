@@ -17,7 +17,7 @@ export default function LoginPage() {
           </div>
 
           <div className="relative z-10 mt-20 max-w-xl">
-            <p className="text-xs font-black uppercase tracking-[0.18em] text-blue-200">Afropay Stadium Suite</p>
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-blue-200">Stadium Management System</p>
             <h1 className="mt-5 text-6xl font-medium leading-[0.96] tracking-tight">Command center for stadium event days.</h1>
             <p className="mt-6 max-w-md text-base font-semibold leading-8 text-white/62">
               Select a stadium, manage invitations, verify Fayda IDs, issue QR tickets, and run gate scanning from one operations surface.
@@ -67,7 +67,7 @@ export default function LoginPage() {
               <div>
                 <p className="ap-kicker">Welcome Back</p>
                 <h2 className="mt-3 text-4xl font-black leading-tight tracking-tight" style={{ color: "var(--text-strong)" }}>
-                  Log in to Afropay Stadium
+                  Log in to Stadium Management
                 </h2>
               </div>
               <div className="grid size-14 place-items-center rounded-2xl" style={{ background: "var(--surface-muted)", color: "var(--text-strong)" }}>
