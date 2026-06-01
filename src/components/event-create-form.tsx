@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { stadiumOptions } from "@/components/stadium-selector";
 
 type SecurityDefaults = {
   idVerificationRequiredByDefault: boolean;
@@ -20,7 +21,7 @@ export function EventCreateForm({
   const router = useRouter();
   const [form, setForm] = useState({
     name: "",
-    venueName: "",
+    venueName: stadiumOptions[0],
     date: "",
     startTime: "",
     endTime: "",
@@ -61,7 +62,7 @@ export function EventCreateForm({
     <div>
       <div className="grid gap-4 sm:grid-cols-2 lg:gap-5">
         <label className="ap-field-label">Event name<input className="ap-input" onChange={(e) => setForm((s) => ({ ...s, name: e.target.value }))} value={form.name} /></label>
-        <label className="ap-field-label">Venue name<input className="ap-input" onChange={(e) => setForm((s) => ({ ...s, venueName: e.target.value }))} value={form.venueName} /></label>
+        <label className="ap-field-label">Stadium<select className="ap-input" onChange={(e) => setForm((s) => ({ ...s, venueName: e.target.value }))} value={form.venueName}>{stadiumOptions.map((stadium) => <option key={stadium}>{stadium}</option>)}</select></label>
         <label className="ap-field-label">Event date<input className="ap-input" onChange={(e) => setForm((s) => ({ ...s, date: e.target.value }))} type="date" value={form.date} /></label>
         <label className="ap-field-label">Start time<input className="ap-input" onChange={(e) => setForm((s) => ({ ...s, startTime: e.target.value }))} type="time" value={form.startTime} /></label>
         <label className="ap-field-label">End time<input className="ap-input" onChange={(e) => setForm((s) => ({ ...s, endTime: e.target.value }))} type="time" value={form.endTime} /></label>

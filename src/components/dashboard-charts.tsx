@@ -3,7 +3,7 @@
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { Badge, Card } from "@/components/ui";
 
-const colors = ["#FFD100", "#111418", "#5A5F66", "#94A3B8", "#22C55E"];
+const colors = ["#0B7DE3", "#071B3D", "#5A5F66", "#94A3B8", "#22C55E"];
 
 type Props = {
   trendData: Array<{ day: string; registrations: number; checkins: number }>;

@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Adey Pass",
-  description: "Smart Event Access & Registration",
+  title: "Stadium Management System",
+  description: "Stadium access, invitation, ticketing, QR scanning, and reporting",
 };
 
 export default function RootLayout({

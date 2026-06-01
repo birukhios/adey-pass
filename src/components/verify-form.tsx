@@ -69,7 +69,7 @@ export function VerifyForm({ token }: { token: string }) {
       <label className="grid gap-2 text-sm font-black" style={{ color: "var(--text-strong)" }}>Email optional<input className="ap-input" onChange={(event) => setEmail(event.target.value)} placeholder="guest@example.com" type="email" value={email} /></label>
       <label className="grid gap-2 text-sm font-black" style={{ color: "var(--text-strong)" }}>Current address<input className="ap-input" onChange={(event) => setCurrentAddress(event.target.value)} placeholder="Addis Ababa, Ethiopia" value={currentAddress} /></label>
       <label className="flex gap-3 rounded-2xl p-4 text-sm font-bold leading-6" style={{ background: "var(--surface-muted)", color: "var(--text-strong)" }}>
-        <input className="mt-1 size-4 accent-[#FFD100]" onChange={(event) => setConsent(event.target.checked)} type="checkbox" />
+        <input className="mt-1 size-4 accent-[var(--adey-yellow)]" onChange={(event) => setConsent(event.target.checked)} type="checkbox" />
         I confirm that the information I provided is correct and I consent to identity verification for event access.
       </label>
       {message ? <div className="rounded-2xl border p-3 text-sm font-bold" style={{ borderColor: "var(--stroke)", background: "var(--surface-muted)", color: "var(--text-strong)" }}>{message}</div> : null}

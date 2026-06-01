@@ -106,7 +106,7 @@ export function BookingTicketFlow({
     ctx.fillRect(0, 0, width, height);
 
     // Yellow frame
-    ctx.fillStyle = "#FFD100";
+    ctx.fillStyle = "#0B7DE3";
     ctx.fillRect(38, 38, width - 76, height - 76);
 
     // Inner white body
@@ -116,9 +116,9 @@ export function BookingTicketFlow({
     // Branding header
     ctx.fillStyle = "#111418";
     ctx.font = "700 46px Arial";
-    ctx.fillText("Adey Pass", 140, 116);
+    ctx.fillText("Stadium Management System", 140, 116);
     ctx.font = "600 24px Arial";
-    ctx.fillText("Smart Event Access & Registration", 140, 150);
+    ctx.fillText("Stadium Access & Gate Management", 140, 150);
 
     // Content
     ctx.fillStyle = "#6B7280";
@@ -204,7 +204,7 @@ export function BookingTicketFlow({
             <label className="grid gap-1 text-sm font-bold text-slate-700">
               Full name
               <input
-                className="h-11 rounded-lg border border-slate-200 px-3 outline-none focus:ring-4 focus:ring-[#FFD100]/20"
+                className="h-11 rounded-lg border border-slate-200 px-3 outline-none focus:ring-4 focus:ring-[color-mix(in_oklab,var(--adey-yellow)_20%,transparent)]"
                 onChange={(event) => setFullName(event.target.value)}
                 value={fullName}
               />
@@ -212,7 +212,7 @@ export function BookingTicketFlow({
             <label className="grid gap-1 text-sm font-bold text-slate-700">
               Company name
               <input
-                className="h-11 rounded-lg border border-slate-200 px-3 outline-none focus:ring-4 focus:ring-[#FFD100]/20"
+                className="h-11 rounded-lg border border-slate-200 px-3 outline-none focus:ring-4 focus:ring-[color-mix(in_oklab,var(--adey-yellow)_20%,transparent)]"
                 onChange={(event) => setCompanyName(event.target.value)}
                 value={companyName}
               />
@@ -220,13 +220,13 @@ export function BookingTicketFlow({
             <label className="grid gap-1 text-sm font-bold text-slate-700">
               Fayda number
               <input
-                className="h-11 rounded-lg border border-slate-200 px-3 outline-none focus:ring-4 focus:ring-[#FFD100]/20"
+                className="h-11 rounded-lg border border-slate-200 px-3 outline-none focus:ring-4 focus:ring-[color-mix(in_oklab,var(--adey-yellow)_20%,transparent)]"
                 onChange={(event) => setFaydaNumber(event.target.value)}
                 value={faydaNumber}
               />
             </label>
             <label className="flex items-start gap-2 text-sm font-bold text-slate-700">
-              <input checked={consent} onChange={(event) => setConsent(event.target.checked)} type="checkbox" className="mt-1 size-4 accent-[#FFD100]" />
+              <input checked={consent} onChange={(event) => setConsent(event.target.checked)} type="checkbox" className="mt-1 size-4 accent-[var(--adey-yellow)]" />
               I confirm this information is correct and I consent to identity verification for event access.
             </label>
           </div>
@@ -248,9 +248,9 @@ export function BookingTicketFlow({
             <div className="mt-4 rounded-lg border border-emerald-200 bg-emerald-50 p-4">
               <p className="text-sm font-black text-emerald-700">Verified. Your ticket card is ready.</p>
               <div className="mt-4 rounded-xl bg-[#0B1017] p-4">
-                <div className="rounded-xl bg-[#FFD100] p-4">
-                  <div className="text-xl font-black text-[#111418]">Adey Pass</div>
-                  <div className="text-xs font-bold text-[#111418]">Smart Event Access & Registration</div>
+                <div className="rounded-xl bg-[var(--adey-yellow)] p-4">
+                  <div className="text-xl font-black text-[var(--adey-charcoal)]">Stadium Management System</div>
+                  <div className="text-xs font-bold text-[var(--adey-charcoal)]">Stadium Access & Gate Management</div>
                   <div className="mt-4 rounded-lg bg-white p-4">
                     <div className="text-xs font-black uppercase tracking-[0.16em] text-slate-500">{eventName}</div>
                     <h3 className="mt-2 text-2xl font-black text-slate-900">{fullName}</h3>

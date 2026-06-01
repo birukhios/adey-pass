@@ -167,7 +167,7 @@ export function WalkinRegistrationForm({ events }: { events: Array<{ id: string;
           />
         </label>
         <button
-          className="inline-flex h-11 items-center justify-center rounded-xl bg-[#FFD100] px-4 text-sm font-black text-[#111418] disabled:opacity-50 sm:mt-7"
+          className="inline-flex h-11 items-center justify-center rounded-xl bg-[var(--adey-yellow)] px-4 text-sm font-black text-[var(--adey-charcoal)] disabled:opacity-50 sm:mt-7"
           disabled={otpStatus !== "sent" || !otp.trim()}
           onClick={verifyOtp}
           type="button"

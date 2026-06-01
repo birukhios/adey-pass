@@ -12,9 +12,9 @@ export const guestCsvHeaders = [
 ] as const;
 
 export const guestCsvTemplate = `${guestCsvHeaders.join(",")}
-Aster Girma,+251911111111,aster@example.com,VIP,Adey Group,Board Guest,Adey Launch Showcase,Needs protocol escort
-Mikael Tadesse,+251922222222,mikael@example.com,Media,Addis Daily,Reporter,Adey Launch Showcase,Camera access
-Liya Kebede,+251933333333,liya@example.com,Staff,Adey Ops,Operations Lead,Adey Launch Showcase,Backstage access
+Aster Girma,+251911111111,aster@example.com,VIP,Stadium Operations,Board Guest,National Stadium Inauguration,Needs protocol escort
+Mikael Tadesse,+251922222222,mikael@example.com,Media,Addis Daily,Reporter,National Stadium Inauguration,Camera access
+Liya Kebede,+251933333333,liya@example.com,Staff,Stadium Ops,Operations Lead,National Stadium Inauguration,Backstage access
 `;
 
 export const allowedGuestCategories = [

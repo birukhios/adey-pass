@@ -54,7 +54,7 @@ async function main() {
   }
 
   const roles = [
-    ["super_admin", "Super Admin", "Full access to Adey Pass"],
+    ["super_admin", "Super Admin", "Full access to Stadium Management System"],
     ["event_admin", "Event Admin", "Manage events, guests, tickets, scanner, and reports"],
     ["guest_manager", "Guest Manager", "Manage invited guests and ticket links"],
     ["gate_officer", "Gate Officer", "Scan tickets and register allowed walk-ins"],
@@ -105,7 +105,7 @@ async function main() {
   const superAdmin = await prisma.user.findUniqueOrThrow({ where: { email: "super@adeypass.local" } });
 
   const categories = [
-    ["VIP", "VIP Access", "#FFD100"],
+    ["VIP", "VIP Access", "#0B7DE3"],
     ["Media", "Media Access", "#5A5F66"],
     ["Staff", "Staff Access", "#111418"],
     ["Sponsor", "VIP Access", "#F59E0B"],
@@ -140,9 +140,9 @@ async function main() {
   }
 
   const templateData = {
-    name: "Adey Standard",
+    name: "Stadium Standard",
     isDefault: true,
-    layoutJson: { accent: "#FFD100", mode: "registration-only", footer: "Show this QR code at the gate." },
+    layoutJson: { accent: "#0B7DE3", mode: "registration-only", footer: "Show this QR code at the selected stadium gate." },
   };
   const existingTemplate = await prisma.ticketTemplate.findFirst({ where: { name: templateData.name } });
   const template = existingTemplate
@@ -150,8 +150,8 @@ async function main() {
     : await prisma.ticketTemplate.create({ data: templateData });
 
   const eventData = {
-    name: "Adey Launch Showcase",
-    description: "Registration-only launch event with VIP, media, staff, and walk-in access.",
+    name: "National Stadium Inauguration",
+    description: "Registration-only stadium event with VIP, media, staff, and walk-in access.",
     date: new Date("2026-06-20T00:00:00.000Z"),
     startTime: "18:00",
     endTime: "22:00",
@@ -178,9 +178,9 @@ async function main() {
   }
 
   const sampleGuests = [
-    ["Aster Girma", "+251911111111", "VIP", "Adey Group", "Board Guest", "INVITED"],
+    ["Aster Girma", "+251911111111", "VIP", "Stadium Operations", "Board Guest", "INVITED"],
     ["Mikael Tadesse", "+251922222222", "Media", "Addis Daily", "Reporter", "INVITED"],
-    ["Liya Kebede", "+251933333333", "Staff", "Adey Ops", "Operations Lead", "INVITED"],
+    ["Liya Kebede", "+251933333333", "Staff", "Stadium Ops", "Operations Lead", "INVITED"],
     ["Abel Fikru", "+251944444444", "Walk-In", "", "", "WALK_IN"],
   ] as const;
 
@@ -237,14 +237,22 @@ async function main() {
 
   await prisma.appSetting.upsert({
     where: { key: "branding" },
-    update: {},
+    update: {
+      value: {
+        appName: "Stadium Management System",
+        primaryColor: "#0B7DE3",
+        organizationName: "Stadium Operations",
+        ticketFooterText: "Stadium Access & Gate Management",
+      },
+      updatedById: superAdmin.id,
+    },
     create: {
       key: "branding",
       value: {
-        appName: "Adey Pass",
-        primaryColor: "#FFD100",
-        organizationName: "Adey Pass",
-        ticketFooterText: "Smart Event Access & Registration",
+        appName: "Stadium Management System",
+        primaryColor: "#0B7DE3",
+        organizationName: "Stadium Operations",
+        ticketFooterText: "Stadium Access & Gate Management",
       },
       updatedById: superAdmin.id,
     },

@@ -10,7 +10,7 @@ export default async function EventsPage() {
   const events = await getEventsList();
   return (
     <AppShell>
-      <PageHeader title="Events" description="Create and manage registration-only events. Gates are optional; seats are intentionally out of scope for this MVP." actionHref="/events/new" actionLabel="Create Event" />
+      <PageHeader title="Events" description="Create and manage stadium events. Gates are optional; seats are intentionally out of scope for this MVP." actionHref="/events/new" actionLabel="Create Event" />
       <div className="mb-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
         <SelectField label="Status" options={["All statuses", "Draft", "Active", "Closed", "Archived"]} />
         <SelectField label="Gate usage" options={["All events", "Gates enabled", "No gates"]} />

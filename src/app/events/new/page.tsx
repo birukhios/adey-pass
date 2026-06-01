@@ -21,7 +21,7 @@ export default async function NewEventPage() {
 
   return (
     <AppShell>
-      <PageHeader title="Create Event" description="The working mode for this version is Registration-Only. Seated and hybrid event architecture can be added later without forcing seats into this flow." />
+      <PageHeader title="Create Event" description="Create registration-only stadium events. Pick the stadium first, then configure gates, verification, and walk-ins." />
       <Card>
         <EventCreateForm
           gates={gates.map((gate) => ({ id: gate.id, name: gate.name }))}

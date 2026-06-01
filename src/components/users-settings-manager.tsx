@@ -147,7 +147,7 @@ export function UsersSettingsManager({
               <div className="mt-3 grid gap-2 sm:grid-cols-2">
                 {permissionCatalog.map((permissionKey) => (
                   <label className="flex items-center gap-2 text-sm font-semibold" style={{ color: "var(--text-strong)" }} key={`create-${permissionKey}`}>
-                    <input checked={createPermissions.includes(permissionKey)} className="size-4 accent-[#FFD100]" onChange={() => toggleCreatePermission(permissionKey)} type="checkbox" />
+                    <input checked={createPermissions.includes(permissionKey)} className="size-4 accent-[var(--adey-yellow)]" onChange={() => toggleCreatePermission(permissionKey)} type="checkbox" />
                     {permissionKey}
                   </label>
                 ))}
@@ -286,7 +286,7 @@ export function UsersSettingsManager({
                 <label className="flex items-center gap-2 text-sm font-semibold" style={{ color: "var(--text-strong)" }} key={permissionKey}>
                   <input
                     checked={draftPermissions.includes(permissionKey)}
-                    className="size-4 accent-[#FFD100]"
+                    className="size-4 accent-[var(--adey-yellow)]"
                     onChange={() => toggleDraftPermission(permissionKey)}
                     type="checkbox"
                   />

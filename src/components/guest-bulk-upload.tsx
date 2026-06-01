@@ -609,7 +609,7 @@ function GuestTable({
       {guests.map((guest) => (
         <article className="ap-mobile-card" key={guest.id}>
           <div className="flex items-start gap-3">
-            <input checked={selectedGuestIds.includes(guest.id)} className="mt-1 size-4 shrink-0 accent-[#FFD100]" onChange={() => onSelect?.(guest.id)} type="checkbox" />
+            <input checked={selectedGuestIds.includes(guest.id)} className="mt-1 size-4 shrink-0 accent-[var(--adey-yellow)]" onChange={() => onSelect?.(guest.id)} type="checkbox" />
             <div className="min-w-0 flex-1">
               <div className="break-words font-black">{guest.name}</div>
               <div className="mt-1 text-xs font-semibold ap-soft-text">{guest.phone}</div>
@@ -650,7 +650,7 @@ function GuestTable({
           {guests.map((guest) => (
             <tr key={guest.id}>
               <td>
-                <input checked={selectedGuestIds.includes(guest.id)} className="size-4 accent-[#FFD100]" onChange={() => onSelect?.(guest.id)} type="checkbox" />
+                <input checked={selectedGuestIds.includes(guest.id)} className="size-4 accent-[var(--adey-yellow)]" onChange={() => onSelect?.(guest.id)} type="checkbox" />
               </td>
               <td>
                 <div className="font-black">{guest.name}</div>

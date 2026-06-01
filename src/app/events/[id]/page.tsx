@@ -63,7 +63,7 @@ export default async function EventDetailPage({ params }: Props) {
                   <div className="mb-4" key={label}>
                     <div className="mb-1 flex justify-between text-sm font-bold"><span>{label}</span><span>{value}</span></div>
                     <div className="h-3 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
-                      <div className="h-full rounded-full bg-[#FFD100]" style={{ width: `${Math.min(100, total ? (Number(value) / Number(total)) * 100 : 0)}%` }} />
+                      <div className="h-full rounded-full bg-[var(--adey-yellow)]" style={{ width: `${Math.min(100, total ? (Number(value) / Number(total)) * 100 : 0)}%` }} />
                     </div>
                   </div>
                 ))}

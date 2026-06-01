@@ -40,11 +40,11 @@ export async function POST(request: Request) {
   const user = await prisma.$transaction(async (tx) => {
     const role = await tx.role.upsert({
       where: { systemKey: "super_admin" },
-      update: { name: "Super Admin", description: "Full access to Adey Pass" },
+      update: { name: "Super Admin", description: "Full access to Stadium Management System" },
       create: {
         systemKey: "super_admin",
         name: "Super Admin",
-        description: "Full access to Adey Pass",
+        description: "Full access to Stadium Management System",
       },
     });
 

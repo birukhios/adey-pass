@@ -5,12 +5,12 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --adey-yellow: #ffd100;
-  --adey-charcoal: #111418;
+  --adey-yellow: #0b7de3;
+  --adey-charcoal: #071b3d;
   --adey-warm-gray: #5a5f66;
   --adey-light-gray: #e6e8ec;
-  --adey-yellow-soft: #fff6bf;
-  --adey-yellow-deep: #b58b00;
+  --adey-yellow-soft: #dff0ff;
+  --adey-yellow-deep: #075cad;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -44,8 +44,8 @@
   --text-strong: #0f172a;
   --text-muted: #6b7280;
   --text-soft: #94a3b8;
-  --sidebar-start: #050812;
-  --sidebar-end: #0e1422;
+  --sidebar-start: #06142d;
+  --sidebar-end: #082450;
   --shadow-soft: 0 18px 50px -34px rgba(15, 23, 42, 0.55);
   --shadow-card: 0 1px 1px rgba(15, 23, 42, 0.04), 0 14px 36px -28px rgba(15, 23, 42, 0.4);
   --sidebar: oklch(0.985 0 0);
@@ -109,7 +109,7 @@ body {
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
   background:
     radial-gradient(circle at top left, color-mix(in oklab, var(--adey-yellow) 18%, transparent), transparent 34%),
-    linear-gradient(135deg, color-mix(in oklab, var(--surface) 88%, var(--adey-yellow) 12%), var(--app-bg) 46%, color-mix(in oklab, var(--app-bg) 94%, var(--adey-charcoal) 6%));
+    linear-gradient(135deg, color-mix(in oklab, var(--surface) 90%, var(--adey-yellow) 10%), var(--app-bg) 46%, color-mix(in oklab, var(--app-bg) 94%, var(--adey-charcoal) 6%));
   color: var(--text-strong);
   min-height: 100vh;
 }

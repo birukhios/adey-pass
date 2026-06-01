@@ -21,7 +21,7 @@ export function ProfileSettingsForm({ initial }: { initial: { name: string; emai
 
   return (
     <>
-      <div className="mb-6 grid size-24 place-items-center rounded-full bg-[#FFD100] text-2xl font-black shadow-[0_12px_24px_-16px_rgba(255,209,0,0.9)]">
+      <div className="mb-6 grid size-24 place-items-center rounded-full bg-[var(--adey-yellow)] text-2xl font-black shadow-[0_12px_24px_-16px_rgba(11,125,227,0.62)]">
         {form.name.split(" ").map((part) => part[0]).join("").slice(0, 2).toUpperCase()}
       </div>
       <div className="grid gap-4 sm:grid-cols-2 lg:gap-5">

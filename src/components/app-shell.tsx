@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import { PanelLeftClose, PanelLeftOpen, Menu, Moon, Sun, X } from "lucide-react";
 import { AdeyLogo } from "@/components/adey-logo";
 import { LogoutButton } from "@/components/auth/logout-button";
+import { StadiumSelector } from "@/components/stadium-selector";
 import { navItems } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 
@@ -23,7 +24,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     }
     return window.localStorage.getItem("adey-theme") === "dark";
   });
-  const displayName = session?.user?.name ?? "Adey Admin";
+  const displayName = session?.user?.name ?? "Stadium Admin";
   const displayEmail = session?.user?.email ?? "admin@adeypass.local";
   const initials = displayName
     .split(" ")
@@ -32,7 +33,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     .slice(0, 2)
     .toUpperCase();
   const currentNavLabel =
-    allowedNavItems.find((item) => pathname === item.href || pathname.startsWith(`${item.href}/`))?.label ?? "Adey Pass";
+    allowedNavItems.find((item) => pathname === item.href || pathname.startsWith(`${item.href}/`))?.label ?? "Stadium Management System";
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", isDark);
@@ -119,7 +120,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <button className="grid size-10 place-items-center rounded-xl border lg:hidden" style={{ borderColor: "var(--stroke)", background: "var(--surface)" }} aria-label="Open navigation" onClick={() => setMobileNavOpen(true)} type="button">
             <Menu size={20} />
           </button>
-          <div className="text-sm font-black" style={{ color: "var(--text-strong)" }}>{currentNavLabel}</div>
+          <div className="min-w-0 flex-1 text-sm font-black" style={{ color: "var(--text-strong)" }}>{currentNavLabel}</div>
+          <StadiumSelector compact />
         </header>
         <main className="page-enter min-h-[calc(100vh-56px)] px-3 py-4 sm:px-4 sm:py-6 md:px-8 lg:min-h-[calc(100vh-64px)]">
           <div className="ap-page">{children}</div>

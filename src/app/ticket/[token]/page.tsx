@@ -17,7 +17,7 @@ export default async function PublicTicketPage({ params }: Props) {
 
   if (!ticket) {
     return (
-      <main className="min-h-screen bg-[#F4F6FB] px-4 py-6 text-[#111418]">
+      <main className="min-h-screen bg-[#F4F6FB] px-4 py-6 text-[var(--adey-charcoal)]">
         <div className="mx-auto max-w-md rounded-xl border border-[#E7EBF3] bg-white p-6">
           Ticket not found.
         </div>
@@ -28,11 +28,11 @@ export default async function PublicTicketPage({ params }: Props) {
   const verificationPending = ticket.event.idVerificationRequired && !["VERIFIED", "MANUALLY_APPROVED"].includes(ticket.guest.idVerification?.status ?? "NOT_STARTED");
 
   return (
-    <main className="min-h-screen bg-[#F4F6FB] px-4 py-6 text-[#111418]">
+    <main className="min-h-screen bg-[#F4F6FB] px-4 py-6 text-[var(--adey-charcoal)]">
       <div className="mx-auto max-w-md">
         <div className="rounded-lg bg-[#111418] p-5"><AdeyLogo /></div>
-        <section className="mt-6 overflow-hidden rounded-2xl border border-[#E7EBF3] bg-white text-[#111418] shadow-[0_24px_48px_-24px_rgba(17,20,24,0.35)]">
-          <div className="bg-[#FFD100] p-6">
+        <section className="mt-6 overflow-hidden rounded-2xl border border-[#E7EBF3] bg-white text-[var(--adey-charcoal)] shadow-[0_24px_48px_-24px_rgba(17,20,24,0.35)]">
+          <div className="bg-[var(--adey-yellow)] p-6">
             <p className="text-xs font-black uppercase tracking-[0.16em]">{ticket.event.name}</p>
             <h1 className="mt-2 text-3xl font-black">{ticket.guest.fullName}</h1>
             <p className="mt-1 text-sm font-bold">{ticket.accessType} · {ticket.guest.organization ?? "Guest"}</p>
@@ -48,7 +48,7 @@ export default async function PublicTicketPage({ params }: Props) {
             </div>
             {verificationPending ? (
               <>
-                <p className="mt-5 rounded-lg bg-[#FFD100]/20 p-4 text-sm font-bold leading-6 text-[#6B5200]">Please verify your National/Fayda ID before arrival.</p>
+                <p className="mt-5 rounded-lg bg-[var(--adey-yellow)]/20 p-4 text-sm font-bold leading-6 text-[var(--adey-yellow-deep)]">Please verify your National/Fayda ID before arrival.</p>
                 <Link className="mt-4 flex h-12 items-center justify-center rounded-lg bg-[#111418] text-sm font-black text-white" href={`/verify/${ticket.id}`}>Verify National/Fayda ID</Link>
               </>
             ) : (

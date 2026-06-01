@@ -14,12 +14,12 @@ function readValue(value: string | string[] | undefined, fallback: string) {
 export default async function BookingPage({ params, searchParams }: BookingPageProps) {
   const [{ token }, query] = await Promise.all([params, searchParams]);
 
-  const eventName = readValue(query.e, "Adey Event");
+  const eventName = readValue(query.e, "Stadium Event");
   const accessType = readValue(query.a, "General Admission");
-  const logoText = readValue(query.logo, "Adey Pass");
-  const footerText = readValue(query.footer, "Smart Event Access & Registration");
+  const logoText = readValue(query.logo, "Stadium Management System");
+  const footerText = readValue(query.footer, "Stadium Access & Gate Management");
   const ctaLabel = readValue(query.cta, "Book Your Ticket");
-  const primary = readValue(query.p, "#FFD100");
+  const primary = readValue(query.p, "#0B7DE3");
   const background = readValue(query.bg, "#111418");
   const text = readValue(query.text, "#FFFFFF");
   const accent = readValue(query.acc, "#5A5F66");

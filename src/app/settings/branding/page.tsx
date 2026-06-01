@@ -14,20 +14,20 @@ export default async function BrandingSettingsPage() {
 
   return (
     <AppShell>
-      <PageHeader title="Branding Settings" description="Adey Pass visual identity, ticket footer text, logo placeholder, and primary color." />
+      <PageHeader title="Branding Settings" description="Stadium Management System visual identity, ticket footer text, logo placeholder, and primary color." />
       <SettingsTabs />
       <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(280px,360px)] xl:gap-6">
         <Card>
           <BrandingSettingsForm
             initial={{
-              appName: value.appName ?? "Adey Pass",
-              organizationName: value.organizationName ?? "Adey Pass",
-              primaryColor: value.primaryColor ?? "#FFD100",
-              ticketFooterText: value.ticketFooterText ?? "Smart Event Access & Registration",
+              appName: value.appName ?? "Stadium Management System",
+              organizationName: value.organizationName ?? "Stadium Operations",
+              primaryColor: value.primaryColor ?? "#0B7DE3",
+              ticketFooterText: value.ticketFooterText ?? "Stadium Access & Gate Management",
             }}
           />
         </Card>
-        <Card className="bg-[#111418]"><AdeyLogo /><div className="mt-6 rounded-lg bg-[#FFD100] p-5 text-[#111418] sm:p-6"><h2 className="text-xl font-black sm:text-2xl">Ticket Preview</h2><p className="mt-2 text-sm font-bold">Smart Event Access & Registration</p></div></Card>
+        <Card className="bg-[#071B3D]"><AdeyLogo /><div className="mt-6 rounded-lg bg-[var(--adey-yellow)] p-5 text-white sm:p-6"><h2 className="text-xl font-black sm:text-2xl">Ticket Preview</h2><p className="mt-2 text-sm font-bold">Stadium Access & Gate Management</p></div></Card>
       </div>
     </AppShell>
   );

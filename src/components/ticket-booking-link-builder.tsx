@@ -16,8 +16,8 @@ type TicketPreset = {
 };
 
 const presets: TicketPreset[] = [
-  { id: "general", label: "General", accessType: "General Admission", primary: "#FFD100", background: "#111418", surface: "#FFFFFF", text: "#111418", accent: "#5A5F66" },
-  { id: "vip", label: "VIP", accessType: "VIP Access", primary: "#F4B000", background: "#0F0F0F", surface: "#FFF8D9", text: "#111418", accent: "#8A6A00" },
+  { id: "general", label: "General", accessType: "General Admission", primary: "#0B7DE3", background: "#071B3D", surface: "#FFFFFF", text: "#071B3D", accent: "#64748B" },
+  { id: "vip", label: "VIP", accessType: "VIP Access", primary: "#0B7DE3", background: "#06142D", surface: "#EAF5FF", text: "#071B3D", accent: "#075CAD" },
   { id: "media", label: "Media", accessType: "Media Access", primary: "#38BDF8", background: "#0F172A", surface: "#F8FAFC", text: "#0F172A", accent: "#2563EB" },
   { id: "staff", label: "Staff", accessType: "Staff Access", primary: "#22C55E", background: "#052E1A", surface: "#F0FDF4", text: "#052E1A", accent: "#166534" },
   { id: "protocol", label: "Protocol", accessType: "Protocol Access", primary: "#A855F7", background: "#1E1233", surface: "#FAF5FF", text: "#1E1233", accent: "#6B21A8" },
@@ -35,14 +35,14 @@ function slugify(value: string) {
 }
 
 export function TicketBookingLinkBuilder() {
-  const [eventName, setEventName] = useState("Adey Launch Showcase");
+  const [eventName, setEventName] = useState("National Stadium Inauguration");
   const [venue, setVenue] = useState("National Stadium");
   const [eventDate, setEventDate] = useState("May 25, 2026");
   const [eventTime, setEventTime] = useState("7:30 PM");
   const [guestName, setGuestName] = useState("Guest Name");
-  const [organization, setOrganization] = useState("Adey Group");
-  const [logoText, setLogoText] = useState("Adey Pass");
-  const [footerText, setFooterText] = useState("Show this QR code at the gate.");
+  const [organization, setOrganization] = useState("Stadium Operations");
+  const [logoText, setLogoText] = useState("Stadium Management System");
+  const [footerText, setFooterText] = useState("Show this QR code at the selected stadium gate.");
   const [ctaLabel, setCtaLabel] = useState("Book Your Ticket");
   const [instructionText, setInstructionText] = useState("Verify your Fayda ID, then download your QR ticket.");
   const [layout, setLayout] = useState<(typeof layouts)[number]>("Mobile Pass");

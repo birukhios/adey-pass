@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { BadgeCheck, CalendarDays, QrCode, ShieldCheck } from "lucide-react";
+import { BadgeCheck, Building2, CalendarDays, QrCode, ShieldCheck } from "lucide-react";
 import { AdeyLogo } from "@/components/adey-logo";
 import { LoginForm } from "@/components/auth/login-form";
 
@@ -13,23 +13,23 @@ export default function LoginPage() {
           <div className="absolute bottom-10 left-10 right-10 h-52 rounded-[2rem] border border-white/10 bg-white/[0.04]" />
           <div className="relative z-10 flex items-center justify-between">
             <AdeyLogo theme="dark" />
-            <div className="rounded-full border border-white/10 bg-white/[0.06] px-3 py-1.5 text-xs font-black text-white/70">MVP workspace</div>
+            <div className="rounded-full border border-white/10 bg-white/[0.06] px-3 py-1.5 text-xs font-black text-white/70">Stadium workspace</div>
           </div>
 
           <div className="relative z-10 mt-20 max-w-xl">
-            <p className="ap-kicker">Adey Pass Platform</p>
-            <h1 className="mt-5 text-6xl font-black leading-[0.96] tracking-tight">Premium access control for real event days.</h1>
+            <p className="ap-kicker">Stadium Management System</p>
+            <h1 className="mt-5 text-6xl font-black leading-[0.96] tracking-tight">Command center for stadium event days.</h1>
             <p className="mt-6 max-w-md text-base font-semibold leading-8 text-white/62">
-              Registration-only events, Fayda verification, QR ticketing, and scanner workflows in one calm operations surface.
+              Select a stadium, manage invitations, verify Fayda IDs, issue QR tickets, and run gate scanning from one operations surface.
             </p>
           </div>
 
           <div className="relative z-10 mt-auto grid gap-4">
             <div className="grid grid-cols-3 gap-3">
               {[
+                { icon: Building2, label: "Stadiums", value: "5" },
                 { icon: QrCode, label: "Tickets", value: "12.1K" },
                 { icon: BadgeCheck, label: "Checked In", value: "8.3K" },
-                { icon: ShieldCheck, label: "Verified", value: "98%" },
               ].map((item) => {
                 const Icon = item.icon;
                 return (
@@ -47,8 +47,8 @@ export default function LoginPage() {
                   <CalendarDays size={22} />
                 </div>
                 <div>
-                  <div className="text-sm font-black">Adey Launch Showcase</div>
-                  <div className="text-xs font-bold text-white/48">Live registration and scanner access</div>
+                  <div className="text-sm font-black">National Stadium Inauguration</div>
+                  <div className="text-xs font-bold text-white/48">Live registration and gate scanner access</div>
                 </div>
               </div>
               <div className="mt-5 h-2 overflow-hidden rounded-full bg-white/10">
@@ -67,7 +67,7 @@ export default function LoginPage() {
               <div>
                 <p className="ap-kicker">Welcome Back</p>
                 <h2 className="mt-3 text-4xl font-black leading-tight tracking-tight" style={{ color: "var(--text-strong)" }}>
-                  Log in
+                  Log in to Stadium Ops
                 </h2>
               </div>
               <div className="grid size-14 place-items-center rounded-2xl" style={{ background: "var(--surface-muted)", color: "var(--text-strong)" }}>
@@ -86,7 +86,7 @@ export default function LoginPage() {
             </p>
           </div>
           <div className="mt-5 grid grid-cols-3 gap-3">
-            {["Fayda ready", "QR secure", "Role based"].map((label) => (
+            {["Stadium ready", "QR secure", "Role based"].map((label) => (
               <div className="rounded-2xl border px-3 py-4 text-center text-xs font-black" key={label} style={{ borderColor: "var(--stroke)", background: "var(--surface)" }}>
                 {label}
               </div>

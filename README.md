@@ -1,6 +1,6 @@
-# Adey Pass
+# Stadium Management System
 
-Adey Pass is a production-ready prototype for event registration, special guest invitations, secure QR ticket links, National/Fayda ID verification workflow, gate check-in, walk-in registration, dashboard reporting, and role-based admin settings.
+Stadium Management System is a production-ready prototype for event registration, special guest invitations, secure QR ticket links, National/Fayda ID verification workflow, gate check-in, walk-in registration, dashboard reporting, and role-based admin settings.
 
 The MVP is intentionally focused on registration-only events. Seat maps, seat numbers, and full stadium seating assignment are not part of this first version. Gates are configurable and optional.
 
@@ -93,7 +93,7 @@ The start command pushes the Prisma schema and seeds the demo users, so the acco
 
 ## Implemented Foundation
 
-- Adey Pass brand system and app shell
+- Stadium Management System brand system and app shell
 - Credentials authentication with NextAuth, Prisma users, session roles, and permission-aware proxy route protection
 - Dashboard, events, guests, tickets, scanner, reports, and settings routes
 - Public ticket and verification pages

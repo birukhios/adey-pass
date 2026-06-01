@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 
 export function Badge({ children, tone = "neutral" }: { children: React.ReactNode; tone?: "yellow" | "green" | "red" | "blue" | "neutral" | "dark" }) {
   const tones = {
-    yellow: "bg-[#FFD100]/20 text-[#7A5C00] ring-[#FFD100]/40 dark:text-[#F8D85A]",
+    yellow: "bg-[color-mix(in_oklab,var(--adey-yellow)_16%,transparent)] text-[var(--adey-yellow-deep)] ring-[color-mix(in_oklab,var(--adey-yellow)_32%,transparent)] dark:text-[#9BD1FF]",
     green: "bg-emerald-50 text-emerald-700 ring-emerald-200 dark:bg-emerald-900/25 dark:text-emerald-300 dark:ring-emerald-800",
     red: "bg-red-50 text-red-700 ring-red-200 dark:bg-red-900/25 dark:text-red-300 dark:ring-red-800",
     blue: "bg-sky-50 text-sky-700 ring-sky-200 dark:bg-sky-900/25 dark:text-sky-300 dark:ring-sky-800",
