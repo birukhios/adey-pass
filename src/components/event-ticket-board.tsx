@@ -15,6 +15,9 @@ type TicketType = {
   primaryColor: string;
   accentColor: string;
   outlineColor: string;
+  paymentRequired: boolean;
+  priceAmount: number;
+  currency: string;
   bookingToken?: string;
   issuedCount: number;
 };
@@ -83,6 +86,9 @@ export function EventTicketBoard({ initialEvents }: { initialEvents: EventTicket
                   primaryColor: design.primaryColor,
                   accentColor: design.accentColor,
                   outlineColor: design.outlineColor,
+                  paymentRequired: false,
+                  priceAmount: 0,
+                  currency: "ETB",
                   issuedCount: 0,
                 },
               ],
@@ -127,6 +133,9 @@ export function EventTicketBoard({ initialEvents }: { initialEvents: EventTicket
           primaryColor: ticketType.primaryColor,
           accentColor: ticketType.accentColor,
           outlineColor: ticketType.outlineColor,
+          paymentRequired: ticketType.paymentRequired,
+          priceAmount: ticketType.priceAmount,
+          currency: ticketType.currency,
         })),
       }),
     });
@@ -214,15 +223,34 @@ export function EventTicketBoard({ initialEvents }: { initialEvents: EventTicket
                     ))}
                   </select>
                 </label>
+                <label className="ap-field-label">
+                  Payment
+                  <select className="ap-input" onChange={(event) => updateTicketType(index, { paymentRequired: event.target.value === "paid" })} value={ticketType.paymentRequired ? "paid" : "free"}>
+                    <option value="free">Free booking</option>
+                    <option value="paid">Paid checkout</option>
+                  </select>
+                </label>
+                <label className="ap-field-label">
+                  Price
+                  <input className="ap-input" min={0} onChange={(event) => updateTicketType(index, { priceAmount: Number(event.target.value || 0) })} type="number" value={ticketType.priceAmount} />
+                </label>
+                <label className="ap-field-label sm:col-span-2">
+                  Currency
+                  <select className="ap-input" onChange={(event) => updateTicketType(index, { currency: event.target.value })} value={ticketType.currency}>
+                    <option value="ETB">ETB</option>
+                    <option value="USD">USD</option>
+                  </select>
+                </label>
                 <div className="grid gap-2 sm:col-span-2 xl:col-span-4 xl:flex xl:flex-wrap">
                   <button className="ap-button-ghost gap-2" disabled={!ticketType.bookingToken} onClick={() => { void copyLink(ticketType); }} type="button"><Copy size={16} /> Copy link</button>
                   <a className="ap-button-ghost gap-2" href={ticketType.bookingToken ? `/booking/${ticketType.bookingToken}` : "#"} target="_blank" rel="noreferrer"><ExternalLink size={16} /> Open link</a>
                   <button className="ap-button-ghost gap-2" onClick={() => removeTicketType(index)} type="button"><Trash2 size={16} /> Remove</button>
                 </div>
-                <div className="grid gap-3 sm:col-span-2 xl:col-span-4 sm:grid-cols-3">
+                <div className="grid gap-3 sm:col-span-2 xl:col-span-4 sm:grid-cols-4">
                   <StatTile label="Allowed tickets" value={ticketType.quantity.toLocaleString()} />
                   <StatTile label="People on it" value={ticketType.issuedCount.toLocaleString()} />
                   <StatTile label="Available" value={Math.max(0, ticketType.quantity - ticketType.issuedCount).toLocaleString()} />
+                  <StatTile label="Booking price" value={ticketType.paymentRequired ? `${ticketType.currency} ${ticketType.priceAmount.toLocaleString()}` : "Free"} />
                 </div>
                 <div className="break-all rounded-2xl border p-3 text-xs font-bold ap-soft-text sm:col-span-2 xl:col-span-4" style={{ borderColor: "var(--stroke)", background: "var(--surface)" }}>
                   {ticketType.bookingToken ? `/booking/${ticketType.bookingToken}` : "Save to generate booking link"}

@@ -14,6 +14,9 @@ const ticketTypeSchema = z.object({
   primaryColor: z.string().min(4),
   accentColor: z.string().min(4),
   outlineColor: z.string().min(4),
+  paymentRequired: z.boolean().default(false),
+  priceAmount: z.number().int().min(0).default(0),
+  currency: z.string().min(2).default("ETB"),
 });
 
 const payloadSchema = z.object({
@@ -91,6 +94,9 @@ export async function POST(request: Request) {
           primaryColor: ticketType.primaryColor,
           accentColor: ticketType.accentColor,
           outlineColor: ticketType.outlineColor,
+          paymentRequired: ticketType.paymentRequired,
+          priceAmount: ticketType.priceAmount,
+          currency: ticketType.currency,
           bookingToken: `${slugify(created.name)}-${slugify(ticketType.name)}-${created.id.slice(-6)}`,
           sortOrder: index,
         })),

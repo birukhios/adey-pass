@@ -90,6 +90,14 @@ enum OtpPurpose {
   WALK_IN_VERIFICATION
 }
 
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  CANCELLED
+  REFUNDED
+}
+
 model User {
   id                  String                   @id @default(cuid())
   name                String
@@ -187,6 +195,7 @@ model Event {
   walkins                   WalkinRegistration[]
   organizationSubmissions   OrganizationSubmission[]
   ticketTypes               EventTicketType[]
+  paymentTransactions       PaymentTransaction[]
   createdAt                 DateTime                 @default(now())
   updatedAt                 DateTime                 @updatedAt
 }
@@ -202,13 +211,39 @@ model EventTicketType {
   primaryColor String
   accentColor  String
   outlineColor String
+  paymentRequired Boolean  @default(false)
+  priceAmount  Int      @default(0)
+  currency     String   @default("ETB")
   bookingToken String   @unique
   sortOrder    Int      @default(0)
   event        Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  payments     PaymentTransaction[]
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
   @@unique([eventId, name])
+}
+
+model PaymentTransaction {
+  id                String          @id @default(cuid())
+  checkoutToken     String          @unique
+  reference         String          @unique
+  eventId           String
+  eventTicketTypeId String
+  fullName          String
+  companyName       String?
+  phone             String?
+  maskedFaydaId     String?
+  amount            Int
+  currency          String          @default("ETB")
+  provider          String          @default("Afropay")
+  method            String?
+  status            PaymentStatus   @default(PENDING)
+  paidAt            DateTime?
+  event             Event           @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  ticketType        EventTicketType @relation(fields: [eventTicketTypeId], references: [id], onDelete: Cascade)
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
 }
 
 model Gate {

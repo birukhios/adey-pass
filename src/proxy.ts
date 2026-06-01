@@ -4,7 +4,7 @@ import { firstAccessibleRoute, hasAnyPermission, permissionsForPath } from "@/li
 import { env } from "@/lib/env";
 
 const publicRoutes = ["/login", "/setup", "/forgot-password"];
-const publicPrefixes = ["/api/auth", "/ticket", "/verify", "/rsvp", "/organization", "/api/rsvp", "/api/organization"];
+const publicPrefixes = ["/api/auth", "/ticket", "/verify", "/rsvp", "/organization", "/booking", "/checkout", "/payment", "/api/rsvp", "/api/organization", "/api/payments"];
 
 function isPublicPath(pathname: string) {
   return publicRoutes.includes(pathname) || publicPrefixes.some((prefix) => pathname.startsWith(prefix));

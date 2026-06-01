@@ -30,6 +30,9 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
   const background = ticketType?.outlineColor ?? readValue(query.bg, "#111418");
   const text = readValue(query.text, "#FFFFFF");
   const accent = ticketType?.accentColor ?? readValue(query.acc, "#5A5F66");
+  const paymentRequired = ticketType?.paymentRequired ?? false;
+  const priceAmount = ticketType?.priceAmount ?? 0;
+  const currency = ticketType?.currency ?? "ETB";
 
   return (
     <main className="min-h-screen px-4 py-8" style={{ background: "linear-gradient(180deg,#F4F6FB, #EEF2F8)", color: "#111418" }}>
@@ -45,6 +48,9 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
           <div className="mt-8 rounded-lg p-4" style={{ background: primary, color: background }}>
             <div className="text-sm font-black">{logoText}</div>
             <div className="mt-1 text-xs font-bold">Token: {token}</div>
+            <div className="mt-3 inline-flex rounded-full bg-white/18 px-3 py-1 text-xs font-black">
+              {paymentRequired && priceAmount > 0 ? `${currency} ${priceAmount.toLocaleString()} checkout` : "Free booking"}
+            </div>
           </div>
           <BookingTicketFlow
             accessType={accessType}
@@ -53,6 +59,9 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
             ctaLabel={ctaLabel}
             eventName={eventName}
             primary={primary}
+            paymentRequired={paymentRequired && priceAmount > 0}
+            priceAmount={priceAmount}
+            currency={currency}
             text={text}
             token={token}
           />

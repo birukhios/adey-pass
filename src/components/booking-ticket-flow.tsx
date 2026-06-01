@@ -13,6 +13,9 @@ type BookingTicketFlowProps = {
   background: string;
   text: string;
   accent: string;
+  paymentRequired: boolean;
+  priceAmount: number;
+  currency: string;
 };
 
 export function BookingTicketFlow({
@@ -24,13 +27,18 @@ export function BookingTicketFlow({
   background,
   text,
   accent,
+  paymentRequired,
+  priceAmount,
+  currency,
 }: BookingTicketFlowProps) {
   const [fullName, setFullName] = useState("");
   const [companyName, setCompanyName] = useState("");
+  const [phone, setPhone] = useState("");
   const [faydaNumber, setFaydaNumber] = useState("");
   const [consent, setConsent] = useState(false);
   const [started, setStarted] = useState(false);
   const [status, setStatus] = useState<"idle" | "verifying" | "verified" | "failed">("idle");
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [error, setError] = useState("");
 
   const qrPayload = useMemo(
@@ -40,10 +48,11 @@ export function BookingTicketFlow({
         eventName,
         fullName,
         companyName,
+        phone,
         accessType,
         verifiedAt: new Date().toISOString(),
       }),
-    [accessType, companyName, eventName, fullName, token],
+    [accessType, companyName, eventName, fullName, phone, token],
   );
   const ticketId = useMemo(() => {
     const clean = token.replace(/[^A-Za-z0-9]/g, "").toUpperCase();
@@ -65,6 +74,10 @@ export function BookingTicketFlow({
       setError("Please add your company name.");
       return;
     }
+    if (paymentRequired && phone.replace(/[^0-9]/g, "").length < 8) {
+      setError("Please add the phone number you want to pay with.");
+      return;
+    }
     if (cleanFayda.length < 8) {
       setError("Fayda number must be at least 8 characters.");
       return;
@@ -84,6 +97,29 @@ export function BookingTicketFlow({
     }
 
     setStatus("verified");
+  }
+
+  async function continueToCheckout() {
+    setCheckoutLoading(true);
+    setError("");
+    const response = await fetch("/api/payments/checkout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        bookingToken: token,
+        fullName,
+        companyName,
+        phone,
+        faydaNumber,
+      }),
+    });
+    const result = await response.json();
+    setCheckoutLoading(false);
+    if (!response.ok) {
+      setError(result.message ?? "Could not create checkout.");
+      return;
+    }
+    window.location.href = result.checkoutUrl;
   }
 
   async function downloadTicketCard() {
@@ -218,6 +254,15 @@ export function BookingTicketFlow({
               />
             </label>
             <label className="grid gap-1 text-sm font-bold text-slate-700">
+              Phone number
+              <input
+                className="h-11 rounded-lg border border-slate-200 px-3 outline-none focus:ring-4 focus:ring-[color-mix(in_oklab,var(--adey-yellow)_20%,transparent)]"
+                onChange={(event) => setPhone(event.target.value)}
+                placeholder="+251 9..."
+                value={phone}
+              />
+            </label>
+            <label className="grid gap-1 text-sm font-bold text-slate-700">
               Fayda number
               <input
                 className="h-11 rounded-lg border border-slate-200 px-3 outline-none focus:ring-4 focus:ring-[color-mix(in_oklab,var(--adey-yellow)_20%,transparent)]"
@@ -247,6 +292,24 @@ export function BookingTicketFlow({
           {status === "verified" && (
             <div className="mt-4 rounded-lg border border-emerald-200 bg-emerald-50 p-4">
               <p className="text-sm font-black text-emerald-700">Verified. Your ticket card is ready.</p>
+              {paymentRequired ? (
+                <div className="mt-4 rounded-xl border border-blue-100 bg-white p-4">
+                  <div className="text-xs font-black uppercase tracking-[0.16em] text-blue-500">Payment required</div>
+                  <div className="mt-2 flex items-end justify-between gap-3">
+                    <div>
+                      <div className="text-3xl font-black text-slate-950">{currency} {priceAmount.toLocaleString()}</div>
+                      <div className="mt-1 text-sm font-bold text-slate-500">Powered by Afropay mock checkout</div>
+                    </div>
+                  </div>
+                  <button
+                    className="mt-4 h-11 w-full rounded-lg bg-[#3B63F4] text-sm font-black text-white"
+                    onClick={continueToCheckout}
+                    type="button"
+                  >
+                    {checkoutLoading ? "Preparing checkout..." : `Continue to Checkout`}
+                  </button>
+                </div>
+              ) : (
               <div className="mt-4 rounded-xl bg-[#0B1017] p-4">
                 <div className="rounded-xl bg-[var(--adey-yellow)] p-4">
                   <div className="text-xl font-black text-[var(--adey-charcoal)]">Stadium Management System</div>
@@ -273,6 +336,7 @@ export function BookingTicketFlow({
                   Download Ticket Card
                 </button>
               </div>
+              )}
             </div>
           )}
         </div>

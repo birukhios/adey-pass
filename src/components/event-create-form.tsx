@@ -21,9 +21,9 @@ export function EventCreateForm({
 }) {
   const router = useRouter();
   const defaultTicketTypes = [
-    { name: "VVIP", quantity: "200", designKey: "vvip-blue", layoutKey: "badge-card" },
-    { name: "VIP", quantity: "1000", designKey: "vip-gold", layoutKey: "mobile-pass" },
-    { name: "Normal", quantity: "50000", designKey: "normal-silver", layoutKey: "wide-ticket" },
+    { name: "VVIP", quantity: "200", designKey: "vvip-blue", layoutKey: "badge-card", paymentRequired: true, priceAmount: "2500", currency: "ETB" },
+    { name: "VIP", quantity: "1000", designKey: "vip-gold", layoutKey: "mobile-pass", paymentRequired: true, priceAmount: "1000", currency: "ETB" },
+    { name: "Normal", quantity: "50000", designKey: "normal-silver", layoutKey: "wide-ticket", paymentRequired: true, priceAmount: "45", currency: "ETB" },
   ];
   const [form, setForm] = useState({
     name: "",
@@ -64,6 +64,9 @@ export function EventCreateForm({
             primaryColor: design.primaryColor,
             accentColor: design.accentColor,
             outlineColor: design.outlineColor,
+            paymentRequired: ticketType.paymentRequired,
+            priceAmount: Number(ticketType.priceAmount || 0),
+            currency: ticketType.currency || "ETB",
           };
         }),
       }),
@@ -102,7 +105,7 @@ export function EventCreateForm({
           </div>
           <button
             className="ap-button-ghost"
-            onClick={() => setForm((s) => ({ ...s, ticketTypes: [...s.ticketTypes, { name: "New Ticket", quantity: "100", designKey: "normal-silver", layoutKey: "mobile-pass" }] }))}
+            onClick={() => setForm((s) => ({ ...s, ticketTypes: [...s.ticketTypes, { name: "New Ticket", quantity: "100", designKey: "normal-silver", layoutKey: "mobile-pass", paymentRequired: false, priceAmount: "0", currency: "ETB" }] }))}
             type="button"
           >
             Add Ticket Type
@@ -112,18 +115,20 @@ export function EventCreateForm({
           {form.ticketTypes.map((ticketType, index) => {
             const design = ticketDesigns.find((item) => item.key === ticketType.designKey) ?? ticketDesigns[0];
             return (
-              <div className="grid gap-3 rounded-2xl border p-3 lg:grid-cols-[minmax(0,1fr)_130px_minmax(180px,1fr)_minmax(180px,1fr)_auto]" key={`${ticketType.name}-${index}`} style={{ borderColor: "var(--stroke)", background: "var(--surface-muted)" }}>
+              <div className="grid gap-3 rounded-2xl border p-3 lg:grid-cols-[minmax(0,1fr)_130px_minmax(180px,1fr)_minmax(180px,1fr)_130px_130px_auto]" key={`${ticketType.name}-${index}`} style={{ borderColor: "var(--stroke)", background: "var(--surface-muted)" }}>
                 <label className="ap-field-label">Ticket name<input className="ap-input" onChange={(event) => setForm((s) => ({ ...s, ticketTypes: s.ticketTypes.map((item, itemIndex) => itemIndex === index ? { ...item, name: event.target.value } : item) }))} value={ticketType.name} /></label>
                 <label className="ap-field-label">Quantity<input className="ap-input" min={0} onChange={(event) => setForm((s) => ({ ...s, ticketTypes: s.ticketTypes.map((item, itemIndex) => itemIndex === index ? { ...item, quantity: event.target.value } : item) }))} type="number" value={ticketType.quantity} /></label>
                 <label className="ap-field-label">Design outline<select className="ap-input" onChange={(event) => setForm((s) => ({ ...s, ticketTypes: s.ticketTypes.map((item, itemIndex) => itemIndex === index ? { ...item, designKey: event.target.value } : item) }))} value={ticketType.designKey}>{ticketDesigns.map((item) => <option key={item.key} value={item.key}>{item.name}</option>)}</select></label>
                 <label className="ap-field-label">Ticket layout<select className="ap-input" onChange={(event) => setForm((s) => ({ ...s, ticketTypes: s.ticketTypes.map((item, itemIndex) => itemIndex === index ? { ...item, layoutKey: event.target.value } : item) }))} value={ticketType.layoutKey}>{ticketLayouts.map((item) => <option key={item.key} value={item.key}>{item.name}</option>)}</select></label>
+                <label className="ap-field-label">Payment<select className="ap-input" onChange={(event) => setForm((s) => ({ ...s, ticketTypes: s.ticketTypes.map((item, itemIndex) => itemIndex === index ? { ...item, paymentRequired: event.target.value === "paid" } : item) }))} value={ticketType.paymentRequired ? "paid" : "free"}><option value="free">Free</option><option value="paid">Paid</option></select></label>
+                <label className="ap-field-label">Price<input className="ap-input" min={0} onChange={(event) => setForm((s) => ({ ...s, ticketTypes: s.ticketTypes.map((item, itemIndex) => itemIndex === index ? { ...item, priceAmount: event.target.value } : item) }))} type="number" value={ticketType.priceAmount} /></label>
                 <button className="ap-button-ghost self-end" onClick={() => setForm((s) => ({ ...s, ticketTypes: s.ticketTypes.filter((_, itemIndex) => itemIndex !== index) }))} type="button">Remove</button>
-                <div className="rounded-2xl border p-4 lg:col-span-5" style={{ borderColor: design.outlineColor, background: "var(--surface)" }}>
+                <div className="rounded-2xl border p-4 lg:col-span-7" style={{ borderColor: design.outlineColor, background: "var(--surface)" }}>
                   <div className="flex items-center justify-between gap-3">
                     <div>
                       <div className="text-xs font-black uppercase tracking-[0.14em]" style={{ color: design.accentColor }}>{design.name}</div>
                       <div className="mt-1 text-xl font-black">{ticketType.name || "Ticket Type"}</div>
-                      <div className="text-sm font-bold ap-soft-text">{design.accessType}</div>
+                      <div className="text-sm font-bold ap-soft-text">{design.accessType} · {ticketType.paymentRequired ? `${ticketType.currency} ${Number(ticketType.priceAmount || 0).toLocaleString()}` : "Free booking"}</div>
                     </div>
                     <div className="grid size-14 place-items-center rounded-2xl text-xs font-black text-white" style={{ background: design.primaryColor }}>QR</div>
                   </div>
