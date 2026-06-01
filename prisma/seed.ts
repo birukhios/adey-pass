@@ -105,6 +105,7 @@ async function main() {
   const superAdmin = await prisma.user.findUniqueOrThrow({ where: { email: "super@adeypass.local" } });
 
   const categories = [
+    ["VVIP", "VVIP Access", "#071B3D"],
     ["VIP", "VIP Access", "#0B7DE3"],
     ["Media", "Media Access", "#5A5F66"],
     ["Staff", "Staff Access", "#111418"],

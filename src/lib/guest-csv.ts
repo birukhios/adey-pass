@@ -18,6 +18,7 @@ Liya Kebede,+251933333333,liya@example.com,Staff,Stadium Ops,Operations Lead,Nat
 `;
 
 export const allowedGuestCategories = [
+  "VVIP",
   "VIP",
   "Media",
   "Staff",

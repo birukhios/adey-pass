@@ -41,6 +41,7 @@ type Option = { id: string; name: string };
 type TabKey = "invited" | "booked" | "bulk";
 
 const importantCategories = new Set([
+  "VVIP",
   "VIP",
   "Media",
   "Staff",
@@ -70,6 +71,9 @@ export function GuestBulkUpload({
   const [message, setMessage] = useState("");
   const [isImporting, setIsImporting] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
+  const [bulkInviteModalOpen, setBulkInviteModalOpen] = useState(false);
+  const [bulkInviteCategoryId, setBulkInviteCategoryId] = useState(categories.find((category) => category.name === "VVIP")?.id ?? categories.find((category) => category.name === "VIP")?.id ?? categories[0]?.id ?? "");
+  const [bulkInviteLoading, setBulkInviteLoading] = useState(false);
   const [ticketPreview, setTicketPreview] = useState<GuestRow | null>(null);
   const [selectedGuestIds, setSelectedGuestIds] = useState<string[]>([]);
   const [deletedGuestIds, setDeletedGuestIds] = useState<string[]>([]);
@@ -249,12 +253,14 @@ export function GuestBulkUpload({
       return;
     }
 
+    setBulkInviteLoading(true);
     const response = await fetch("/api/guests/invitations/bulk-send", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ guestIds }),
+      body: JSON.stringify({ guestIds, categoryId: bulkInviteCategoryId }),
     });
     const result = await response.json();
+    setBulkInviteLoading(false);
     if (!response.ok) {
       showMessage(result.message ?? "Could not prepare invitations.");
       return;
@@ -264,12 +270,14 @@ export function GuestBulkUpload({
       .map((link: { name: string; token: string }) => `${link.name}: ${window.location.origin}/rsvp/${link.token}`)
       .join("\n");
     await navigator.clipboard.writeText(links);
+    const selectedCategoryName = categories.find((category) => category.id === bulkInviteCategoryId)?.name;
     setGuestOverrides((current) => ({
       ...current,
-      ...Object.fromEntries(guestIds.map((id) => [id, { invitation: "Sent" }])),
+      ...Object.fromEntries(guestIds.map((id) => [id, { invitation: "Sent", ...(selectedCategoryName ? { category: selectedCategoryName } : {}) }])),
     }));
     setSelectedGuestIds([]);
-    showMessage(`${result.sentCount} invitation links marked sent and copied.`);
+    setBulkInviteModalOpen(false);
+    showMessage(`${result.sentCount} ${selectedCategoryName ?? "selected"} invitation links marked sent and copied.`);
   }
 
   async function runBulkGuestAction(action: "BLOCK" | "DELETE") {
@@ -309,6 +317,39 @@ export function GuestBulkUpload({
 
   return (
     <div className="grid gap-5">
+      {bulkInviteModalOpen ? <button className="fixed inset-0 z-40 bg-black/45 backdrop-blur-sm" onClick={() => setBulkInviteModalOpen(false)} type="button" /> : null}
+      {bulkInviteModalOpen ? (
+        <div className="fixed inset-0 z-50 grid place-items-center p-4">
+          <div className="w-full max-w-lg rounded-3xl border p-5 shadow-[var(--shadow-soft)]" style={{ borderColor: "var(--stroke)", background: "var(--surface)" }}>
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="ap-kicker">Bulk Invitation Role</p>
+                <h2 className="mt-2 text-2xl font-black">Choose access role</h2>
+                <p className="mt-2 text-sm font-semibold leading-6 ap-soft-text">
+                  Selected guests will be assigned this invitation role before RSVP links are copied.
+                </p>
+              </div>
+              <button className="ap-button-ghost min-h-10 px-3" onClick={() => setBulkInviteModalOpen(false)} type="button"><X size={16} /></button>
+            </div>
+            <label className="mt-5 grid gap-2 text-sm font-black" style={{ color: "var(--text-strong)" }}>
+              Invitation role
+              <select className="ap-input" onChange={(event) => setBulkInviteCategoryId(event.target.value)} value={bulkInviteCategoryId}>
+                {categories.filter((category) => category.name !== "Walk-In").map((category) => <option key={category.id} value={category.id}>{category.name}</option>)}
+              </select>
+            </label>
+            <div className="mt-4 rounded-2xl border p-3 text-sm font-bold ap-soft-text" style={{ borderColor: "var(--stroke)", background: "var(--surface-muted)" }}>
+              {selectedGuestIds.length ? selectedGuestIds.length : invitedGuests.length} guest(s) will receive this role.
+            </div>
+            <div className="mt-5 grid gap-2 sm:flex sm:justify-end">
+              <button className="ap-button-ghost" onClick={() => setBulkInviteModalOpen(false)} type="button">Cancel</button>
+              <button className="ap-button-primary gap-2 disabled:opacity-60" disabled={bulkInviteLoading || !bulkInviteCategoryId} onClick={() => { void sendBulkInvitations(); }} type="button">
+                <Send size={16} />
+                {bulkInviteLoading ? "Sending..." : "Send Invitations"}
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
       {modalOpen ? <button className="fixed inset-0 z-40 bg-black/45 backdrop-blur-sm" onClick={() => setModalOpen(false)} type="button" /> : null}
       {modalOpen ? (
         <div className="fixed inset-0 z-50 grid place-items-center p-4">
@@ -466,7 +507,7 @@ export function GuestBulkUpload({
               <button className="ap-button-ghost gap-2" onClick={() => setSelectedGuestIds(invitedGuests.map((guest) => guest.id))} type="button"><Check size={16} /> Select All</button>
               <button className="ap-button-ghost gap-2" onClick={() => { void runBulkGuestAction("BLOCK"); }} type="button"><Ban size={16} /> Block</button>
               <button className="ap-button-ghost gap-2" onClick={() => { void runBulkGuestAction("DELETE"); }} type="button"><Trash2 size={16} /> Delete</button>
-              <button className="ap-button-primary gap-2" onClick={() => { void sendBulkInvitations(); }} type="button"><Send size={16} /> Send Bulk Invitations</button>
+              <button className="ap-button-primary gap-2" onClick={() => setBulkInviteModalOpen(true)} type="button"><Send size={16} /> Send Bulk Invitations</button>
             </div>
           </div>
           <GuestTable
