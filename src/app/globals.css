@@ -207,22 +207,22 @@ textarea {
 
 @layer components {
   .ap-surface {
-    @apply rounded-[1.75rem] border p-4 sm:p-5;
+    @apply rounded-[1rem] border p-4 sm:p-5;
     border-color: var(--stroke);
     background: var(--surface);
-    box-shadow: var(--shadow-card);
+    box-shadow: none;
   }
 
   .ap-muted-surface {
-    @apply rounded-[1.5rem] border;
+    @apply rounded-[0.9rem] border;
     border-color: var(--stroke);
     background: var(--surface-muted);
   }
 
   .ap-input {
-    @apply h-12 rounded-2xl border px-4 text-sm font-semibold outline-none transition;
+    @apply h-10 rounded-lg border px-3 text-sm font-semibold outline-none transition;
     border-color: var(--stroke);
-    background: color-mix(in oklab, var(--surface-elevated) 92%, var(--app-bg));
+    background: var(--surface);
     color: var(--text-strong);
   }
 
@@ -232,7 +232,7 @@ textarea {
   }
 
   .ap-button-primary {
-    @apply inline-flex min-h-12 items-center justify-center rounded-2xl px-5 text-sm font-black transition;
+    @apply inline-flex min-h-10 items-center justify-center rounded-lg px-5 text-sm font-black transition;
     background: var(--adey-yellow);
     color: #ffffff;
     box-shadow: 0 16px 34px -22px color-mix(in oklab, var(--adey-yellow) 88%, black);
@@ -244,7 +244,7 @@ textarea {
   }
 
   .ap-button-ghost {
-    @apply inline-flex min-h-12 items-center justify-center rounded-2xl border px-5 text-sm font-black transition;
+    @apply inline-flex min-h-10 items-center justify-center rounded-lg border px-5 text-sm font-black transition;
     border-color: var(--stroke);
     background: var(--surface-elevated);
     color: var(--text-strong);
@@ -265,7 +265,7 @@ textarea {
   }
 
   .ap-table-wrap {
-    @apply overflow-x-auto rounded-[1.5rem] border;
+    @apply overflow-x-auto rounded-xl border;
     border-color: var(--stroke);
     background: var(--surface);
   }
@@ -275,7 +275,7 @@ textarea {
   }
 
   .ap-mobile-card {
-    @apply rounded-[1.5rem] border p-4;
+    @apply rounded-xl border p-4;
     border-color: var(--stroke);
     background: var(--surface-muted);
   }
@@ -285,7 +285,7 @@ textarea {
   }
 
   .ap-field-label {
-    @apply grid gap-2 text-sm font-bold;
+    @apply grid gap-2 text-xs font-bold;
     color: var(--text-strong);
   }
 
