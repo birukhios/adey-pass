@@ -1,12 +1,16 @@
+import { connection } from "next/server";
 import { AppShell } from "@/components/app-shell";
+import { EventTicketBoard } from "@/components/event-ticket-board";
 import { PageHeader } from "@/components/page-header";
-import { TicketBookingLinkBuilder } from "@/components/ticket-booking-link-builder";
+import { getTicketTypeBoard } from "@/lib/server-data";
 
 export default async function TicketsPage() {
+  await connection();
+  const events = await getTicketTypeBoard();
   return (
     <AppShell>
-      <PageHeader title="Ticket Builder" description="Build branded booking links and ticket page designs. Ticket booking lists now live with Guests." />
-      <TicketBookingLinkBuilder />
+      <PageHeader title="Tickets" description="Select an event, manage ticket groups, edit quantities, choose design outlines, and copy booking links." />
+      <EventTicketBoard initialEvents={events} />
     </AppShell>
   );
 }

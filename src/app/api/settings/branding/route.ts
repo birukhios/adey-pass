@@ -9,6 +9,14 @@ const payloadSchema = z.object({
   organizationName: z.string().min(2),
   primaryColor: z.string().min(4),
   ticketFooterText: z.string().min(2),
+  appearance: z.object({
+    theme: z.string().min(2),
+    cornerRadius: z.string().min(2),
+    density: z.string().min(2),
+    cardStyle: z.string().min(2),
+    sidebarStyle: z.string().min(2),
+    ticketShape: z.string().min(2),
+  }).optional(),
 });
 
 export async function POST(request: Request) {

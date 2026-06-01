@@ -10,7 +10,20 @@ import { prisma } from "@/lib/prisma";
 export default async function BrandingSettingsPage() {
   await connection();
   const setting = await prisma.appSetting.findUnique({ where: { key: "branding" } });
-  const value = (setting?.value as { appName?: string; organizationName?: string; primaryColor?: string; ticketFooterText?: string } | null) ?? {};
+  const value = (setting?.value as {
+    appName?: string;
+    organizationName?: string;
+    primaryColor?: string;
+    ticketFooterText?: string;
+    appearance?: {
+      theme?: string;
+      cornerRadius?: string;
+      density?: string;
+      cardStyle?: string;
+      sidebarStyle?: string;
+      ticketShape?: string;
+    };
+  } | null) ?? {};
 
   return (
     <AppShell>
@@ -24,6 +37,14 @@ export default async function BrandingSettingsPage() {
               organizationName: value.organizationName ?? "Stadium Operations",
               primaryColor: value.primaryColor ?? "#0B7DE3",
               ticketFooterText: value.ticketFooterText ?? "Stadium Access & Gate Management",
+              appearance: {
+                theme: value.appearance?.theme ?? "System",
+                cornerRadius: value.appearance?.cornerRadius ?? "Soft",
+                density: value.appearance?.density ?? "Comfortable",
+                cardStyle: value.appearance?.cardStyle ?? "Elevated",
+                sidebarStyle: value.appearance?.sidebarStyle ?? "Navy",
+                ticketShape: value.appearance?.ticketShape ?? "Rounded Pass",
+              },
             }}
           />
         </Card>

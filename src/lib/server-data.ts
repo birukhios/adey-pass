@@ -156,6 +156,35 @@ export async function getTicketRows() {
     }));
 }
 
+export async function getTicketTypeBoard() {
+  const events = await prisma.event.findMany({
+    include: {
+      ticketTypes: { orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }] },
+      tickets: { select: { id: true, accessType: true } },
+    },
+    orderBy: [{ date: "asc" }],
+  });
+
+  return events.map((event) => ({
+    id: event.id,
+    name: event.name,
+    stadium: event.venueName,
+    date: event.date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+    ticketTypes: event.ticketTypes.map((ticketType) => ({
+      id: ticketType.id,
+      name: ticketType.name,
+      accessType: ticketType.accessType,
+      quantity: ticketType.quantity,
+      designKey: ticketType.designKey,
+      primaryColor: ticketType.primaryColor,
+      accentColor: ticketType.accentColor,
+      outlineColor: ticketType.outlineColor,
+      bookingToken: ticketType.bookingToken,
+      issuedCount: event.tickets.filter((ticket) => ticket.accessType === ticketType.accessType).length,
+    })),
+  }));
+}
+
 export async function getDashboardData() {
   const [eventsCount, guestsCount, ticketsCount, checkedInCount, walkInCount, pendingVerificationCount, failedVerificationCount] =
     await Promise.all([

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { stadiumOptions } from "@/components/stadium-selector";
+import { ticketDesigns } from "@/lib/ticket-designs";
 
 type SecurityDefaults = {
   idVerificationRequiredByDefault: boolean;
@@ -19,6 +20,11 @@ export function EventCreateForm({
   securityDefaults: SecurityDefaults;
 }) {
   const router = useRouter();
+  const defaultTicketTypes = [
+    { name: "VVIP", quantity: "200", designKey: "vvip-blue" },
+    { name: "VIP", quantity: "1000", designKey: "vip-gold" },
+    { name: "Normal", quantity: "50000", designKey: "normal-silver" },
+  ];
   const [form, setForm] = useState({
     name: "",
     venueName: stadiumOptions[0],
@@ -33,6 +39,7 @@ export function EventCreateForm({
     maxAttendees: "",
     status: "DRAFT",
     securityDefaults,
+    ticketTypes: defaultTicketTypes,
   });
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
@@ -46,6 +53,18 @@ export function EventCreateForm({
       body: JSON.stringify({
         ...form,
         maxAttendees: form.maxAttendees ? Number(form.maxAttendees) : null,
+        ticketTypes: form.ticketTypes.map((ticketType) => {
+          const design = ticketDesigns.find((item) => item.key === ticketType.designKey) ?? ticketDesigns[0];
+          return {
+            name: ticketType.name,
+            quantity: Number(ticketType.quantity || 0),
+            designKey: design.key,
+            accessType: design.accessType,
+            primaryColor: design.primaryColor,
+            accentColor: design.accentColor,
+            outlineColor: design.outlineColor,
+          };
+        }),
       }),
     });
     const result = await response.json();
@@ -74,6 +93,44 @@ export function EventCreateForm({
         <label className="ap-field-label">Max attendees<input className="ap-input" onChange={(e) => setForm((s) => ({ ...s, maxAttendees: e.target.value }))} type="number" value={form.maxAttendees} /></label>
       </div>
       <label className="ap-field-label mt-5">Description<textarea className="ap-input min-h-32 p-3" onChange={(e) => setForm((s) => ({ ...s, description: e.target.value }))} value={form.description} /></label>
+      <div className="mt-8 border-t border-slate-200 pt-6 dark:border-slate-800">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 className="text-lg font-black text-slate-900 dark:text-slate-100">Ticket Creation</h2>
+            <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">Create ticket groups for this event, choose a design outline, and set how many links can be booked.</p>
+          </div>
+          <button
+            className="ap-button-ghost"
+            onClick={() => setForm((s) => ({ ...s, ticketTypes: [...s.ticketTypes, { name: "New Ticket", quantity: "100", designKey: "normal-silver" }] }))}
+            type="button"
+          >
+            Add Ticket Type
+          </button>
+        </div>
+        <div className="mt-4 grid gap-3">
+          {form.ticketTypes.map((ticketType, index) => {
+            const design = ticketDesigns.find((item) => item.key === ticketType.designKey) ?? ticketDesigns[0];
+            return (
+              <div className="grid gap-3 rounded-2xl border p-3 sm:grid-cols-[minmax(0,1fr)_150px_minmax(180px,1fr)_auto]" key={`${ticketType.name}-${index}`} style={{ borderColor: "var(--stroke)", background: "var(--surface-muted)" }}>
+                <label className="ap-field-label">Ticket name<input className="ap-input" onChange={(event) => setForm((s) => ({ ...s, ticketTypes: s.ticketTypes.map((item, itemIndex) => itemIndex === index ? { ...item, name: event.target.value } : item) }))} value={ticketType.name} /></label>
+                <label className="ap-field-label">Quantity<input className="ap-input" min={0} onChange={(event) => setForm((s) => ({ ...s, ticketTypes: s.ticketTypes.map((item, itemIndex) => itemIndex === index ? { ...item, quantity: event.target.value } : item) }))} type="number" value={ticketType.quantity} /></label>
+                <label className="ap-field-label">Design outline<select className="ap-input" onChange={(event) => setForm((s) => ({ ...s, ticketTypes: s.ticketTypes.map((item, itemIndex) => itemIndex === index ? { ...item, designKey: event.target.value } : item) }))} value={ticketType.designKey}>{ticketDesigns.map((item) => <option key={item.key} value={item.key}>{item.name}</option>)}</select></label>
+                <button className="ap-button-ghost self-end" onClick={() => setForm((s) => ({ ...s, ticketTypes: s.ticketTypes.filter((_, itemIndex) => itemIndex !== index) }))} type="button">Remove</button>
+                <div className="rounded-2xl border p-4 sm:col-span-4" style={{ borderColor: design.outlineColor, background: "var(--surface)" }}>
+                  <div className="flex items-center justify-between gap-3">
+                    <div>
+                      <div className="text-xs font-black uppercase tracking-[0.14em]" style={{ color: design.accentColor }}>{design.name}</div>
+                      <div className="mt-1 text-xl font-black">{ticketType.name || "Ticket Type"}</div>
+                      <div className="text-sm font-bold ap-soft-text">{design.accessType}</div>
+                    </div>
+                    <div className="grid size-14 place-items-center rounded-2xl text-xs font-black text-white" style={{ background: design.primaryColor }}>QR</div>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
       <div className="mt-8 border-t border-slate-200 pt-6 dark:border-slate-800">
         <h2 className="text-lg font-black text-slate-900 dark:text-slate-100">Security Defaults For New Events</h2>
         <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">These settings are saved together with your event.</p>

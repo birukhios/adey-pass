@@ -5,6 +5,16 @@ import { requirePermission } from "@/lib/api-auth";
 import { prisma } from "@/lib/prisma";
 import { permissions } from "@/lib/rbac";
 
+const ticketTypeSchema = z.object({
+  name: z.string().min(2),
+  accessType: z.string().min(2),
+  quantity: z.number().int().min(0),
+  designKey: z.string().min(2),
+  primaryColor: z.string().min(4),
+  accentColor: z.string().min(4),
+  outlineColor: z.string().min(4),
+});
+
 const payloadSchema = z.object({
   name: z.string().min(2),
   venueName: z.string().min(2),
@@ -24,7 +34,16 @@ const payloadSchema = z.object({
     ticketExpiryRule: z.string().min(2),
     duplicateCheckinPrevention: z.boolean(),
   }),
+  ticketTypes: z.array(ticketTypeSchema).default([]),
 });
+
+function slugify(value: string) {
+  return value
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "") || "ticket";
+}
 
 export async function POST(request: Request) {
   const auth = await requirePermission(permissions.eventsManage);
@@ -56,6 +75,23 @@ export async function POST(request: Request) {
     if (payload.data.gateUsageEnabled && payload.data.selectedGateIds.length) {
       await tx.eventGate.createMany({
         data: payload.data.selectedGateIds.map((gateId) => ({ eventId: created.id, gateId })),
+      });
+    }
+
+    if (payload.data.ticketTypes.length) {
+      await tx.eventTicketType.createMany({
+        data: payload.data.ticketTypes.map((ticketType, index) => ({
+          eventId: created.id,
+          name: ticketType.name,
+          accessType: ticketType.accessType,
+          quantity: ticketType.quantity,
+          designKey: ticketType.designKey,
+          primaryColor: ticketType.primaryColor,
+          accentColor: ticketType.accentColor,
+          outlineColor: ticketType.outlineColor,
+          bookingToken: `${slugify(created.name)}-${slugify(ticketType.name)}-${created.id.slice(-6)}`,
+          sortOrder: index,
+        })),
       });
     }
 

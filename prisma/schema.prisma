@@ -186,8 +186,28 @@ model Event {
   checkins                  Checkin[]
   walkins                   WalkinRegistration[]
   organizationSubmissions   OrganizationSubmission[]
+  ticketTypes               EventTicketType[]
   createdAt                 DateTime                 @default(now())
   updatedAt                 DateTime                 @updatedAt
+}
+
+model EventTicketType {
+  id           String   @id @default(cuid())
+  eventId      String
+  name         String
+  accessType   String
+  quantity     Int      @default(0)
+  designKey    String
+  primaryColor String
+  accentColor  String
+  outlineColor String
+  bookingToken String   @unique
+  sortOrder    Int      @default(0)
+  event        Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([eventId, name])
 }
 
 model Gate {

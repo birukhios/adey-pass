@@ -177,6 +177,30 @@ async function main() {
     });
   }
 
+  const ticketTypes = [
+    ["VVIP", "VVIP Access", 200, "vvip-blue", "#0B7DE3", "#075CAD", "#071B3D"],
+    ["VIP", "VIP Access", 1000, "vip-gold", "#D6A600", "#8A6A00", "#111418"],
+    ["Normal", "General Admission", 50000, "normal-silver", "#94A3B8", "#64748B", "#334155"],
+  ] as const;
+
+  for (const [name, accessType, quantity, designKey, primaryColor, accentColor, outlineColor] of ticketTypes) {
+    await prisma.eventTicketType.upsert({
+      where: { eventId_name: { eventId: event.id, name } },
+      update: { accessType, quantity, designKey, primaryColor, accentColor, outlineColor },
+      create: {
+        eventId: event.id,
+        name,
+        accessType,
+        quantity,
+        designKey,
+        primaryColor,
+        accentColor,
+        outlineColor,
+        bookingToken: `${event.id.slice(-6)}-${name.toLowerCase()}`,
+      },
+    });
+  }
+
   const sampleGuests = [
     ["Aster Girma", "+251911111111", "VIP", "Stadium Operations", "Board Guest", "INVITED"],
     ["Mikael Tadesse", "+251922222222", "Media", "Addis Daily", "Reporter", "INVITED"],
@@ -243,6 +267,14 @@ async function main() {
         primaryColor: "#0B7DE3",
         organizationName: "Stadium Operations",
         ticketFooterText: "Stadium Access & Gate Management",
+        appearance: {
+          theme: "System",
+          cornerRadius: "Soft",
+          density: "Comfortable",
+          cardStyle: "Elevated",
+          sidebarStyle: "Navy",
+          ticketShape: "Rounded Pass",
+        },
       },
       updatedById: superAdmin.id,
     },
@@ -253,6 +285,14 @@ async function main() {
         primaryColor: "#0B7DE3",
         organizationName: "Stadium Operations",
         ticketFooterText: "Stadium Access & Gate Management",
+        appearance: {
+          theme: "System",
+          cornerRadius: "Soft",
+          density: "Comfortable",
+          cardStyle: "Elevated",
+          sidebarStyle: "Navy",
+          ticketShape: "Rounded Pass",
+        },
       },
       updatedById: superAdmin.id,
     },

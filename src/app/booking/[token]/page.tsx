@@ -1,5 +1,7 @@
 import Link from "next/link";
+import { connection } from "next/server";
 import { BookingTicketFlow } from "@/components/booking-ticket-flow";
+import { prisma } from "@/lib/prisma";
 
 type BookingPageProps = {
   params: Promise<{ token: string }>;
@@ -12,17 +14,22 @@ function readValue(value: string | string[] | undefined, fallback: string) {
 }
 
 export default async function BookingPage({ params, searchParams }: BookingPageProps) {
+  await connection();
   const [{ token }, query] = await Promise.all([params, searchParams]);
+  const ticketType = await prisma.eventTicketType.findUnique({
+    where: { bookingToken: token },
+    include: { event: true },
+  });
 
-  const eventName = readValue(query.e, "Stadium Event");
-  const accessType = readValue(query.a, "General Admission");
+  const eventName = ticketType?.event.name ?? readValue(query.e, "Stadium Event");
+  const accessType = ticketType?.accessType ?? readValue(query.a, "General Admission");
   const logoText = readValue(query.logo, "Stadium Management System");
   const footerText = readValue(query.footer, "Stadium Access & Gate Management");
   const ctaLabel = readValue(query.cta, "Book Your Ticket");
-  const primary = readValue(query.p, "#0B7DE3");
-  const background = readValue(query.bg, "#111418");
+  const primary = ticketType?.primaryColor ?? readValue(query.p, "#0B7DE3");
+  const background = ticketType?.outlineColor ?? readValue(query.bg, "#111418");
   const text = readValue(query.text, "#FFFFFF");
-  const accent = readValue(query.acc, "#5A5F66");
+  const accent = ticketType?.accentColor ?? readValue(query.acc, "#5A5F66");
 
   return (
     <main className="min-h-screen px-4 py-8" style={{ background: "linear-gradient(180deg,#F4F6FB, #EEF2F8)", color: "#111418" }}>
@@ -32,7 +39,9 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
             Booking Link
           </div>
           <h1 className="mt-2 text-4xl font-black tracking-tight">{eventName}</h1>
-          <p className="mt-2 text-sm font-bold" style={{ color: accent }}>{accessType}</p>
+          <p className="mt-2 text-sm font-bold" style={{ color: accent }}>
+            {ticketType ? `${ticketType.name} · ${accessType} · ${ticketType.event.venueName}` : accessType}
+          </p>
           <div className="mt-8 rounded-lg p-4" style={{ background: primary, color: background }}>
             <div className="text-sm font-black">{logoText}</div>
             <div className="mt-1 text-xs font-bold">Token: {token}</div>
