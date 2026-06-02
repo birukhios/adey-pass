@@ -22,7 +22,7 @@ export function SettingsTabs() {
             <Link
               className={cn(
                 "whitespace-nowrap rounded-xl px-4 py-2.5 text-sm font-black transition",
-                active ? "text-[var(--adey-charcoal)]" : "text-[var(--text-muted)] hover:bg-[var(--surface-muted)] hover:text-[var(--text-strong)]",
+                active ? "text-white" : "text-[var(--text-muted)] hover:bg-[var(--surface-muted)] hover:text-[var(--text-strong)]",
               )}
               href={tab.href}
               key={tab.href}

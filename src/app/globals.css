@@ -251,8 +251,14 @@ textarea {
   .ap-button-primary {
     @apply inline-flex min-h-10 items-center justify-center rounded-lg px-5 text-sm font-bold transition;
     background: var(--adey-yellow);
-    color: #ffffff;
+    color: #ffffff !important;
     box-shadow: 0 16px 34px -22px color-mix(in oklab, var(--adey-yellow) 88%, black);
+  }
+
+  .ap-button-primary *,
+  .ap-primary-action,
+  .ap-primary-action * {
+    color: #ffffff !important;
   }
 
   .ap-button-primary:hover {
@@ -411,6 +417,17 @@ textarea {
   .ap-table .font-black,
   .ap-mobile-card .font-black {
     font-weight: 700;
+  }
+
+  .ap-surface button,
+  .ap-surface input,
+  .ap-surface select,
+  .ap-surface textarea,
+  .ap-muted-surface button,
+  .ap-muted-surface input,
+  .ap-muted-surface select,
+  .ap-muted-surface textarea {
+    font-weight: 650;
   }
 
   .ap-soft-text {

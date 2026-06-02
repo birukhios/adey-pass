@@ -43,7 +43,7 @@ export default function LoginPage() {
             </div>
             <div className="rounded-3xl border border-white/10 bg-white/[0.06] p-5">
               <div className="flex items-center gap-3">
-                <div className="grid size-12 place-items-center rounded-2xl" style={{ background: "var(--adey-yellow)", color: "var(--adey-charcoal)" }}>
+                <div className="grid size-12 place-items-center rounded-2xl text-white" style={{ background: "var(--adey-yellow)" }}>
                   <CalendarDays size={22} />
                 </div>
                 <div>

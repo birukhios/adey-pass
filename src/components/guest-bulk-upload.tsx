@@ -610,7 +610,7 @@ function TabButton({ active, label, onClick }: { active: boolean; label: string;
     <button
       className="min-h-10 whitespace-nowrap rounded-xl px-4 text-sm font-black transition"
       onClick={onClick}
-      style={active ? { background: "var(--adey-yellow)", color: "var(--adey-charcoal)" } : { color: "var(--text-muted)" }}
+      style={active ? { background: "var(--adey-yellow)", color: "#ffffff" } : { color: "var(--text-muted)" }}
       type="button"
     >
       {label}
