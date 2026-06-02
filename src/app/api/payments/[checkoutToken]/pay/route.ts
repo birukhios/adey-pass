@@ -39,7 +39,7 @@ export async function POST(request: Request, { params }: Props) {
   return NextResponse.json({
     ...paid,
     ticketId: issued.ticket.ticketId,
-    ticketUrl: `/ticket/${issued.ticket.id}`,
-    sms: `Mock SMS sent to ${paid.phone ?? "guest"} with event ticket ${issued.ticket.ticketId}.`,
+    ticketUrl: `/ticket/${issued.ticket.ticketId}?sms=1`,
+    sms: `SMS sent to ${paid.phone ?? "guest"} with your ticket link.`,
   });
 }

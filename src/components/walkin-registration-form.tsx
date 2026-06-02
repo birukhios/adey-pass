@@ -135,7 +135,7 @@ export function WalkinRegistrationForm({ events }: { events: WalkinEvent[] }) {
     const nextTicketId = result.ticket.ticketId as string;
     const ticketUrl = (result.ticketUrl as string | undefined) ?? `/ticket/${result.ticket.id}`;
     setTicketId(nextTicketId);
-    setNotice(`Walk-in registered. Redirecting to ticket ${nextTicketId}...`);
+    setNotice(result.sms ?? `SMS sent to ${phone} with your ticket link.`);
     const image = await QRCodeLib.toDataURL(JSON.stringify({ ticketId: nextTicketId }), { width: 220, margin: 1 });
     setQrDataUrl(image);
     router.push(ticketUrl);

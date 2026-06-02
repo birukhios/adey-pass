@@ -205,7 +205,7 @@ export function BookingTicketFlow({
       return;
     }
     setTicketId(result.ticketId);
-    setSmsNotice(result.sms ?? `Mock SMS sent to ${phone} with your event ticket.`);
+    setSmsNotice(result.sms ?? `SMS sent to ${phone} with your ticket link.`);
   }
 
   async function downloadTicketCard() {

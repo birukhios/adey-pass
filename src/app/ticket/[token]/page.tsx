@@ -6,11 +6,12 @@ import { AdeyLogo } from "@/components/adey-logo";
 import { TicketReceiptDownload } from "@/components/ticket-receipt-download";
 import { Badge } from "@/components/ui";
 
-type Props = { params: Promise<{ token: string }> };
+type Props = { params: Promise<{ token: string }>; searchParams: Promise<{ sms?: string }> };
 
-export default async function PublicTicketPage({ params }: Props) {
+export default async function PublicTicketPage({ params, searchParams }: Props) {
   await connection();
   const { token } = await params;
+  const { sms } = await searchParams;
   const ticket = await prisma.ticket.findFirst({
     where: { OR: [{ id: token }, { ticketId: token }] },
     include: { guest: { include: { category: true, idVerification: true } }, event: true, gate: true },
@@ -55,6 +56,11 @@ export default async function PublicTicketPage({ params }: Props) {
               </>
             ) : (
               <>
+                {sms ? (
+                  <p className="mt-5 rounded-lg bg-blue-50 p-4 text-sm font-bold leading-6 text-blue-700">
+                    SMS sent to {ticket.guest.phone} with your ticket link.
+                  </p>
+                ) : null}
                 <p className="mt-5 rounded-lg bg-emerald-50 p-4 text-sm font-bold leading-6 text-emerald-700">Show this QR code at the gate.</p>
                 <TicketReceiptDownload
                   accessType={ticket.accessType}

@@ -44,11 +44,11 @@ export async function POST(request: Request) {
     return NextResponse.json({
       ticketId: result.ticket.ticketId,
       ticketDbId: result.ticket.id,
-      ticketUrl: `/ticket/${result.ticket.id}`,
+      ticketUrl: `/ticket/${result.ticket.ticketId}?sms=1`,
       eventName: result.ticketType.event.name,
       accessType: result.ticketType.accessType,
       reused: result.reused,
-      sms: `Mock SMS sent to ${payload.data.phone} with ticket ${result.ticket.ticketId}.`,
+      sms: `SMS sent to ${payload.data.phone} with your ticket link.`,
     }, { status: result.reused ? 200 : 201 });
   } catch (error) {
     return NextResponse.json({ message: error instanceof Error ? error.message : "Could not complete booking." }, { status: 422 });

@@ -149,6 +149,7 @@ export async function POST(request: Request) {
 
   return NextResponse.json({
     ...result,
-    ticketUrl: `/ticket/${result.ticket.id}`,
+    ticketUrl: `/ticket/${result.ticket.ticketId}?sms=1`,
+    sms: `SMS sent to ${result.guest.phone} with your ticket link.`,
   });
 }
