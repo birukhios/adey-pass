@@ -45,8 +45,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   }
 
   const navGroups = [
-    { label: "Operations", items: allowedNavItems.filter((item) => ["Dashboard", "Events", "Guests", "Tickets", "Scanner"].includes(item.label)) },
-    { label: "Finance", items: allowedNavItems.filter((item) => ["Reports"].includes(item.label)) },
+    { label: "Operations", items: allowedNavItems.filter((item) => ["Dashboard", "Events", "Guests", "Tickets", "Scanner", "Reports"].includes(item.label)) },
     { label: "Configuration", items: allowedNavItems.filter((item) => ["Settings"].includes(item.label)) },
   ].filter((group) => group.items.length > 0);
 
