@@ -65,7 +65,7 @@ export function EventCreateForm({
             accentColor: design.accentColor,
             outlineColor: design.outlineColor,
             paymentRequired: ticketType.paymentRequired,
-            priceAmount: Number(ticketType.priceAmount || 0),
+            priceAmount: ticketType.paymentRequired ? Number(ticketType.priceAmount || 0) : 0,
             currency: ticketType.currency || "ETB",
           };
         }),
@@ -120,8 +120,8 @@ export function EventCreateForm({
                 <label className="ap-field-label">Quantity<input className="ap-input" min={0} onChange={(event) => setForm((s) => ({ ...s, ticketTypes: s.ticketTypes.map((item, itemIndex) => itemIndex === index ? { ...item, quantity: event.target.value } : item) }))} type="number" value={ticketType.quantity} /></label>
                 <label className="ap-field-label">Design outline<select className="ap-input" onChange={(event) => setForm((s) => ({ ...s, ticketTypes: s.ticketTypes.map((item, itemIndex) => itemIndex === index ? { ...item, designKey: event.target.value } : item) }))} value={ticketType.designKey}>{ticketDesigns.map((item) => <option key={item.key} value={item.key}>{item.name}</option>)}</select></label>
                 <label className="ap-field-label">Ticket layout<select className="ap-input" onChange={(event) => setForm((s) => ({ ...s, ticketTypes: s.ticketTypes.map((item, itemIndex) => itemIndex === index ? { ...item, layoutKey: event.target.value } : item) }))} value={ticketType.layoutKey}>{ticketLayouts.map((item) => <option key={item.key} value={item.key}>{item.name}</option>)}</select></label>
-                <label className="ap-field-label">Payment<select className="ap-input" onChange={(event) => setForm((s) => ({ ...s, ticketTypes: s.ticketTypes.map((item, itemIndex) => itemIndex === index ? { ...item, paymentRequired: event.target.value === "paid" } : item) }))} value={ticketType.paymentRequired ? "paid" : "free"}><option value="free">Free</option><option value="paid">Paid</option></select></label>
-                <label className="ap-field-label">Price<input className="ap-input" min={0} onChange={(event) => setForm((s) => ({ ...s, ticketTypes: s.ticketTypes.map((item, itemIndex) => itemIndex === index ? { ...item, priceAmount: event.target.value } : item) }))} type="number" value={ticketType.priceAmount} /></label>
+                <label className="ap-field-label">Payment<select className="ap-input" onChange={(event) => setForm((s) => ({ ...s, ticketTypes: s.ticketTypes.map((item, itemIndex) => itemIndex === index ? { ...item, paymentRequired: event.target.value === "paid", priceAmount: event.target.value === "paid" ? item.priceAmount : "0" } : item) }))} value={ticketType.paymentRequired ? "paid" : "free"}><option value="free">Free</option><option value="paid">Paid</option></select></label>
+                <label className="ap-field-label">Price<input className="ap-input" disabled={!ticketType.paymentRequired} min={0} onChange={(event) => setForm((s) => ({ ...s, ticketTypes: s.ticketTypes.map((item, itemIndex) => itemIndex === index ? { ...item, priceAmount: event.target.value } : item) }))} type="number" value={ticketType.paymentRequired ? ticketType.priceAmount : "0"} /></label>
                 <button className="ap-button-ghost self-end" onClick={() => setForm((s) => ({ ...s, ticketTypes: s.ticketTypes.filter((_, itemIndex) => itemIndex !== index) }))} type="button">Remove</button>
                 <div className="rounded-2xl border p-4 lg:col-span-7" style={{ borderColor: design.outlineColor, background: "var(--surface)" }}>
                   <div className="flex items-center justify-between gap-3">

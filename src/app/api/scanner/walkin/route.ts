@@ -8,15 +8,15 @@ import { permissions } from "@/lib/rbac";
 import { hashSecret } from "@/lib/secure-token";
 
 const payloadSchema = z.object({
-  fullName: z.string().min(2),
-  phone: z.string().min(8),
-  email: z.string().email().optional().or(z.literal("")),
-  faydaNumber: z.string().min(8),
-  idType: z.string().optional(),
-  otp: z.string().min(4),
+  fullName: z.string().trim().min(2),
+  phone: z.string().trim().min(8),
+  email: z.preprocess((value) => value === "" || value === null ? undefined : value, z.string().email().optional()),
+  faydaNumber: z.string().trim().min(8),
+  idType: z.preprocess((value) => value === "" || value === null ? undefined : value, z.string().optional()),
+  otp: z.string().trim().min(4),
   checkInImmediately: z.boolean().default(false),
-  eventId: z.string().optional(),
-  eventTicketTypeId: z.string().optional(),
+  eventId: z.preprocess((value) => value === "" || value === null ? undefined : value, z.string().optional()),
+  eventTicketTypeId: z.preprocess((value) => value === "" || value === null ? undefined : value, z.string().optional()),
 });
 
 export async function POST(request: Request) {
@@ -24,7 +24,9 @@ export async function POST(request: Request) {
   if ("error" in auth) return auth.error;
 
   const parsed = payloadSchema.safeParse(await request.json());
-  if (!parsed.success) return NextResponse.json({ message: "Invalid walk-in payload." }, { status: 422 });
+  if (!parsed.success) {
+    return NextResponse.json({ message: "Invalid walk-in payload.", issues: parsed.error.flatten().fieldErrors }, { status: 422 });
+  }
 
   const challenge = await prisma.otpChallenge.findFirst({
     where: {

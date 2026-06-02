@@ -6,30 +6,30 @@ import { prisma } from "@/lib/prisma";
 import { permissions } from "@/lib/rbac";
 
 const ticketTypeSchema = z.object({
-  name: z.string().min(2),
-  accessType: z.string().min(2),
-  quantity: z.number().int().min(0),
-  designKey: z.string().min(2),
-  layoutKey: z.string().min(2).default("mobile-pass"),
-  primaryColor: z.string().min(4),
-  accentColor: z.string().min(4),
-  outlineColor: z.string().min(4),
+  name: z.string().trim().min(2),
+  accessType: z.string().trim().min(2),
+  quantity: z.coerce.number().int().min(0),
+  designKey: z.string().trim().min(2),
+  layoutKey: z.string().trim().min(2).default("mobile-pass"),
+  primaryColor: z.string().trim().min(4),
+  accentColor: z.string().trim().min(4),
+  outlineColor: z.string().trim().min(4),
   paymentRequired: z.boolean().default(false),
-  priceAmount: z.number().int().min(0).default(0),
-  currency: z.string().min(2).default("ETB"),
+  priceAmount: z.coerce.number().int().min(0).default(0),
+  currency: z.string().trim().min(2).default("ETB"),
 });
 
 const payloadSchema = z.object({
-  name: z.string().min(2),
-  venueName: z.string().min(2),
-  date: z.string().min(1),
-  startTime: z.string().min(1),
-  endTime: z.string().min(1),
+  name: z.string().trim().min(2),
+  venueName: z.string().trim().min(2),
+  date: z.string().trim().min(1),
+  startTime: z.string().trim().min(1),
+  endTime: z.string().trim().min(1),
   gateUsageEnabled: z.boolean().default(false),
   selectedGateIds: z.array(z.string()).default([]),
   idVerificationRequired: z.boolean().default(true),
   walkInRegistrationAllowed: z.boolean().default(true),
-  maxAttendees: z.number().int().positive().optional().nullable(),
+  maxAttendees: z.coerce.number().int().positive().optional().nullable(),
   status: z.nativeEnum(EventStatus).default(EventStatus.DRAFT),
   description: z.string().optional(),
   securityDefaults: z.object({
@@ -54,7 +54,7 @@ export async function POST(request: Request) {
   if ("error" in auth) return auth.error;
   const payload = payloadSchema.safeParse(await request.json());
   if (!payload.success) {
-    return NextResponse.json({ message: "Invalid event payload." }, { status: 422 });
+    return NextResponse.json({ message: "Invalid event payload.", issues: payload.error.flatten().fieldErrors }, { status: 422 });
   }
 
   const event = await prisma.$transaction(async (tx) => {
