@@ -8,7 +8,6 @@ const tabs = [
   { href: "/settings/profile", label: "Profile" },
   { href: "/settings/users", label: "Users & Roles" },
   { href: "/settings/gates", label: "Gates" },
-  { href: "/settings/branding", label: "Branding" },
 ];
 
 export function SettingsTabs() {
