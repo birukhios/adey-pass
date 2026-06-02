@@ -247,6 +247,13 @@ textarea {
     color: #ffffff;
   }
 
+  .walkin-dark-form label,
+  .ap-surface .walkin-dark-form label:has(.ap-input),
+  .ap-muted-surface .walkin-dark-form label:has(.ap-input),
+  .walkin-dark-form .ap-field-label {
+    color: #ffffff !important;
+  }
+
   .walkin-dark-form .ap-input::placeholder {
     color: color-mix(in oklab, #ffffff 62%, transparent);
   }
