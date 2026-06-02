@@ -241,6 +241,20 @@ textarea {
     color: var(--text-soft);
   }
 
+  .walkin-dark-form .ap-input {
+    border-color: color-mix(in oklab, #ffffff 22%, transparent);
+    background: color-mix(in oklab, #ffffff 12%, transparent);
+    color: #ffffff;
+  }
+
+  .walkin-dark-form .ap-input::placeholder {
+    color: color-mix(in oklab, #ffffff 62%, transparent);
+  }
+
+  .walkin-dark-form .ap-input option {
+    color: #111827;
+  }
+
   textarea.ap-input {
     min-height: 7rem;
     padding-top: 0.75rem;

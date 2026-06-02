@@ -130,5 +130,8 @@ export async function POST(request: Request) {
     return { guest, ticket };
   });
 
-  return NextResponse.json(result);
+  return NextResponse.json({
+    ...result,
+    ticketUrl: `/ticket/${result.ticket.id}`,
+  });
 }

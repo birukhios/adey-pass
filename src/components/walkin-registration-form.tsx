@@ -2,10 +2,12 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import QRCodeLib from "qrcode";
 import { Badge } from "@/components/ui";
 
 export function WalkinRegistrationForm({ events }: { events: Array<{ id: string; name: string }> }) {
+  const router = useRouter();
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
@@ -52,7 +54,7 @@ export function WalkinRegistrationForm({ events }: { events: Array<{ id: string;
     }
     if (otp.trim() && (!demoOtp || otp.trim() === demoOtp)) {
       setOtpStatus("verified");
-      setNotice("OTP added. It will be verified securely when you register.");
+      setNotice("Fayda OTP verified. You can generate the walk-in ticket now.");
       return;
     }
     setOtpStatus("failed");
@@ -60,7 +62,10 @@ export function WalkinRegistrationForm({ events }: { events: Array<{ id: string;
   }
 
   async function registerWalkin(checkInImmediately: boolean) {
-    if (otpStatus !== "verified") return;
+    if (otpStatus !== "verified") {
+      setNotice("Verify the Fayda OTP before generating the ticket.");
+      return;
+    }
     setSubmitting(true);
     const response = await fetch("/api/scanner/walkin", {
       method: "POST",
@@ -83,17 +88,19 @@ export function WalkinRegistrationForm({ events }: { events: Array<{ id: string;
       return;
     }
     const nextTicketId = result.ticket.ticketId as string;
+    const ticketUrl = (result.ticketUrl as string | undefined) ?? `/ticket/${result.ticket.id}`;
     setTicketId(nextTicketId);
-    setNotice(`Walk-in registered. Ticket: ${nextTicketId}`);
+    setNotice(`Walk-in registered. Redirecting to ticket ${nextTicketId}...`);
     const image = await QRCodeLib.toDataURL(JSON.stringify({ ticketId: nextTicketId }), { width: 220, margin: 1 });
     setQrDataUrl(image);
+    router.push(ticketUrl);
   }
 
   return (
-    <div className="min-w-0">
-      <h2 className="text-lg font-black">Manual Add Walk-In</h2>
+    <div className="walkin-dark-form min-w-0">
+      <h2 className="text-lg font-black text-white">Manual Add Walk-In</h2>
       <div className="mt-4 grid gap-4 lg:grid-cols-2">
-        <label className="grid gap-2 text-sm font-bold text-slate-200">
+        <label className="grid gap-2 text-sm font-bold text-white">
           Full name
           <input
             className="ap-input"
@@ -102,7 +109,7 @@ export function WalkinRegistrationForm({ events }: { events: Array<{ id: string;
             value={fullName}
           />
         </label>
-        <label className="grid gap-2 text-sm font-bold text-slate-200">
+        <label className="grid gap-2 text-sm font-bold text-white">
           Phone number
           <input
             className="ap-input"
@@ -111,7 +118,7 @@ export function WalkinRegistrationForm({ events }: { events: Array<{ id: string;
             value={phone}
           />
         </label>
-        <label className="grid gap-2 text-sm font-bold text-slate-200">
+        <label className="grid gap-2 text-sm font-bold text-white">
           Email optional
           <input
             className="ap-input"
@@ -119,7 +126,7 @@ export function WalkinRegistrationForm({ events }: { events: Array<{ id: string;
             value={email}
           />
         </label>
-        <label className="grid gap-2 text-sm font-bold text-slate-200">
+        <label className="grid gap-2 text-sm font-bold text-white">
           Event
           <select className="ap-input" onChange={(event) => setEventId(event.target.value)} value={eventId}>
             {events.map((event) => (
@@ -129,7 +136,7 @@ export function WalkinRegistrationForm({ events }: { events: Array<{ id: string;
             ))}
           </select>
         </label>
-        <label className="grid gap-2 text-sm font-bold text-slate-200">
+        <label className="grid gap-2 text-sm font-bold text-white">
           ID Type
           <select className="ap-input" onChange={(event) => setIdType(event.target.value)} value={idType}>
             <option>Fayda ID</option>
@@ -137,7 +144,7 @@ export function WalkinRegistrationForm({ events }: { events: Array<{ id: string;
             <option>Passport</option>
           </select>
         </label>
-        <label className="grid gap-2 text-sm font-bold text-slate-200">
+        <label className="grid gap-2 text-sm font-bold text-white">
           ID Number (Required)
           <div className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_auto]">
             <input
@@ -160,7 +167,7 @@ export function WalkinRegistrationForm({ events }: { events: Array<{ id: string;
       </div>
 
       <div className="mt-4 grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto]">
-        <label className="grid gap-2 text-sm font-bold text-slate-200">
+        <label className="grid gap-2 text-sm font-bold text-white">
           OTP code
           <input
             className="ap-input"
@@ -180,7 +187,7 @@ export function WalkinRegistrationForm({ events }: { events: Array<{ id: string;
       </div>
 
       <div className="mt-4 flex flex-wrap items-center gap-3">
-        <span className="text-sm font-black text-slate-200">Verification:</span>
+        <span className="text-sm font-black text-white">Verification:</span>
         {otpStatus === "verified" && <Badge tone="green">Verified</Badge>}
         {otpStatus === "sent" && <Badge tone="yellow">OTP Sent</Badge>}
         {otpStatus === "failed" && <Badge tone="red">Failed</Badge>}
