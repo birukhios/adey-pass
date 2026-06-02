@@ -1,23 +1,42 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import QRCodeLib from "qrcode";
 import { Badge } from "@/components/ui";
 
-export function WalkinRegistrationForm({ events }: { events: Array<{ id: string; name: string }> }) {
+type WalkinEvent = {
+  id: string;
+  name: string;
+  ticketTypes: Array<{
+    id: string;
+    name: string;
+    accessType: string;
+    bookingToken: string;
+    paymentRequired: boolean;
+    priceAmount: number;
+    currency: string;
+  }>;
+};
+
+export function WalkinRegistrationForm({ events }: { events: WalkinEvent[] }) {
   const router = useRouter();
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [faydaNumber, setFaydaNumber] = useState("");
-  const [idType, setIdType] = useState("Fayda ID");
   const [otp, setOtp] = useState("");
   const [demoOtp, setDemoOtp] = useState("");
   const [otpStatus, setOtpStatus] = useState<"idle" | "sent" | "verified" | "failed">("idle");
   const [notice, setNotice] = useState("");
   const [eventId, setEventId] = useState(events[0]?.id ?? "");
+  const activeEvent = useMemo(() => events.find((event) => event.id === eventId) ?? events[0], [eventId, events]);
+  const [ticketTypeId, setTicketTypeId] = useState(events[0]?.ticketTypes[0]?.id ?? "");
+  const selectedTicketType = useMemo(
+    () => activeEvent?.ticketTypes.find((ticketType) => ticketType.id === ticketTypeId) ?? activeEvent?.ticketTypes[0],
+    [activeEvent, ticketTypeId],
+  );
   const [submitting, setSubmitting] = useState(false);
   const [ticketId, setTicketId] = useState("");
   const [qrDataUrl, setQrDataUrl] = useState("");
@@ -66,6 +85,32 @@ export function WalkinRegistrationForm({ events }: { events: Array<{ id: string;
       setNotice("Verify the Fayda OTP before generating the ticket.");
       return;
     }
+    if (selectedTicketType?.paymentRequired && selectedTicketType.priceAmount > 0) {
+      setSubmitting(true);
+      const response = await fetch("/api/payments/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          bookingToken: selectedTicketType.bookingToken,
+          ticketTypeId: selectedTicketType.id,
+          fullName,
+          companyName: "Walk-in",
+          phone,
+          faydaNumber,
+          otp,
+        }),
+      });
+      const result = await response.json();
+      setSubmitting(false);
+      if (!response.ok) {
+        setNotice(result.message ?? "Could not create walk-in checkout.");
+        return;
+      }
+      setNotice("Checkout created. Redirecting to payment...");
+      router.push(result.checkoutUrl);
+      return;
+    }
+
     setSubmitting(true);
     const response = await fetch("/api/scanner/walkin", {
       method: "POST",
@@ -75,9 +120,9 @@ export function WalkinRegistrationForm({ events }: { events: Array<{ id: string;
         phone,
         email,
         faydaNumber,
-        idType,
         otp,
         eventId,
+        eventTicketTypeId: selectedTicketType?.id,
         checkInImmediately,
       }),
     });
@@ -128,7 +173,15 @@ export function WalkinRegistrationForm({ events }: { events: Array<{ id: string;
         </label>
         <label className="grid gap-2 text-sm font-bold text-white">
           Event
-          <select className="ap-input" onChange={(event) => setEventId(event.target.value)} value={eventId}>
+          <select
+            className="ap-input"
+            onChange={(event) => {
+              const nextEvent = events.find((item) => item.id === event.target.value);
+              setEventId(event.target.value);
+              setTicketTypeId(nextEvent?.ticketTypes[0]?.id ?? "");
+            }}
+            value={eventId}
+          >
             {events.map((event) => (
               <option key={event.id} value={event.id}>
                 {event.name}
@@ -137,15 +190,17 @@ export function WalkinRegistrationForm({ events }: { events: Array<{ id: string;
           </select>
         </label>
         <label className="grid gap-2 text-sm font-bold text-white">
-          ID Type
-          <select className="ap-input" onChange={(event) => setIdType(event.target.value)} value={idType}>
-            <option>Fayda ID</option>
-            <option>National ID</option>
-            <option>Passport</option>
+          Ticket type
+          <select className="ap-input" onChange={(event) => setTicketTypeId(event.target.value)} value={ticketTypeId}>
+            {activeEvent?.ticketTypes.length ? activeEvent.ticketTypes.map((ticketType) => (
+              <option key={ticketType.id} value={ticketType.id}>
+                {ticketType.name} · {ticketType.paymentRequired && ticketType.priceAmount > 0 ? `${ticketType.currency} ${ticketType.priceAmount.toLocaleString()}` : "Free"}
+              </option>
+            )) : <option value="">General Admission · Free</option>}
           </select>
         </label>
         <label className="grid gap-2 text-sm font-bold text-white">
-          ID Number (Required)
+          Fayda Number (Required)
           <div className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_auto]">
             <input
               className="ap-input"
@@ -205,7 +260,7 @@ export function WalkinRegistrationForm({ events }: { events: Array<{ id: string;
           }}
           type="button"
         >
-          {submitting ? "Saving..." : "Generate Ticket"}
+          {submitting ? "Saving..." : selectedTicketType?.paymentRequired && selectedTicketType.priceAmount > 0 ? "Continue to Checkout" : "Generate Ticket"}
         </button>
         <button
           className="inline-flex min-h-11 w-full items-center justify-center rounded-xl border px-4 text-sm font-black text-white disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
@@ -216,7 +271,7 @@ export function WalkinRegistrationForm({ events }: { events: Array<{ id: string;
           style={{ borderColor: "var(--surface-muted)" }}
           type="button"
         >
-          Check In Immediately
+          {selectedTicketType?.paymentRequired && selectedTicketType.priceAmount > 0 ? "Checkout & Check In Later" : "Check In Immediately"}
         </button>
       </div>
       {ticketId && qrDataUrl ? (

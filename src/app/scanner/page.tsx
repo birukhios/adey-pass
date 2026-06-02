@@ -19,7 +19,22 @@ export default async function ScannerPage() {
     prisma.event.findMany({
       where: { status: "ACTIVE" },
       orderBy: { date: "asc" },
-      select: { id: true, name: true },
+      select: {
+        id: true,
+        name: true,
+        ticketTypes: {
+          orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
+          select: {
+            id: true,
+            name: true,
+            accessType: true,
+            bookingToken: true,
+            paymentRequired: true,
+            priceAmount: true,
+            currency: true,
+          },
+        },
+      },
     }),
     session?.user?.id
       ? prisma.gate.findMany({

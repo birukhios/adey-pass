@@ -59,17 +59,16 @@ export function StadiumCarousel({ compact = false }: { compact?: boolean }) {
   return (
     <section className="relative overflow-hidden rounded-[1.35rem] border bg-white p-2 shadow-[var(--shadow-card)]" style={{ borderColor: "var(--stroke)" }}>
       <div className={`relative overflow-hidden rounded-[1rem] bg-slate-950 ${compact ? "aspect-[4/3] min-h-[260px]" : "aspect-[16/5] min-h-[220px]"}`}>
-        {stadiumSlides.map((item, index) => (
-          <Image
-            alt={`${item.name} photo`}
-            className={`absolute inset-0 h-full w-full object-cover transition duration-700 ${index === activeIndex ? "scale-100 opacity-100" : "scale-105 opacity-0"}`}
-            fill
-            key={item.name}
-            priority={index === 0}
-            src={item.image}
-            sizes="(min-width: 1024px) 84vw, 100vw"
-          />
-        ))}
+        <Image
+          alt={`${slide.name} photo`}
+          className="absolute inset-0 h-full w-full object-cover transition duration-700"
+          fill
+          key={slide.name}
+          priority={activeIndex === 0}
+          src={slide.image}
+          sizes={compact ? "(min-width: 1024px) 52vw, 100vw" : "(min-width: 1024px) 84vw, 100vw"}
+          unoptimized
+        />
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950/72 via-slate-950/8 to-transparent" />
         <div className="absolute bottom-4 left-4 right-4 flex flex-wrap items-end justify-between gap-3">
           <div>

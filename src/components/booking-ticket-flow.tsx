@@ -53,6 +53,9 @@ export function BookingTicketFlow({
   const [consent, setConsent] = useState(false);
   const [started, setStarted] = useState(false);
   const [status, setStatus] = useState<"idle" | "verifying" | "verified" | "failed">("idle");
+  const [otp, setOtp] = useState("");
+  const [demoOtp, setDemoOtp] = useState("");
+  const [otpMessage, setOtpMessage] = useState("");
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [ticketId, setTicketId] = useState("");
   const [smsNotice, setSmsNotice] = useState("");
@@ -87,40 +90,70 @@ export function BookingTicketFlow({
     return `AP26-${a}-${b}${c}`;
   }, [token]);
 
-  async function verifyIdentity() {
+  function validateIdentityFields() {
     setError("");
-
     const cleanFayda = faydaNumber.replace(/[^0-9A-Za-z]/g, "");
     if (!fullName.trim()) {
       setError("Please add your full name.");
-      return;
+      return false;
     }
     if (!companyName.trim()) {
       setError("Please add your company name.");
-      return;
+      return false;
     }
     if (phone.replace(/[^0-9]/g, "").length < 8) {
       setError(activePaymentRequired ? "Please add the phone number you want to pay with." : "Please add your phone number.");
-      return;
+      return false;
     }
     if (cleanFayda.length < 8) {
       setError("Fayda number must be at least 8 characters.");
-      return;
+      return false;
     }
     if (!consent) {
       setError("Please accept the consent to continue.");
-      return;
+      return false;
     }
+    return true;
+  }
 
+  async function sendBookingOtp() {
+    if (!validateIdentityFields()) return;
     setStatus("verifying");
-    await new Promise((resolve) => setTimeout(resolve, 900));
-
-    if (cleanFayda.startsWith("0")) {
+    setOtpMessage("");
+    const response = await fetch("/api/bookings/otp", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        bookingToken: token,
+        ticketTypeId: selectedTicketType?.id,
+        phone,
+        faydaNumber,
+      }),
+    });
+    const result = await response.json();
+    if (!response.ok) {
       setStatus("failed");
-      setError("Verification failed. Please check your Fayda number.");
+      setError(result.message ?? "Could not send OTP.");
       return;
     }
+    setDemoOtp(result.demoOtp);
+    setOtp(result.demoOtp);
+    setOtpMessage(`OTP sent to ${phone}. Demo OTP: ${result.demoOtp}`);
+    setStatus("idle");
+  }
 
+  function verifyIdentity() {
+    if (!otp.trim()) {
+      setError("Enter the OTP sent to your phone.");
+      return;
+    }
+    if (demoOtp && otp.trim() !== demoOtp) {
+      setStatus("failed");
+      setError("Invalid OTP code.");
+      return;
+    }
+    setError("");
+    setOtpMessage("Fayda OTP verified. You can continue.");
     setStatus("verified");
   }
 
@@ -137,6 +170,7 @@ export function BookingTicketFlow({
         companyName,
         phone,
         faydaNumber,
+        otp,
       }),
     });
     const result = await response.json();
@@ -161,6 +195,7 @@ export function BookingTicketFlow({
         companyName,
         phone,
         faydaNumber,
+        otp,
       }),
     });
     const result = await response.json();
@@ -291,7 +326,7 @@ export function BookingTicketFlow({
             {ticketTypes.length > 1 ? (
               <label className="ap-field-label">
                 Ticket type
-                <select className="ap-input" onChange={(event) => { setSelectedTicketTypeId(event.target.value); setStatus("idle"); setTicketId(""); }} value={selectedTicketTypeId}>
+                <select className="ap-input" onChange={(event) => { setSelectedTicketTypeId(event.target.value); setStatus("idle"); setTicketId(""); setDemoOtp(""); setOtp(""); setOtpMessage(""); }} value={selectedTicketTypeId}>
                   {ticketTypes.map((item) => (
                     <option key={item.id} value={item.id}>
                       {item.name} · {item.paymentRequired && item.priceAmount > 0 ? `${item.currency} ${item.priceAmount.toLocaleString()}` : "Free"}
@@ -333,6 +368,26 @@ export function BookingTicketFlow({
                 value={faydaNumber}
               />
             </label>
+            <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto]">
+              <label className="ap-field-label">
+                Fayda OTP
+                <input
+                  className="ap-input"
+                  onChange={(event) => setOtp(event.target.value)}
+                  placeholder="Send OTP first"
+                  value={otp}
+                />
+              </label>
+              <button
+                className="h-10 rounded-lg px-4 text-sm font-black text-white disabled:opacity-50 sm:mt-6"
+                disabled={status === "verifying"}
+                onClick={() => { void sendBookingOtp(); }}
+                style={{ background: activePrimary }}
+                type="button"
+              >
+                {status === "verifying" ? "Sending..." : "Send OTP"}
+              </button>
+            </div>
             <label className="flex items-start gap-2 text-sm font-bold text-slate-700">
               <input checked={consent} onChange={(event) => setConsent(event.target.checked)} type="checkbox" className="mt-1 size-4 accent-[var(--adey-yellow)]" />
               I confirm this information is correct and I consent to identity verification for event access.
@@ -340,6 +395,7 @@ export function BookingTicketFlow({
           </div>
 
           {error && <div className="mt-3 rounded-lg bg-red-50 p-3 text-sm font-bold text-red-700">{error}</div>}
+          {otpMessage && <div className="mt-3 rounded-lg bg-blue-50 p-3 text-sm font-bold text-blue-700">{otpMessage}</div>}
 
           {status !== "verified" && (
             <button
@@ -348,7 +404,7 @@ export function BookingTicketFlow({
               style={{ background: activePrimary, color: activeBackground }}
               type="button"
             >
-              {status === "verifying" ? "Verifying..." : "Verify Fayda Number"}
+              Verify Fayda OTP
             </button>
           )}
 

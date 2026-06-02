@@ -16,6 +16,7 @@ const payloadSchema = z.object({
   otp: z.string().min(4),
   checkInImmediately: z.boolean().default(false),
   eventId: z.string().optional(),
+  eventTicketTypeId: z.string().optional(),
 });
 
 export async function POST(request: Request) {
@@ -48,6 +49,12 @@ export async function POST(request: Request) {
 
   const walkInCategory = await prisma.guestCategory.findUnique({ where: { name: "Walk-In" } });
   if (!walkInCategory) return NextResponse.json({ message: "Walk-In category missing." }, { status: 500 });
+  const ticketType = parsed.data.eventTicketTypeId
+    ? await prisma.eventTicketType.findFirst({ where: { id: parsed.data.eventTicketTypeId, eventId: event.id } })
+    : await prisma.eventTicketType.findFirst({ where: { eventId: event.id, paymentRequired: false }, orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }] });
+  if (ticketType?.paymentRequired && ticketType.priceAmount > 0) {
+    return NextResponse.json({ message: "This walk-in ticket type requires checkout first." }, { status: 422 });
+  }
   const faydaHash = crypto.createHash("sha256").update(parsed.data.faydaNumber).digest("hex");
 
   const duplicate = await prisma.guest.findFirst({
@@ -99,7 +106,7 @@ export async function POST(request: Request) {
         guestId: guest.id,
         eventId: event.id,
         ticketId: `AP26-${crypto.randomBytes(3).toString("hex").toUpperCase()}`,
-        accessType: "General Admission",
+        accessType: ticketType?.accessType ?? "General Admission",
         status: parsed.data.checkInImmediately ? TicketStatus.USED : TicketStatus.GENERATED,
         usedAt: parsed.data.checkInImmediately ? new Date() : null,
       },

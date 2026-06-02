@@ -56,18 +56,18 @@ export default async function PublicTicketPage({ params }: Props) {
             ) : (
               <>
                 <p className="mt-5 rounded-lg bg-emerald-50 p-4 text-sm font-bold leading-6 text-emerald-700">Show this QR code at the gate.</p>
-                {isWalkIn ? (
-                  <TicketReceiptDownload
-                    accessType={ticket.accessType}
-                    eventName={ticket.event.name}
-                    guestName={ticket.guest.fullName}
-                    organization={ticket.guest.organization}
-                    phone={ticket.guest.phone}
-                    source={ticket.guest.source}
-                    status={ticket.status}
-                    ticketId={ticket.ticketId}
-                  />
-                ) : null}
+                <TicketReceiptDownload
+                  accessType={ticket.accessType}
+                  buttonLabel={isWalkIn ? "Download Walk-in Receipt" : "Download Ticket"}
+                  eventName={ticket.event.name}
+                  guestName={ticket.guest.fullName}
+                  organization={ticket.guest.organization}
+                  phone={ticket.guest.phone}
+                  source={ticket.guest.source}
+                  status={ticket.status}
+                  subtitle={isWalkIn ? "Walk-in access receipt" : "Verified access ticket"}
+                  ticketId={ticket.ticketId}
+                />
               </>
             )}
           </div>

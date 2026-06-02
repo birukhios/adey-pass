@@ -11,9 +11,11 @@ type TicketReceiptDownloadProps = {
   organization?: string | null;
   status: string;
   source: string;
+  buttonLabel?: string;
+  subtitle?: string;
 };
 
-export function TicketReceiptDownload({ eventName, guestName, phone, ticketId, accessType, organization, status, source }: TicketReceiptDownloadProps) {
+export function TicketReceiptDownload({ eventName, guestName, phone, ticketId, accessType, organization, status, source, buttonLabel = "Download Ticket", subtitle = "QR ticket receipt" }: TicketReceiptDownloadProps) {
   async function downloadReceipt() {
     const qrDataUrl = await QRCodeLib.toDataURL(JSON.stringify({ ticketId }), {
       margin: 2,
@@ -39,7 +41,7 @@ export function TicketReceiptDownload({ eventName, guestName, phone, ticketId, a
     ctx.fillText("Stadium Management System", 92, 132);
     ctx.font = "700 24px Arial";
     ctx.fillStyle = "rgba(255,255,255,0.72)";
-    ctx.fillText("Walk-in access receipt", 92, 174);
+    ctx.fillText(subtitle, 92, 174);
 
     ctx.fillStyle = "#3B63F4";
     roundRect(ctx, 92, 214, 220, 48, 24);
@@ -66,7 +68,7 @@ export function TicketReceiptDownload({ eventName, guestName, phone, ticketId, a
     const rows = [
       ["Ticket ID", ticketId],
       ["Access", accessType],
-      ["Organization", organization || "Walk-in guest"],
+      ["Organization", organization || "Guest"],
       ["Phone", phone],
       ["Status", status],
       ["Issued", new Date().toLocaleString()],
@@ -99,13 +101,13 @@ export function TicketReceiptDownload({ eventName, guestName, phone, ticketId, a
 
     const link = document.createElement("a");
     link.href = canvas.toDataURL("image/png");
-    link.download = `${ticketId.toLowerCase()}-walk-in-receipt.png`;
+    link.download = `${ticketId.toLowerCase()}-ticket.png`;
     link.click();
   }
 
   return (
     <button className="mt-4 flex h-12 w-full items-center justify-center rounded-lg bg-[#0B7DE3] text-sm font-black text-white" onClick={downloadReceipt} type="button">
-      Download Walk-in Receipt
+      {buttonLabel}
     </button>
   );
 }
