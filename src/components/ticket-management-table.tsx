@@ -62,7 +62,7 @@ export function TicketManagementTable({ initialRows }: { initialRows: TicketRow[
   }
 
   async function copyLink(row: TicketRow) {
-    const link = `http://localhost:3000/ticket/${row.linkToken}`;
+    const link = `${window.location.origin}/ticket/${row.linkToken}`;
     await navigator.clipboard.writeText(link);
     setMessage(`Copied ticket link for ${row.name}`);
   }

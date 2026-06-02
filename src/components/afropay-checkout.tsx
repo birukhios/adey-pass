@@ -46,7 +46,7 @@ export function AfropayCheckout({ checkout }: { checkout: CheckoutData }) {
       setMessage(result.message ?? "Payment could not be completed.");
       return;
     }
-    router.push(`/payment/${checkout.checkoutToken}`);
+    router.push(result.ticketUrl ?? `/payment/${checkout.checkoutToken}`);
     router.refresh();
   }
 

@@ -1,4 +1,5 @@
 import { connection } from "next/server";
+import { headers } from "next/headers";
 import { AppShell } from "@/components/app-shell";
 import { EventDetailSidePanel } from "@/components/event-detail-side-panel";
 import { PageHeader } from "@/components/page-header";
@@ -11,6 +12,10 @@ type Props = { params: Promise<{ id: string }> };
 export default async function EventDetailPage({ params }: Props) {
   await connection();
   const { id } = await params;
+  const requestHeaders = await headers();
+  const host = requestHeaders.get("x-forwarded-host") ?? requestHeaders.get("host") ?? "localhost:3000";
+  const protocol = requestHeaders.get("x-forwarded-proto") ?? (host.includes("localhost") ? "http" : "https");
+  const origin = `${protocol}://${host}`;
   const [event, gates] = await Promise.all([getEventSummary(id), getGatesList()]);
   if (!event) {
     return (
@@ -20,8 +25,8 @@ export default async function EventDetailPage({ params }: Props) {
     );
   }
 
-  const generatedLink = `http://localhost:3000/booking/${event.id}`;
-  const organizationLink = `http://localhost:3000/organization/${event.id}`;
+  const generatedLink = `${origin}/booking/${event.id}`;
+  const organizationLink = `${origin}/organization/${event.id}`;
   const qrDataUrl = await QRCodeLib.toDataURL(generatedLink, { width: 180, margin: 1 });
   const checkedIn = event.checkins.length;
   const registered = event.guests.length;

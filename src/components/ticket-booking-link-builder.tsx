@@ -55,6 +55,7 @@ export function TicketBookingLinkBuilder() {
   }, [brand.accessType, eventName]);
 
   const bookingLink = useMemo(() => {
+    const origin = typeof window !== "undefined" ? window.location.origin : "";
     const params = new URLSearchParams({
       e: eventName,
       a: brand.accessType,
@@ -66,7 +67,7 @@ export function TicketBookingLinkBuilder() {
       text: brand.surface,
       acc: brand.accent,
     });
-    return `http://localhost:3000/booking/${bookingToken}?${params.toString()}`;
+    return `${origin}/booking/${bookingToken}?${params.toString()}`;
   }, [bookingToken, brand, ctaLabel, eventName, footerText, logoText]);
 
   async function copyLink() {

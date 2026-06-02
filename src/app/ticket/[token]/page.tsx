@@ -41,7 +41,7 @@ export default async function PublicTicketPage({ params }: Props) {
           </div>
           <div className="p-6">
             <div className="grid place-items-center rounded-xl border border-dashed border-slate-300 p-5">
-              <QRCode value={ticket.id} size={220} />
+              <QRCode value={JSON.stringify({ ticketId: ticket.ticketId, ticketDbId: ticket.id, url: `/ticket/${ticket.id}` })} size={220} />
             </div>
             <div className="mt-5 grid gap-3 text-sm">
               <div className="flex items-center justify-between"><span className="font-bold text-slate-500">Ticket ID</span><span className="font-black">{ticket.ticketId}</span></div>

@@ -4,6 +4,7 @@ import { z } from "zod";
 import { requirePermission } from "@/lib/api-auth";
 import { prisma } from "@/lib/prisma";
 import { permissions } from "@/lib/rbac";
+import { hashSecret } from "@/lib/secure-token";
 
 const payloadSchema = z.object({
   query: z.string().min(2),
@@ -20,13 +21,7 @@ export async function POST(request: Request) {
   }
 
   const query = parsed.data.query.trim();
-  let normalizedQuery = query;
-  try {
-    const maybeJson = JSON.parse(query) as { token?: string; ticketId?: string };
-    normalizedQuery = maybeJson.token ?? maybeJson.ticketId ?? query;
-  } catch {
-    normalizedQuery = query;
-  }
+  const normalizedQuery = normalizeScanQuery(query);
   if (parsed.data.gateId && !auth.session.user.permissions?.includes(permissions.scannerOverride)) {
     const assignment = await prisma.gateOfficerAssignment.findUnique({
       where: { userId_gateId: { userId: auth.session.user.id, gateId: parsed.data.gateId } },
@@ -39,9 +34,15 @@ export async function POST(request: Request) {
     }
   }
 
+  const qrToken = await prisma.qrToken.findUnique({
+    where: { tokenHash: hashSecret(normalizedQuery) },
+    include: { ticket: true },
+  });
+
   const ticket = await prisma.ticket.findFirst({
     where: {
       OR: [
+        ...(qrToken?.ticketId ? [{ id: qrToken.ticketId }] : []),
         { id: query },
         { id: normalizedQuery },
         { ticketId: normalizedQuery },
@@ -109,4 +110,37 @@ export async function POST(request: Request) {
   ]);
 
   return NextResponse.json({ status: "Allow Entry", ticket });
+}
+
+function normalizeScanQuery(query: string) {
+  let normalizedQuery = query.trim();
+  try {
+    const maybeJson = JSON.parse(normalizedQuery) as {
+      token?: string;
+      ticketId?: string;
+      ticketDbId?: string;
+      url?: string;
+    };
+    normalizedQuery = maybeJson.ticketId ?? maybeJson.ticketDbId ?? maybeJson.token ?? maybeJson.url ?? normalizedQuery;
+  } catch {
+    // Plain QR values are supported.
+  }
+
+  try {
+    const url = new URL(normalizedQuery);
+    const parts = url.pathname.split("/").filter(Boolean);
+    if (["ticket", "verify"].includes(parts[0] ?? "") && parts[1]) {
+      return parts[1];
+    }
+    const token = url.searchParams.get("token") ?? url.searchParams.get("ticketId");
+    if (token) return token;
+  } catch {
+    if (normalizedQuery.includes("/ticket/") || normalizedQuery.includes("/verify/")) {
+      const parts = normalizedQuery.split(/[/?#]/).filter(Boolean);
+      const markerIndex = parts.findIndex((part) => part === "ticket" || part === "verify");
+      if (markerIndex >= 0 && parts[markerIndex + 1]) return parts[markerIndex + 1];
+    }
+  }
+
+  return normalizedQuery;
 }

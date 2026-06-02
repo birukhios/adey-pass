@@ -105,6 +105,14 @@ export async function POST(request: Request) {
       },
     });
 
+    await tx.qrToken.create({
+      data: {
+        ticketId: ticket.id,
+        tokenHash: hashSecret(ticket.ticketId),
+        status: ticket.status,
+      },
+    });
+
     if (parsed.data.checkInImmediately) {
       await tx.checkin.create({
         data: {
