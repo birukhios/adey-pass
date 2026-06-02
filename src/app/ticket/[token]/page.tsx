@@ -3,6 +3,7 @@ import { connection } from "next/server";
 import QRCode from "react-qr-code";
 import { prisma } from "@/lib/prisma";
 import { AdeyLogo } from "@/components/adey-logo";
+import { TicketReceiptDownload } from "@/components/ticket-receipt-download";
 import { Badge } from "@/components/ui";
 
 type Props = { params: Promise<{ token: string }> };
@@ -26,6 +27,7 @@ export default async function PublicTicketPage({ params }: Props) {
   }
 
   const verificationPending = ticket.event.idVerificationRequired && !["VERIFIED", "MANUALLY_APPROVED"].includes(ticket.guest.idVerification?.status ?? "NOT_STARTED");
+  const isWalkIn = ticket.guest.source === "WALK_IN";
 
   return (
     <main className="min-h-screen bg-[#F4F6FB] px-4 py-6 text-[var(--adey-charcoal)]">
@@ -52,7 +54,21 @@ export default async function PublicTicketPage({ params }: Props) {
                 <Link className="mt-4 flex h-12 items-center justify-center rounded-lg bg-[#111418] text-sm font-black text-white" href={`/verify/${ticket.id}`}>Verify National/Fayda ID</Link>
               </>
             ) : (
-              <p className="mt-5 rounded-lg bg-emerald-50 p-4 text-sm font-bold leading-6 text-emerald-700">Show this QR code at the gate.</p>
+              <>
+                <p className="mt-5 rounded-lg bg-emerald-50 p-4 text-sm font-bold leading-6 text-emerald-700">Show this QR code at the gate.</p>
+                {isWalkIn ? (
+                  <TicketReceiptDownload
+                    accessType={ticket.accessType}
+                    eventName={ticket.event.name}
+                    guestName={ticket.guest.fullName}
+                    organization={ticket.guest.organization}
+                    phone={ticket.guest.phone}
+                    source={ticket.guest.source}
+                    status={ticket.status}
+                    ticketId={ticket.ticketId}
+                  />
+                ) : null}
+              </>
             )}
           </div>
         </section>

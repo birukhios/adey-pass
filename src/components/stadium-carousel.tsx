@@ -6,6 +6,11 @@ import { useEffect, useState } from "react";
 
 const stadiumSlides = [
   {
+    name: "Addis Ababa Stadium Tribune",
+    image: "/stadium-photos/addis-ababa-tribune-2018.jpg",
+    credit: "Wikimedia Commons",
+  },
+  {
     name: "Addis Ababa Stadium",
     image: "/stadium-photos/addis-ababa-stadium.jpg",
     credit: "Wikimedia Commons",
@@ -16,13 +21,23 @@ const stadiumSlides = [
     credit: "Wikimedia Commons",
   },
   {
+    name: "Hawassa Stadium Stands",
+    image: "/stadium-photos/hawassa-stadium-stands.jpg",
+    credit: "Wikimedia Commons",
+  },
+  {
     name: "Addis Ababa Stadium Exterior",
     image: "/stadium-photos/addis-ababa-stadium-classic.jpg",
     credit: "Wikimedia Commons",
   },
+  {
+    name: "Bahir Dar Stadium",
+    image: "/stadiums/bahir-dar-stadium.svg",
+    credit: "Stadium Management System",
+  },
 ];
 
-export function StadiumCarousel() {
+export function StadiumCarousel({ compact = false }: { compact?: boolean }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const slide = stadiumSlides[activeIndex];
 
@@ -43,7 +58,7 @@ export function StadiumCarousel() {
 
   return (
     <section className="relative overflow-hidden rounded-[1.35rem] border bg-white p-2 shadow-[var(--shadow-card)]" style={{ borderColor: "var(--stroke)" }}>
-      <div className="relative aspect-[16/5] min-h-[220px] overflow-hidden rounded-[1rem] bg-slate-950">
+      <div className={`relative overflow-hidden rounded-[1rem] bg-slate-950 ${compact ? "aspect-[4/3] min-h-[260px]" : "aspect-[16/5] min-h-[220px]"}`}>
         {stadiumSlides.map((item, index) => (
           <Image
             alt={`${item.name} photo`}

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { connection } from "next/server";
 import { BookingTicketFlow } from "@/components/booking-ticket-flow";
+import { StadiumCarousel } from "@/components/stadium-carousel";
 import { prisma } from "@/lib/prisma";
 
 type BookingPageProps = {
@@ -41,21 +42,40 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
   const currency = ticketType?.currency ?? "ETB";
 
   return (
-    <main className="min-h-screen px-4 py-8" style={{ background: "linear-gradient(180deg,#F4F6FB, #EEF2F8)", color: "#111418" }}>
-      <div className="mx-auto max-w-lg">
-        <section className="rounded-xl border p-6 shadow-[0_28px_52px_-30px_rgba(17,20,24,0.5)]" style={{ borderColor: "#E7EBF3", background: text, color: background }}>
-          <div className="text-xs font-black uppercase tracking-[0.16em]" style={{ color: accent }}>
-            Booking Link
-          </div>
-          <h1 className="mt-2 text-4xl font-black tracking-tight">{eventName}</h1>
-          <p className="mt-2 text-sm font-bold" style={{ color: accent }}>
-            {event ? `${event.venueName} · choose your ticket type below` : accessType}
-          </p>
-          <div className="mt-8 rounded-lg p-4" style={{ background: primary, color: background }}>
-            <div className="text-sm font-black">Booking access</div>
-            <div className="mt-1 text-xs font-bold">Token: {token}</div>
+    <main className="min-h-screen px-4 py-6 sm:py-10" style={{ background: "radial-gradient(circle at 10% 0%, rgba(59,99,244,0.14), transparent 32%), linear-gradient(180deg,#F4F6FB, #EEF2F8)", color: "#111418" }}>
+      <div className="mx-auto grid max-w-6xl gap-5 lg:grid-cols-[minmax(0,1.08fr)_minmax(380px,0.92fr)] lg:items-start">
+        <div className="grid gap-5">
+          <StadiumCarousel compact />
+          <section className="rounded-[1.6rem] border bg-white p-5 shadow-[var(--shadow-card)] sm:p-6" style={{ borderColor: "#E7EBF3" }}>
+            <div className="text-xs font-black uppercase tracking-[0.16em]" style={{ color: primary }}>Booking Link</div>
+            <h1 className="mt-2 text-4xl font-black tracking-tight sm:text-5xl">{eventName}</h1>
+            <p className="mt-3 max-w-2xl text-sm font-bold leading-6 text-slate-500">
+              {event ? `${event.venueName} · choose the right access type, verify Fayda, then receive your QR ticket.` : accessType}
+            </p>
+            <div className="mt-6 grid gap-3 sm:grid-cols-3">
+              <div className="rounded-2xl bg-slate-50 p-4">
+                <div className="text-xs font-black uppercase tracking-[0.14em] text-slate-400">Access</div>
+                <div className="mt-2 text-lg font-black text-slate-950">{accessType}</div>
+              </div>
+              <div className="rounded-2xl bg-slate-50 p-4">
+                <div className="text-xs font-black uppercase tracking-[0.14em] text-slate-400">Ticket mode</div>
+                <div className="mt-2 text-lg font-black text-slate-950">{ticketTypes.length > 1 ? "Multiple types" : "Single link"}</div>
+              </div>
+              <div className="rounded-2xl bg-slate-50 p-4">
+                <div className="text-xs font-black uppercase tracking-[0.14em] text-slate-400">Checkout</div>
+                <div className="mt-2 text-lg font-black text-slate-950">
+                  {ticketTypes.some((item) => item.paymentRequired && item.priceAmount > 0) ? "Paid / Free" : paymentRequired && priceAmount > 0 ? `${currency} ${priceAmount.toLocaleString()}` : "Free"}
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+        <section className="rounded-[1.6rem] border p-5 shadow-[0_28px_52px_-30px_rgba(17,20,24,0.5)] sm:p-6" style={{ borderColor: "#E7EBF3", background: text, color: background }}>
+          <div className="rounded-2xl p-4" style={{ background: primary, color: background }}>
+            <div className="text-sm font-black">Secure booking access</div>
+            <div className="mt-1 break-all text-xs font-bold opacity-80">Token: {token}</div>
             <div className="mt-3 inline-flex rounded-full bg-white/18 px-3 py-1 text-xs font-black">
-              {ticketTypes.some((item) => item.paymentRequired && item.priceAmount > 0) ? "Paid and free options" : paymentRequired && priceAmount > 0 ? `${currency} ${priceAmount.toLocaleString()} checkout` : "Free booking"}
+              Fayda verification required
             </div>
           </div>
           <BookingTicketFlow
