@@ -28,6 +28,8 @@ export default async function PublicTicketPage({ params, searchParams }: Props) 
   }
 
   const verificationPending = ticket.event.idVerificationRequired && !["VERIFIED", "MANUALLY_APPROVED"].includes(ticket.guest.idVerification?.status ?? "NOT_STARTED");
+  const isOneTimeConsumed = ticket.status === "USED";
+  const isUnavailable = ["CANCELLED", "EXPIRED", "BLOCKED"].includes(ticket.status);
   const isWalkIn = ticket.guest.source === "WALK_IN";
 
   return (
@@ -41,12 +43,19 @@ export default async function PublicTicketPage({ params, searchParams }: Props) 
             <p className="mt-1 text-sm font-bold">{ticket.accessType} · {ticket.guest.organization ?? "Guest"}</p>
           </div>
           <div className="p-6">
-            <div className="grid place-items-center rounded-xl border border-dashed border-slate-300 p-5">
-              <QRCode value={JSON.stringify({ ticketId: ticket.ticketId, ticketDbId: ticket.id, url: `/ticket/${ticket.id}` })} size={220} />
-            </div>
+            {isOneTimeConsumed || isUnavailable ? (
+              <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-5 text-center">
+                <div className="text-xl font-black text-slate-900">{isOneTimeConsumed ? "Ticket already used" : `Ticket ${ticket.status.toLowerCase()}`}</div>
+                <p className="mt-2 text-sm font-bold text-slate-500">This one-time QR is no longer valid for entry.</p>
+              </div>
+            ) : (
+              <div className="grid place-items-center rounded-xl border border-dashed border-slate-300 p-5">
+                <QRCode value={JSON.stringify({ ticketId: ticket.ticketId, ticketDbId: ticket.id, url: `/ticket/${ticket.ticketId}` })} size={220} />
+              </div>
+            )}
             <div className="mt-5 grid gap-3 text-sm">
               <div className="flex items-center justify-between"><span className="font-bold text-slate-500">Ticket ID</span><span className="font-black">{ticket.ticketId}</span></div>
-              <div className="flex items-center justify-between"><span className="font-bold text-slate-500">Status</span><Badge tone={verificationPending ? "yellow" : "green"}>{verificationPending ? "Verification Required" : "Valid For Entry"}</Badge></div>
+              <div className="flex items-center justify-between"><span className="font-bold text-slate-500">Status</span><Badge tone={isOneTimeConsumed || isUnavailable ? "red" : verificationPending ? "yellow" : "green"}>{isOneTimeConsumed ? "Already Used" : isUnavailable ? ticket.status.replaceAll("_", " ") : verificationPending ? "Verification Required" : "Valid For Entry"}</Badge></div>
               <div className="flex items-center justify-between"><span className="font-bold text-slate-500">Gate</span><span className="font-black">{ticket.gate?.name ?? "Any Gate"}</span></div>
             </div>
             {verificationPending ? (
@@ -54,6 +63,8 @@ export default async function PublicTicketPage({ params, searchParams }: Props) 
                 <p className="mt-5 rounded-lg bg-[var(--adey-yellow)]/20 p-4 text-sm font-bold leading-6 text-[var(--adey-yellow-deep)]">Please verify your National/Fayda ID before arrival.</p>
                 <Link className="mt-4 flex h-12 items-center justify-center rounded-lg bg-[#111418] text-sm font-black text-white" href={`/verify/${ticket.id}`}>Verify National/Fayda ID</Link>
               </>
+            ) : isOneTimeConsumed || isUnavailable ? (
+              <p className="mt-5 rounded-lg bg-red-50 p-4 text-sm font-bold leading-6 text-red-700">This ticket link has already been consumed or is unavailable.</p>
             ) : (
               <>
                 {sms ? (

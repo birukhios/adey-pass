@@ -119,6 +119,7 @@ export async function POST(request: Request) {
         ticketId: ticket.id,
         tokenHash: hashSecret(ticket.ticketId),
         status: ticket.status,
+        lastUsedAt: parsed.data.checkInImmediately ? new Date() : null,
       },
     });
 

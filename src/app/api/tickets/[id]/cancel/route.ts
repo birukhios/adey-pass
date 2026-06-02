@@ -11,10 +11,14 @@ export async function POST(_: Request, { params }: Props) {
   if ("error" in auth) return auth.error;
   const { id } = await params;
 
-  const updated = await prisma.ticket.update({
-    where: { id },
-    data: { status: TicketStatus.CANCELLED, cancelledAt: new Date() },
-    select: { id: true, status: true },
+  const updated = await prisma.$transaction(async (tx) => {
+    const ticket = await tx.ticket.update({
+      where: { id },
+      data: { status: TicketStatus.CANCELLED, cancelledAt: new Date() },
+      select: { id: true, status: true },
+    });
+    await tx.qrToken.updateMany({ where: { ticketId: id }, data: { status: TicketStatus.CANCELLED } });
+    return ticket;
   });
 
   return NextResponse.json(updated);

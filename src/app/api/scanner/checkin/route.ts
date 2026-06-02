@@ -103,6 +103,10 @@ export async function POST(request: Request) {
       where: { id: ticket.id },
       data: { status: TicketStatus.USED, usedAt: new Date() },
     }),
+    prisma.qrToken.updateMany({
+      where: { ticketId: ticket.id },
+      data: { status: TicketStatus.USED, lastUsedAt: new Date() },
+    }),
     prisma.guest.update({
       where: { id: ticket.guestId },
       data: { checkInStatus: CheckInStatus.CHECKED_IN },

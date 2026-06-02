@@ -6,6 +6,21 @@ import { useEffect, useState } from "react";
 
 const stadiumSlides = [
   {
+    name: "Bahir Dar Stadium",
+    image: "/stadium-photos/dire-dawa-stadium.jpg",
+    credit: "Provided stadium photo",
+  },
+  {
+    name: "Adey Abeba Stadium",
+    image: "/stadium-photos/national-stadium-construction.png",
+    credit: "Provided stadium photo",
+  },
+  {
+    name: "Sheikh Mohammed Al Amoudi Stadium",
+    image: "/stadium-photos/hawassa-stadium.jpg",
+    credit: "Wikimedia Commons",
+  },
+  {
     name: "Addis Ababa Stadium Tribune",
     image: "/stadium-photos/addis-ababa-tribune-2018.jpg",
     credit: "Wikimedia Commons",
@@ -16,24 +31,9 @@ const stadiumSlides = [
     credit: "Wikimedia Commons",
   },
   {
-    name: "Hawassa Stadium",
-    image: "/stadium-photos/hawassa-stadium.jpg",
-    credit: "Wikimedia Commons",
-  },
-  {
-    name: "Hawassa Stadium Stands",
-    image: "/stadium-photos/hawassa-stadium-stands.jpg",
-    credit: "Wikimedia Commons",
-  },
-  {
     name: "Addis Ababa Stadium Exterior",
     image: "/stadium-photos/addis-ababa-stadium-classic.jpg",
     credit: "Wikimedia Commons",
-  },
-  {
-    name: "Bahir Dar Stadium",
-    image: "/stadiums/bahir-dar-stadium.svg",
-    credit: "Stadium Management System",
   },
 ];
 
