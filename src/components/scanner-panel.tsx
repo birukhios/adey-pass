@@ -30,20 +30,32 @@ export function ScannerPanel({ gates }: { gates: Array<{ id: string; name: strin
   async function lookupAndCheckin() {
     setLoading(true);
     setMessage("");
-    const response = await fetch("/api/scanner/checkin", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ query, gateId: gateId || undefined }),
-    });
-    const data = await response.json();
-    setLoading(false);
-    if (!response.ok) {
-      setMessage(data.status ?? data.message ?? "Could not process ticket.");
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), 12000);
+    try {
+      const response = await fetch("/api/scanner/checkin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query, gateId: gateId || undefined }),
+        signal: controller.signal,
+      });
+      const text = await response.text();
+      const data = parseScannerResponse(text);
+      if (!response.ok) {
+        setMessage(data.status ?? data.message ?? "Could not process ticket.");
+        setResult(data.ticket ?? null);
+        return;
+      }
+      setMessage(data.status ?? "Scan completed.");
       setResult(data.ticket ?? null);
-      return;
+    } catch (error) {
+      const timedOut = error instanceof DOMException && error.name === "AbortError";
+      setMessage(timedOut ? "Scanner Timeout" : "Scanner Error");
+      setResult(null);
+    } finally {
+      window.clearTimeout(timeout);
+      setLoading(false);
     }
-    setMessage(data.status);
-    setResult(data.ticket);
   }
 
   return (
@@ -92,4 +104,12 @@ export function ScannerPanel({ gates }: { gates: Array<{ id: string; name: strin
       ) : null}
     </div>
   );
+}
+
+function parseScannerResponse(text: string) {
+  try {
+    return JSON.parse(text) as { status?: string; message?: string; ticket?: ScanTicket };
+  } catch {
+    return { message: "Scanner returned an unreadable response. Please sign in again." };
+  }
 }

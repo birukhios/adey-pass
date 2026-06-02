@@ -13,6 +13,7 @@ type ScanTicket = {
 
 export function CameraScannerCard({ gates }: { gates: Array<{ id: string; name: string }> }) {
   const scannerRef = useRef<{ stop: () => Promise<void>; clear: () => void | Promise<void> } | null>(null);
+  const processingRef = useRef(false);
   const [running, setRunning] = useState(false);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("Camera is ready.");
@@ -59,22 +60,39 @@ export function CameraScannerCard({ gates }: { gates: Array<{ id: string; name: 
   }
 
   async function handleScan(decodedText: string) {
-    if (busy) return;
+    if (processingRef.current) return;
+    processingRef.current = true;
     setBusy(true);
-    const response = await fetch("/api/scanner/checkin", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ query: decodedText, gateId: gateId || undefined }),
-    });
-    const data = await response.json();
-    setResult(data.ticket ?? null);
-    setMessage(data.status ?? data.message ?? "Scan completed.");
-    setStatusText(data.status ?? "Scan completed.");
-    if (response.ok || data.status === "Allow Entry") triggerFlash("valid");
-    else if (data.status === "Already Checked In") triggerFlash("warning");
-    else triggerFlash("invalid");
-    setBusy(false);
-    await stopScanner();
+    setMessage("Processing ticket...");
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), 12000);
+    try {
+      const response = await fetch("/api/scanner/checkin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query: decodedText, gateId: gateId || undefined }),
+        signal: controller.signal,
+      });
+      const text = await response.text();
+      const data = parseScannerResponse(text);
+      setResult(data.ticket ?? null);
+      setMessage(data.status ?? data.message ?? "Scan completed.");
+      setStatusText(data.status ?? data.message ?? "Scan completed.");
+      if (response.ok || data.status === "Allow Entry") triggerFlash("valid");
+      else if (data.status === "Already Checked In" || data.status === "Verification Required") triggerFlash("warning");
+      else triggerFlash("invalid");
+    } catch (error) {
+      const timedOut = error instanceof DOMException && error.name === "AbortError";
+      setResult(null);
+      setStatusText(timedOut ? "Scanner Timeout" : "Scanner Error");
+      setMessage(timedOut ? "The scan request timed out. Try manual entry or scan again." : "Could not process this QR. Try manual entry.");
+      triggerFlash("invalid");
+    } finally {
+      window.clearTimeout(timeout);
+      processingRef.current = false;
+      setBusy(false);
+      await stopScanner();
+    }
   }
 
   async function startScanner() {
@@ -208,4 +226,12 @@ export function CameraScannerCard({ gates }: { gates: Array<{ id: string; name: 
       </div>
     </div>
   );
+}
+
+function parseScannerResponse(text: string) {
+  try {
+    return JSON.parse(text) as { status?: string; message?: string; ticket?: ScanTicket };
+  } catch {
+    return { message: "Scanner returned an unreadable response. Please sign in again or use manual entry." };
+  }
 }
