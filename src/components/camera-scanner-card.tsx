@@ -48,13 +48,19 @@ export function CameraScannerCard({ gates }: { gates: Array<{ id: string; name: 
 
   async function stopScanner() {
     if (!scannerRef.current) return;
+    const currentScanner = scannerRef.current;
+    scannerRef.current = null;
     try {
-      await scannerRef.current.stop();
-      await scannerRef.current.clear();
+      await Promise.race([
+        (async () => {
+          await currentScanner.stop();
+          await currentScanner.clear();
+        })(),
+        new Promise<void>((resolve) => window.setTimeout(resolve, 2000)),
+      ]);
     } catch {
       // Ignore teardown errors while switching state.
     } finally {
-      scannerRef.current = null;
       setRunning(false);
     }
   }

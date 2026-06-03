@@ -21,7 +21,7 @@ export async function POST(request: Request) {
   }
 
   const query = parsed.data.query.trim();
-  const normalizedQuery = normalizeScanQuery(query);
+  const lookupCandidates = getScanLookupCandidates(query);
   if (parsed.data.gateId && !auth.session.user.permissions?.includes(permissions.scannerOverride)) {
     const assignment = await prisma.gateOfficerAssignment.findUnique({
       where: { userId_gateId: { userId: auth.session.user.id, gateId: parsed.data.gateId } },
@@ -34,8 +34,8 @@ export async function POST(request: Request) {
     }
   }
 
-  const qrToken = await prisma.qrToken.findUnique({
-    where: { tokenHash: hashSecret(normalizedQuery) },
+  const qrToken = await prisma.qrToken.findFirst({
+    where: { tokenHash: { in: lookupCandidates.map((candidate) => hashSecret(candidate)) } },
     include: { ticket: true },
   });
 
@@ -43,11 +43,11 @@ export async function POST(request: Request) {
     where: {
       OR: [
         ...(qrToken?.ticketId ? [{ id: qrToken.ticketId }] : []),
-        { id: query },
-        { id: normalizedQuery },
-        { ticketId: normalizedQuery },
-        { guest: { phone: { contains: normalizedQuery } } },
-        { guest: { fullName: { contains: normalizedQuery } } },
+        { id: { in: lookupCandidates } },
+        { ticketId: { in: lookupCandidates } },
+        { guest: { phone: { in: lookupCandidates } } },
+        ...lookupCandidates.map((candidate) => ({ guest: { phone: { contains: candidate } } })),
+        ...lookupCandidates.map((candidate) => ({ guest: { fullName: { contains: candidate } } })),
       ],
     },
     include: { guest: { include: { idVerification: true, category: true } }, event: true, gate: true },
@@ -113,19 +113,39 @@ export async function POST(request: Request) {
     }),
   ]);
 
-  return NextResponse.json({ status: "Allow Entry", ticket });
+  return NextResponse.json({
+    status: "Allow Entry",
+    ticket: { ...ticket, status: TicketStatus.USED, usedAt: new Date() },
+  });
 }
 
-function normalizeScanQuery(query: string) {
+function getScanLookupCandidates(query: string) {
+  const candidates = new Set<string>();
+  const add = (value?: string | null) => {
+    const clean = value?.trim();
+    if (clean) candidates.add(clean);
+  };
+
   let normalizedQuery = query.trim();
+  add(normalizedQuery);
+
   try {
     const maybeJson = JSON.parse(normalizedQuery) as {
       token?: string;
       ticketId?: string;
       ticketDbId?: string;
       url?: string;
+      reference?: string;
+      paymentReference?: string;
+      provider?: string;
     };
-    normalizedQuery = maybeJson.ticketId ?? maybeJson.ticketDbId ?? maybeJson.token ?? maybeJson.url ?? normalizedQuery;
+    add(maybeJson.token);
+    add(maybeJson.url);
+    add(maybeJson.ticketDbId);
+    add(maybeJson.ticketId);
+    add(maybeJson.reference);
+    add(maybeJson.paymentReference);
+    normalizedQuery = maybeJson.url ?? maybeJson.token ?? maybeJson.ticketDbId ?? maybeJson.ticketId ?? maybeJson.reference ?? normalizedQuery;
   } catch {
     // Plain QR values are supported.
   }
@@ -134,17 +154,17 @@ function normalizeScanQuery(query: string) {
     const url = new URL(normalizedQuery);
     const parts = url.pathname.split("/").filter(Boolean);
     if (["ticket", "verify"].includes(parts[0] ?? "") && parts[1]) {
-      return parts[1];
+      add(parts[1]);
     }
     const token = url.searchParams.get("token") ?? url.searchParams.get("ticketId");
-    if (token) return token;
+    add(token);
   } catch {
     if (normalizedQuery.includes("/ticket/") || normalizedQuery.includes("/verify/")) {
       const parts = normalizedQuery.split(/[/?#]/).filter(Boolean);
       const markerIndex = parts.findIndex((part) => part === "ticket" || part === "verify");
-      if (markerIndex >= 0 && parts[markerIndex + 1]) return parts[markerIndex + 1];
+      if (markerIndex >= 0 && parts[markerIndex + 1]) add(parts[markerIndex + 1]);
     }
   }
 
-  return normalizedQuery;
+  return Array.from(candidates);
 }

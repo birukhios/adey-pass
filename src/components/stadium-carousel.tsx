@@ -6,19 +6,19 @@ import { useEffect, useState } from "react";
 
 const stadiumSlides = [
   {
-    name: "Bahir Dar Stadium",
-    image: "/stadium-photos/dire-dawa-stadium.jpg",
-    credit: "Provided stadium photo",
-  },
-  {
     name: "Adey Abeba Stadium",
     image: "/stadium-photos/national-stadium-construction.png",
     credit: "Provided stadium photo",
   },
   {
-    name: "Sheikh Mohammed Al Amoudi Stadium",
+    name: "Sheikh Mohammed Al-Amoudi Stadium",
     image: "/stadium-photos/hawassa-stadium.jpg",
-    credit: "Wikimedia Commons",
+    credit: "Provided stadium photo",
+  },
+  {
+    name: "Bahir Dar Stadium",
+    image: "/stadium-photos/dire-dawa-stadium.jpg",
+    credit: "Provided stadium photo",
   },
   {
     name: "Addis Ababa Stadium Tribune",
