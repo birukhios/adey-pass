@@ -77,7 +77,7 @@ Start Command: npm run render:start
 Add these environment variables in Render before building:
 
 ```text
-DATABASE_URL=file:./dev.db
+DATABASE_URL=file:/var/data/adey-pass.db
 NEXTAUTH_SECRET=<32+ character random string>
 AUTH_SECRET=<32+ character random string>
 NEXTAUTH_URL=https://YOUR-RENDER-SERVICE.onrender.com
@@ -89,7 +89,23 @@ You can generate secrets locally with:
 openssl rand -base64 32
 ```
 
-The start command pushes the Prisma schema and seeds the demo users, so the accounts above will exist on the deployed app. SQLite on Render is good for demo testing; for production, move to PostgreSQL and persistent migrations.
+Attach a Render persistent disk:
+
+```text
+Disk name: adey-pass-data
+Mount path: /var/data
+Size: 1 GB
+```
+
+The repo also includes `render.yaml` for Blueprint deployment with the disk, env vars, build command, and start command already defined.
+
+The start command pushes the Prisma schema and seeds the demo users, so the accounts above will exist on the deployed app. The seeded demo ticket `AP26-F39EC0` will also exist on Render after seeding:
+
+```text
+https://YOUR-RENDER-SERVICE.onrender.com/ticket/AP26-F39EC0
+```
+
+SQLite on Render is good for demo testing with a persistent disk; for full production, move to PostgreSQL and persistent migrations.
 
 ## Implemented Foundation
 

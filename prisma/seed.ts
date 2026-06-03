@@ -259,13 +259,13 @@ async function main() {
   }
 
   const sampleGuests = [
-    ["Aster Girma", "+251911111111", "VIP", "Stadium Operations", "Board Guest", "INVITED"],
-    ["Mikael Tadesse", "+251922222222", "Media", "Addis Daily", "Reporter", "INVITED"],
-    ["Liya Kebede", "+251933333333", "Staff", "Stadium Ops", "Operations Lead", "INVITED"],
-    ["Abel Fikru", "+251944444444", "Walk-In", "", "", "WALK_IN"],
+    ["Aster Girma", "+251911111111", "VIP", "Stadium Operations", "Board Guest", "INVITED", "AP26-F39EC0"],
+    ["Mikael Tadesse", "+251922222222", "Media", "Addis Daily", "Reporter", "INVITED", "AP26-MEDIA1"],
+    ["Liya Kebede", "+251933333333", "Staff", "Stadium Ops", "Operations Lead", "INVITED", "AP26-STAFF1"],
+    ["Abel Fikru", "+251944444444", "Walk-In", "", "", "WALK_IN", "AP26-WALKIN1"],
   ] as const;
 
-  for (const [fullName, phone, categoryName, organization, title, source] of sampleGuests) {
+  for (const [fullName, phone, categoryName, organization, title, source, ticketId] of sampleGuests) {
     const category = await prisma.guestCategory.findUniqueOrThrow({ where: { name: categoryName } });
     const guestData = {
         fullName,
@@ -295,12 +295,25 @@ async function main() {
       where: { guestId: guest.id },
       include: { token: true },
     });
-    const ticket = existingTicket ??
-      await prisma.ticket.create({
+    const ticketIdConflict = await prisma.ticket.findUnique({ where: { ticketId } });
+    const safeTicketId = ticketIdConflict && ticketIdConflict.guestId !== guest.id
+      ? existingTicket?.ticketId ?? `AP26-${crypto.randomBytes(3).toString("hex").toUpperCase()}`
+      : ticketId;
+    const ticket = existingTicket
+      ? await prisma.ticket.update({
+        where: { id: existingTicket.id },
+        data: {
+          ticketId: safeTicketId,
+          accessType: category.accessType,
+          status: existingTicket.status === "USED" ? "GENERATED" : existingTicket.status,
+          usedAt: existingTicket.status === "USED" ? null : existingTicket.usedAt,
+        },
+      })
+      : await prisma.ticket.create({
         data: {
           guestId: guest.id,
           eventId: event.id,
-          ticketId: `AP26-${crypto.randomBytes(3).toString("hex").toUpperCase()}`,
+          ticketId: safeTicketId,
           accessType: category.accessType,
           status: "GENERATED",
         },
